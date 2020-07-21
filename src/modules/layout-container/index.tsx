@@ -3,6 +3,7 @@ import { Layout } from 'antd';
 import './index.scss';
 import LayoutHeader from './component/header';
 import LayoutMenu from './component/menu';
+import LayoutBread from './component/bread';
 import { ILayoutSiderMenu, ILayoutSiderSubMenu } from './types';
 
 const { Content, Footer } = Layout;
@@ -20,10 +21,11 @@ function LayoutContainer(props: Props) {
       <LayoutHeader />
       <LayoutMenu menus={menus} />
       <Layout className='site-layout' style={{ paddingTop: '45px' }}>
-        <Content style={{ margin: '24px 16px', padding: 24 }}>
+        <Content style={{ padding: '14px 24px' }}>
+          <LayoutBread />
           <div
             className='site-layout-background'
-            style={{ padding: 24, textAlign: 'center' }}
+            style={{ padding: 24, marginTop: 8, textAlign: 'center' }}
           >
             {props.children}
           </div>
