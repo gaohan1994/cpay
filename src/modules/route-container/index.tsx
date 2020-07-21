@@ -6,11 +6,11 @@ import {
   Route,
   RouteProps
 } from 'react-router-dom';
-import { createBrowserHistory } from 'history';
 import { AnimatedSwitch, spring } from 'react-router-transition';
 import { routerConfig } from '@/common/route-config';
-
-const history = createBrowserHistory();
+import { menuConfig } from '@/common/menu-config';
+import LayouContainer from '@/modules/layout-container';
+import { history } from '@/common/history-util';
 
 export type WebNavigator = {} & RouteProps;
 
@@ -23,19 +23,15 @@ function createWebNavigation(params: CreateWebNavigationParams): any {
   const { routes, transition = true } = params;
   return class extends React.Component<any, any> {
     render() {
-      const { SwitchComponent, SwitchProps } = createSwitchNavigation(
-        transition
-      );
-
       return (
         <BrowserRouter>
           <Router history={history}>
-            <SwitchComponent {...SwitchProps}>
+            <LayouContainer menus={menuConfig}>
               {routes.map((item: WebNavigator, index: number) => {
                 const { ...rest } = item;
                 return <Route key={index} {...rest} />;
               })}
-            </SwitchComponent>
+            </LayouContainer>
           </Router>
         </BrowserRouter>
       );

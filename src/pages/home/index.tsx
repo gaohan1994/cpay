@@ -1,8 +1,8 @@
 import React from 'react';
-import requestUtil from '@/common/request-util';
+import './index.scss';
 
 function App() {
-  return <div className='App'>hahahahahah</div>;
+  return <div className='home-container'>home1</div>;
 }
 
 export default App;
