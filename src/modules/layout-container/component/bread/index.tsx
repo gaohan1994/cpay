@@ -54,7 +54,7 @@ function Bread(props: Props) {
   return (
     <Breadcrumb>
       {breadData.map(breadItem => {
-        return <Item>{breadItem.name}</Item>;
+        return <Item key={breadItem.name}>{breadItem.name}</Item>;
       })}
     </Breadcrumb>
   );
