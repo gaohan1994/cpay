@@ -1,3 +1,5 @@
+import { formartQuery, jsonToQueryString } from '@/common/request-util';
+import ApiRequest from '@/common/request-util';
 export const getTableData = (
   { current, pageSize }: any,
   formData: Object
@@ -16,4 +18,13 @@ export const getTableData = (
       total: res.info.results,
       list: res.results
     }));
+};
+
+export const merchantQueryBocoms = (
+  params: any,
+  formData: any
+): Promise<any> => {
+  formartQuery(params);
+  console.log('formData', formData);
+  return ApiRequest.get(`/merchant/query.bocoms${jsonToQueryString(params)}`);
 };

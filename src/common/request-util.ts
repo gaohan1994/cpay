@@ -1,5 +1,9 @@
 import { BASE_URL } from './config';
 
+export const formartQuery = (params: any) => {
+  console.log('params', params);
+};
+
 /**
  * @todo [传入条件返回格式化请求数据]
  * @param json

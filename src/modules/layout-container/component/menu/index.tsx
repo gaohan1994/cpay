@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Menu, Breadcrumb } from 'antd';
-import {
-  DesktopOutlined,
-  PieChartOutlined,
-  FileOutlined,
-  TeamOutlined,
-  UserOutlined,
-  LaptopOutlined,
-  NotificationOutlined
-} from '@ant-design/icons';
+import { Layout, Menu } from 'antd';
 import './index.scss';
 import { ILayoutSiderMenu } from '../../types';
 import { MenuInfo } from 'rc-menu/lib/interface';
@@ -87,7 +78,7 @@ function LayoutMenu(props: Props) {
                 return (
                   <SubMenu
                     key={menuItem.value}
-                    icon={<UserOutlined />}
+                    icon={<menuItem.icon />}
                     title={menuItem.name}
                   >
                     {menuItem.subMenus.map((subMenuItem, subIndex) => {
@@ -101,7 +92,7 @@ function LayoutMenu(props: Props) {
                 );
               }
               return (
-                <Menu.Item key={menuItem.value} icon={<FileOutlined />}>
+                <Menu.Item key={menuItem.value} icon={<menuItem.icon />}>
                   {menuItem.name}
                 </Menu.Item>
               );

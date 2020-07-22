@@ -21,11 +21,11 @@ function LayoutContainer(props: Props) {
       <LayoutHeader />
       <LayoutMenu menus={menus} />
       <Layout className='site-layout' style={{ paddingTop: '45px' }}>
-        <Content style={{ padding: '14px 24px' }}>
+        <Content style={{ padding: 12 }}>
           <LayoutBread />
           <div
             className='site-layout-background'
-            style={{ padding: 24, marginTop: 8, textAlign: 'center' }}
+            style={{ padding: 12, marginTop: 8, textAlign: 'center' }}
           >
             {props.children}
           </div>

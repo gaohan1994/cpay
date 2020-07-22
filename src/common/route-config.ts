@@ -8,7 +8,9 @@
 import { RouteProps } from 'react-router-dom';
 import Home from '@/pages/home';
 
-import TerminalMessage from '@/pages/terminal/message';
+import TerminalRoute from '@/pages/terminal/route';
+import ApplicationRoute from '@/pages/application/route';
+import UploadRoute from '@/pages/upload/route';
 
 export const routerConfig: RouteProps[] = [
   {
@@ -21,10 +23,7 @@ export const routerConfig: RouteProps[] = [
     component: Home,
     exact: true
   },
-  {
-    // 终端信息管理
-    path: '/terminal/message',
-    component: TerminalMessage,
-    exact: true
-  }
+  ...TerminalRoute,
+  ...ApplicationRoute,
+  ...UploadRoute
 ];
