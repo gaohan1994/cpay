@@ -11,24 +11,24 @@ import { merge } from 'lodash';
 import TerminalRoute, { TerminalMenu } from '@/pages/terminal/route';
 import ApplicationRoute, { ApplicationMenu } from '@/pages/application/route';
 import UploadRoute, { UploadMenu } from '@/pages/upload/route';
-import {
-  HomeOutlined,
-  GlobalOutlined,
-  AndroidOutlined,
-  AppstoreAddOutlined,
-  CloudUploadOutlined,
-  FundViewOutlined
-} from '@ant-design/icons';
+import AdvertisementRoute, {
+  AdvertisementMenu
+} from '@/pages/advertisement/route';
+import { HomeOutlined, FundViewOutlined } from '@ant-design/icons';
 
-function formartRouteToMenu(routeConfig: any[]) {
+function formartRouteToMenu(routeConfig: any[]): any[] {
   const newConfig: any[] = merge([], routeConfig);
-  return newConfig.map(route => {
-    return {
-      name: route.name,
-      value: route.path && route.path.substring(1, route.path.length),
-      path: route.path && route.path.substring(1, route.path.length)
-    };
-  });
+  return newConfig
+    .map(route => {
+      if (route.inMenu !== false) {
+        return {
+          name: route.name,
+          value: route.path && route.path.substring(1, route.path.length),
+          path: route.path && route.path.substring(1, route.path.length)
+        };
+      }
+    })
+    .filter(item => !!item);
 }
 
 const menuConfig: ILayoutSiderMenu[] = [
@@ -39,24 +39,9 @@ const menuConfig: ILayoutSiderMenu[] = [
     value: 'home'
   },
   {
-    name: '广告管理',
-    icon: GlobalOutlined,
-    path: 'adver',
-    value: 'adver',
-    subMenus: [
-      {
-        name: '广告审核',
-        value: 'adver/sh',
-        path: 'adver/sh'
-      },
-      {
-        name: '广告申请',
-        value: 'adver/sq',
-        path: 'adver/sq'
-      }
-    ]
+    ...AdvertisementMenu,
+    subMenus: formartRouteToMenu(AdvertisementRoute)
   },
-
   {
     ...TerminalMenu,
     subMenus: formartRouteToMenu(TerminalRoute)

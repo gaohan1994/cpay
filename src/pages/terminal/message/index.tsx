@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Col, Form, Input, Row, Table, Select, TreeSelect } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
-import { getTableData, merchantQueryBocoms } from '../constants/api';
+import { getTableData, merchantQueryBocoms } from './constants/api';
 
 const { Item } = Form;
 const { Option } = Select;
@@ -98,17 +98,7 @@ export default () => {
           </Col>
           <Col span={4}>
             <Form.Item name='treeData'>
-              <TreeSelect
-                // style={{ width: '100%' }}
-                // value={this.state.value}
-                // name='treeSelect'
-                // dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-                // treeData={treeData}
-                // placeholder='Please select'
-                // treeDefaultExpandAll
-                // onChange={this.onChange}
-                {...(treeProps as any)}
-              />
+              <TreeSelect {...(treeProps as any)} />
             </Form.Item>
           </Col>
           <Col span={4}>

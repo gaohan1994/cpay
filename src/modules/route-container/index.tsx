@@ -12,7 +12,7 @@ import { menuConfig } from '@/common/menu-config';
 import LayouContainer from '@/modules/layout-container';
 import { history } from '@/common/history-util';
 
-export type WebNavigator = {} & RouteProps;
+export type WebNavigator = { child?: any[] } & RouteProps;
 
 export type CreateWebNavigationParams = {
   routes: WebNavigator[];
@@ -26,12 +26,14 @@ function createWebNavigation(params: CreateWebNavigationParams): any {
       return (
         <BrowserRouter>
           <Router history={history}>
-            <LayouContainer menus={menuConfig}>
-              {routes.map((item: WebNavigator, index: number) => {
-                const { ...rest } = item;
-                return <Route key={index} {...rest} />;
-              })}
-            </LayouContainer>
+            <Switch>
+              <LayouContainer menus={menuConfig}>
+                {routes.map((item: WebNavigator, index: number) => {
+                  const { ...rest } = item;
+                  return <Route key={index} {...rest} />;
+                })}
+              </LayouContainer>
+            </Switch>
           </Router>
         </BrowserRouter>
       );

@@ -11,6 +11,7 @@ import Home from '@/pages/home';
 import TerminalRoute from '@/pages/terminal/route';
 import ApplicationRoute from '@/pages/application/route';
 import UploadRoute from '@/pages/upload/route';
+import advertisement from '@/pages/advertisement/route';
 
 export const routerConfig: RouteProps[] = [
   {
@@ -23,6 +24,7 @@ export const routerConfig: RouteProps[] = [
     component: Home,
     exact: true
   },
+  ...advertisement,
   ...TerminalRoute,
   ...ApplicationRoute,
   ...UploadRoute
