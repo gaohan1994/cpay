@@ -12,11 +12,23 @@ export const jsonToQueryString = (json: any) => {
   return (
     '?' +
     Object.keys(json)
-      .map(function(key: any) {
+      .map(function (key: any) {
         return key + '=' + json[key];
       })
       .join('&')
   );
+};
+
+/**
+ * @todo 将body数据转成urlencoded类型
+ * @param json
+ */
+export const jsonToForm = (json: any): string => {
+  return Object.keys(json)
+    .map(function (key: any) {
+      return key + '=' + json[key];
+    })
+    .join('&');
 };
 
 /**
@@ -28,17 +40,20 @@ export const jsonToQueryString = (json: any) => {
 class ApiRequest {
   baseOptions(params: any, method: string = 'GET'): Promise<any> {
     let { url, data } = params;
-    let contentType = 'application/json';
+    // let contentType = 'application/json';
+    let contentType = 'application/x-www-form-urlencoded';
     contentType = params.contentType || contentType;
-    const option: any = {
-      data: data,
+    const option: RequestInit = {
+      // data: data,
       method: method,
       headers: {
-        'content-type': contentType
-      }
+        'content-type': contentType,
+      },
+      // credentials: 'include',
+      ...(!!data ? { body: data } : {}),
     };
     console.log('option: ', option);
-    return fetch(`${BASE_URL}${url}`, option).then(res => res.json());
+    return fetch(`${BASE_URL}${url}`, option).then((res) => res.json());
   }
 
   get(url: string, data: string = '') {
@@ -49,7 +64,7 @@ class ApiRequest {
   post(url: string, data: any) {
     let params = {
       url,
-      data: typeof data === 'string' ? data : JSON.stringify(data)
+      data: typeof data === 'string' ? data : JSON.stringify(data),
     };
     return this.baseOptions(params, 'POST');
   }

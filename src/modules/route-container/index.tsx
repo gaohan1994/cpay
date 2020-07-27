@@ -4,7 +4,7 @@ import {
   Router,
   Switch,
   Route,
-  RouteProps
+  RouteProps,
 } from 'react-router-dom';
 import { AnimatedSwitch, spring } from 'react-router-transition';
 import { routerConfig } from '@/common/route-config';
@@ -23,10 +23,12 @@ function createWebNavigation(params: CreateWebNavigationParams): any {
   const { routes, transition = true } = params;
   return class extends React.Component<any, any> {
     render() {
+      const login = routes.find((r) => r.path === '/login');
       return (
         <BrowserRouter>
           <Router history={history}>
             <Switch>
+              {login && <Route key={'login'} {...login} />}
               <LayouContainer menus={menuConfig}>
                 {routes.map((item: WebNavigator, index: number) => {
                   const { ...rest } = item;
@@ -44,30 +46,30 @@ function createWebNavigation(params: CreateWebNavigationParams): any {
 function mapStyles(styles: any) {
   return {
     opacity: styles.opacity,
-    transform: `scale(${styles.scale})`
+    transform: `scale(${styles.scale})`,
   };
 }
 
 function bounce(val: number) {
   return spring(val, {
     stiffness: 330,
-    damping: 22
+    damping: 22,
   });
 }
 
 const switchTransition = {
   atEnter: {
     opacity: 0,
-    scale: 1.2
+    scale: 1.2,
   },
   atLeave: {
     opacity: bounce(0),
-    scale: bounce(0.8)
+    scale: bounce(0.8),
   },
   atActive: {
     opacity: bounce(1),
-    scale: bounce(1)
-  }
+    scale: bounce(1),
+  },
 };
 
 function createSwitchNavigation(
@@ -84,8 +86,8 @@ function createSwitchNavigation(
         atLeave: switchTransition.atLeave,
         atActive: switchTransition.atActive,
         mapStyles: mapStyles,
-        className: 'route-wrapper'
-      }
+        className: 'route-wrapper',
+      },
     };
   } else {
     /**

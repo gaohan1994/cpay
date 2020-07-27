@@ -12,20 +12,26 @@ import TerminalRoute from '@/pages/terminal/route';
 import ApplicationRoute from '@/pages/application/route';
 import UploadRoute from '@/pages/upload/route';
 import advertisement from '@/pages/advertisement/route';
+import Login from '@/pages/sign/login';
 
 export const routerConfig: RouteProps[] = [
   {
     path: '/',
     component: Home,
-    exact: true
+    exact: true,
   },
   {
     path: '/home',
     component: Home,
-    exact: true
+    exact: true,
+  },
+  {
+    path: '/login',
+    component: Login,
+    exact: true,
   },
   ...advertisement,
   ...TerminalRoute,
   ...ApplicationRoute,
-  ...UploadRoute
+  ...UploadRoute,
 ];

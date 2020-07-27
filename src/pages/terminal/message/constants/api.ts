@@ -13,10 +13,10 @@ export const getTableData = (
   });
 
   return fetch(`https://randomuser.me/api?results=55&${query}`)
-    .then(res => res.json())
-    .then(res => ({
+    .then((res) => res.json())
+    .then((res) => ({
       total: res.info.results,
-      list: res.results
+      list: res.results,
     }));
 };
 
