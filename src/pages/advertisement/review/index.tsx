@@ -1,25 +1,19 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { Button, Col, Form, Input, Row, Table, Select, TreeSelect } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { Form, Table } from 'antd';
 import { useAntdTable, useMount } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { advertInfoList } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
-import { advertisementType, advertisementFileType } from '../types';
-import { deptTreeData } from '@/pages/common/constants';
-import { connectCommonReducer } from '@/pages/common/reducer';
-import { CommonReducerInterface } from '@/pages/common/type';
+import { getDeptTreeData } from '@/pages/common/constants';
 
-const { Item } = Form;
-const { Option } = Select;
+import AdvertisementForm from '../component/form';
 
-type Props = CommonReducerInterface.IConnectReducerState;
+type Props = {};
 
 function Page(props: Props) {
   // 请求dept数据
   useMount(() => {
-    deptTreeData();
+    getDeptTreeData();
   });
 
   const [form] = Form.useForm();
@@ -75,55 +69,11 @@ function Page(props: Props) {
     };
   });
 
-  const { common } = props;
-  const { deptData } = common;
-  const advanceSearchForm = (
-    <div>
-      <Form form={form}>
-        <Row gutter={24}>
-          <Col span={4}>
-            <Item name="name">
-              <Input placeholder="广告名称" />
-            </Item>
-          </Col>
-          <Col span={4}>
-            <Item name="type">
-              <Select placeholder="广告类型">
-                {advertisementType.map((item) => {
-                  return <Option value={item.value}>{item.title}</Option>;
-                })}
-              </Select>
-            </Item>
-          </Col>
-          <Col>
-            <Item name="adFileType">
-              <Select placeholder="广告文件类型">
-                {advertisementFileType.map((item) => {
-                  return <Option value={item.value}>{item.title}</Option>;
-                })}
-              </Select>
-            </Item>
-          </Col>
-        </Row>
-        <Row>
-          <Form.Item style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button onClick={reset} style={{ marginRight: 12 }}>
-              重置
-            </Button>
-            <Button type="primary" onClick={submit} icon={<SearchOutlined />}>
-              查询
-            </Button>
-          </Form.Item>
-        </Row>
-      </Form>
-    </div>
-  );
-
   return (
     <div>
-      {advanceSearchForm}
+      <AdvertisementForm form={form} submit={submit} reset={reset} />
       <Table columns={columns} {...tableProps} />
     </div>
   );
 }
-export default connect(connectCommonReducer)(Page);
+export default Page;

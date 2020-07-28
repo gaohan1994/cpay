@@ -55,7 +55,7 @@ function formatDeptTreeData(deptData: DeptItem[]): DeptTreeData[] {
 /**
  * @todo 查询机构标签关联列表
  */
-export const deptTreeData = async () => {
+export const getDeptTreeData = async () => {
   const treeData = await ApiRequset.get(`/cpay-admin/system/dept/treeData`);
   if (treeData.code === RESPONSE_CODE.success) {
     store.dispatch({
