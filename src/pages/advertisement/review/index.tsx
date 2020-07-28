@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button, Col, Form, Input, Row, Table, Select, TreeSelect } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import { useAntdTable } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
-import history from '@/common/history-util';
+import { advertInfoList } from '../constants/api';
+import { formatListResult } from '@/common/request-util';
+import { advertisementType, advertisementFileType } from '../types';
 
 const { Item } = Form;
 const { Option } = Select;
@@ -10,115 +13,103 @@ const { Option } = Select;
 export default () => {
   const [form] = Form.useForm();
 
-  const onItemClick = (parmas: any) => {
-    console.log('parmas', parmas);
-    history.push(`/advertisement/review-detail/${parmas.id}`);
-  };
-
   const { tableProps, search }: any = useAntdTable(
-    (paginatedParams: PaginatedParams, tableProps: any) => {
-      return new Promise(resolve =>
-        resolve({
-          list: [{ email: '871418277@qq.com', id: 1 }],
-          total: 5
-        })
-      );
-    },
+    (paginatedParams: PaginatedParams, tableProps: any) =>
+      advertInfoList({ ...paginatedParams, ...tableProps }),
     {
-      form
+      form,
+      formatResult: formatListResult,
     }
   );
-  const { submit, reset } = search;
 
+  const { submit, reset } = search;
   const columns = [
     {
       title: '操作',
-      key: 'action',
-      render: (params: any, item: any) => {
-        return <a onClick={() => onItemClick(item)}>审核</a>;
-      }
+      render: () => <a>审核</a>,
+      fixed: 'left',
     },
     {
-      title: '终端编号',
-      dataIndex: 'email'
-    }
-  ];
-
-  const treeData = [
-    {
-      title: 'Node1',
-      value: '0-0',
-      children: [
-        {
-          title: 'Child Node1',
-          value: '0-0-1'
-        },
-        {
-          title: 'Child Node2',
-          value: '0-0-2'
-        }
-      ]
+      title: '广告名称',
+      dataIndex: 'adName',
     },
     {
-      title: 'Node2',
-      value: '0-1'
-    }
-  ];
-  const treeProps = {
-    style: { width: '100%' },
-    name: 'treeSelect',
-    dropdownStyle: { maxHeight: 400, overflow: 'auto' },
-    treeData: treeData,
-    placeholder: '所属机构',
-    treeDefaultExpandAll: true
-  };
+      title: '所属机构',
+      dataIndex: 'deptName',
+    },
+    {
+      title: '组别名称',
+      dataIndex: 'groupId',
+    },
+    {
+      title: '广告类型',
+      dataIndex: 'adFileType',
+    },
+    {
+      title: '广告文件类型',
+      dataIndex: 'adFileType',
+    },
+    {
+      title: '有效起始时间',
+      dataIndex: 'createTime',
+    },
+    {
+      title: '审核状态',
+      dataIndex: 'status',
+    },
+  ].map((item) => {
+    return {
+      ...item,
+      key: item.title,
+    };
+  });
 
-  const searchForm = (
+  const advanceSearchForm = (
     <div>
       <Form form={form}>
         <Row gutter={24}>
           <Col span={4}>
-            <Form.Item name='treeData'>
-              <TreeSelect {...(treeProps as any)} />
-            </Form.Item>
-          </Col>
-          <Col span={4}>
-            <Item name='name'>
-              <Input placeholder='名称' />
+            <Item name="name">
+              <Input placeholder="广告名称" />
             </Item>
           </Col>
           <Col span={4}>
-            <Form.Item name='select'>
-              <Select placeholder='类型'>
-                <Option value='china'>China</Option>
+            <Item name="type">
+              <Select placeholder="广告类型">
+                {advertisementType.map((item) => {
+                  return <Option value={item.value}>{item.title}</Option>;
+                })}
               </Select>
-            </Form.Item>
+            </Item>
           </Col>
-          <Col span={4}>
-            <Form.Item name='selectfile'>
-              <Select placeholder='广告文件类型'>
-                <Option value='china'>China</Option>
+          <Col>
+            <Item name="adFileType">
+              <Select placeholder="广告文件类型">
+                {advertisementFileType.map((item) => {
+                  return <Option value={item.value}>{item.title}</Option>;
+                })}
               </Select>
-            </Form.Item>
+            </Item>
           </Col>
         </Row>
         <Row>
           <Form.Item style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button type='primary' onClick={submit}>
-              Search
+            <Button onClick={reset} style={{ marginRight: 12 }}>
+              重置
             </Button>
-            <Button onClick={reset} style={{ marginLeft: 16 }}>
-              Reset
+            <Button type="primary" onClick={submit} icon={<SearchOutlined />}>
+              查询
             </Button>
           </Form.Item>
         </Row>
       </Form>
     </div>
   );
+
   return (
     <div>
-      {searchForm}
-      <Table columns={columns} rowKey='email' {...tableProps} />
+      {advanceSearchForm}
+      <Table columns={columns} {...tableProps} />
     </div>
   );
 };

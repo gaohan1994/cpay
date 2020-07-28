@@ -14,29 +14,29 @@ export const AdvertisementMenu = {
   name: '广告管理',
   icon: GlobalOutlined,
   path: 'advertisement',
-  value: 'advertisement'
+  value: 'advertisement',
 };
 
 const routerConfig: any[] = [
   {
+    path: '/advertisement/review',
+    name: '广告审核',
+    component: Advertisementreview,
+    exact: true,
+  },
+  {
     path: '/advertisement/apply',
-    name: '广告管理',
+    name: '广告申请',
     component: Advertisementapple,
-    exact: true
+    exact: true,
   },
   {
     path: '/advertisement/review-detail/:id',
     name: '广告审核详情',
     component: Advertisementreviewdetail,
     exact: true,
-    inMenu: false
+    inMenu: false,
   },
-  {
-    path: '/advertisement/review',
-    name: '广告审核',
-    component: Advertisementreview,
-    exact: true
-  }
 ];
 
 export default routerConfig;
