@@ -1,16 +1,27 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import { Button, Col, Form, Input, Row, Table, Select, TreeSelect } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { useAntdTable } from 'ahooks';
+import { useAntdTable, useMount } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { advertInfoList } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
 import { advertisementType, advertisementFileType } from '../types';
+import { deptTreeData } from '@/pages/common/constants';
+import { connectCommonReducer } from '@/pages/common/reducer';
+import { CommonReducerInterface } from '@/pages/common/type';
 
 const { Item } = Form;
 const { Option } = Select;
 
-export default () => {
+type Props = CommonReducerInterface.IConnectReducerState;
+
+function Page(props: Props) {
+  // 请求dept数据
+  useMount(() => {
+    deptTreeData();
+  });
+
   const [form] = Form.useForm();
 
   const { tableProps, search }: any = useAntdTable(
@@ -64,6 +75,8 @@ export default () => {
     };
   });
 
+  const { common } = props;
+  const { deptData } = common;
   const advanceSearchForm = (
     <div>
       <Form form={form}>
@@ -112,4 +125,5 @@ export default () => {
       <Table columns={columns} {...tableProps} />
     </div>
   );
-};
+}
+export default connect(connectCommonReducer)(Page);
