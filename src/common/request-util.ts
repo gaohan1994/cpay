@@ -1,4 +1,7 @@
 import { BASE_URL } from './config';
+import { notification } from 'antd';
+import { IResponseResult, IFormatResult } from './type';
+import { merge } from 'lodash';
 
 export const formartQuery = (params: any) => {
   console.log('params', params);
@@ -9,14 +12,15 @@ export const formartQuery = (params: any) => {
  * @param json
  */
 export const jsonToQueryString = (json: any) => {
-  return (
-    '?' +
-    Object.keys(json)
-      .map(function (key: any) {
+  const field = Object.keys(json)
+    .map(function (key: any) {
+      if (!!json[key]) {
         return key + '=' + json[key];
-      })
-      .join('&')
-  );
+      }
+    })
+    .filter((item) => !!item)
+    .join('&');
+  return field.length > 0 ? `?${field}` : '';
 };
 
 /**
@@ -26,9 +30,23 @@ export const jsonToQueryString = (json: any) => {
 export const jsonToForm = (json: any): string => {
   return Object.keys(json)
     .map(function (key: any) {
-      return key + '=' + json[key];
+      if (!!json[key]) {
+        return key + '=' + json[key];
+      }
     })
+    .filter((item) => !!item)
     .join('&');
+};
+
+export const formatListResult = <T>(
+  result: IResponseResult<any>
+): IFormatResult<T> => {
+  console.log('result:', result);
+  const mergeResult = merge({}, result);
+  return {
+    list: mergeResult.data.rows || [],
+    total: mergeResult.data.total || 0,
+  };
 };
 
 /**
@@ -41,7 +59,10 @@ class ApiRequest {
   baseOptions(params: any, method: string = 'GET'): Promise<any> {
     let { url, data } = params;
     // let contentType = 'application/json';
-    let contentType = 'application/x-www-form-urlencoded';
+    let contentType =
+      url === '/cpay-admin/login'
+        ? 'application/x-www-form-urlencoded'
+        : 'application/json';
     contentType = params.contentType || contentType;
     const option: RequestInit = {
       // data: data,
@@ -49,11 +70,17 @@ class ApiRequest {
       headers: {
         'content-type': contentType,
       },
-      // credentials: 'include',
+      credentials: 'include',
       ...(!!data ? { body: data } : {}),
     };
     console.log('option: ', option);
-    return fetch(`${BASE_URL}${url}`, option).then((res) => res.json());
+    return fetch(`${BASE_URL}${url}`, option)
+      .then((res) => res.json())
+      .catch((error) => {
+        notification.warn({
+          message: error.message,
+        });
+      });
   }
 
   get(url: string, data: string = '') {

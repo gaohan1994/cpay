@@ -20,19 +20,16 @@ function LayoutContainer(props: Props) {
     <Layout>
       <LayoutHeader />
       <LayoutMenu menus={menus} />
-      <Layout className='site-layout' style={{ paddingTop: '45px' }}>
+      <Layout className="site-layout" style={{ paddingTop: '45px' }}>
         <Content style={{ padding: 12 }}>
           <LayoutBread />
           <div
-            className='site-layout-background'
+            className="site-layout-background"
             style={{ padding: 12, marginTop: 8, textAlign: 'center' }}
           >
             {props.children}
           </div>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>
-          Ant Design ©2018 Created by Ant UED
-        </Footer>
       </Layout>
     </Layout>
   );

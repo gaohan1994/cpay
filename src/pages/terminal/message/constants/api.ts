@@ -1,5 +1,12 @@
-import { formartQuery, jsonToQueryString } from '@/common/request-util';
+import {
+  formartQuery,
+  jsonToQueryString,
+  jsonToForm,
+} from '@/common/request-util';
 import ApiRequest from '@/common/request-util';
+import { PaginatedParams } from 'ahooks/lib/useAntdTable';
+import { ITerminalListField } from '../types';
+
 export const getTableData = (
   { current, pageSize }: any,
   formData: Object
@@ -28,3 +35,11 @@ export const merchantQueryBocoms = (
   console.log('formData', formData);
   return ApiRequest.get(`/merchant/query.bocoms${jsonToQueryString(params)}`);
 };
+
+export const terminalInfoList = (
+  paginatedParams: PaginatedParams,
+  tableProps: ITerminalListField
+) =>
+  ApiRequest.get(
+    `/cpay-admin/terminal/info/list${jsonToQueryString({ ...tableProps })}`
+  );
