@@ -1,3 +1,5 @@
 export declare module HomeInterface {
-  interface IHomeReducerState {}
+  interface IHomeReducerState {
+    test: any;
+  }
 }

@@ -1,11 +1,10 @@
 /**
  * @todo 全局数据使用接口
  */
-import ApiRequset from '@/common/request-util';
-import store from '@/modules/redux-store';
-import { ACTION_TYPES_COMMON } from '@/pages/common/reducer';
+import ApiRequset, { jsonToQueryString } from '@/common/request-util';
 import { RESPONSE_CODE } from '@/common/config';
-import { DeptItem, DeptTreeData } from '../type';
+import { DeptItem, DeptTreeData, DictItem } from '@/pages/common/type';
+import { IResponseResult } from '@/common/type';
 
 /**
  * @todo 递归循环获得treeData
@@ -52,24 +51,33 @@ function formatDeptTreeData(deptData: DeptItem[]): DeptTreeData[] {
   return parseArrayToTree(deptData);
 }
 
+export type GetDeptTreeDataCallback = [DeptItem[], DeptTreeData[]];
 /**
  * @todo 查询机构标签关联列表
  */
-export const getDeptTreeData = async () => {
-  const treeData = await ApiRequset.get(`/cpay-admin/system/dept/treeData`);
-  if (treeData.code === RESPONSE_CODE.success) {
-    store.dispatch({
-      type: ACTION_TYPES_COMMON.RECEIVE_DEPT_DATA,
-      payload: treeData.data,
-    });
+export const getDeptTreeData = async (
+  callback?: (data: GetDeptTreeDataCallback) => void
+): Promise<GetDeptTreeDataCallback> => {
+  const data: any = await ApiRequset.get(`/cpay-admin/system/dept/treeData`);
+  const treeData =
+    (data.code === RESPONSE_CODE.success && formatDeptTreeData(data.data)) ||
+    [];
 
-    // 获得depttreedata
-    const tree = formatDeptTreeData(treeData.data);
-    console.log('tree:', tree);
-    store.dispatch({
-      type: ACTION_TYPES_COMMON.RECEIVE_DEPT_TREE_DATA,
-      payload: tree,
-    });
-  }
-  return treeData;
+  callback && callback([data.data || [], treeData]);
+  return [data.data || [], treeData];
+};
+
+/**
+ * @todo 全局字典函数
+ * @param params
+ */
+export const getDictList = async (
+  dictType: string,
+  callback?: (data: DictItem[]) => void
+): Promise<IResponseResult<DictItem[]>> => {
+  const result = await ApiRequset.get(
+    `/cpay-admin/system/dict/list${jsonToQueryString({ dictType })}`
+  );
+  callback && callback((result.data && result.data.rows) || []);
+  return result;
 };

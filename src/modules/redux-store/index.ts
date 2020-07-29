@@ -2,11 +2,13 @@ import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import logger from 'redux-logger';
 import { homeReducer } from '@/pages/home/reducers/home';
-import common from '@/pages/common/reducer';
+import { common } from '@/pages/common/reducer';
+import { advert } from '@/pages/advertisement/reducers';
 
 const reducer = combineReducers({
   homeReducer,
   common,
+  advert,
 });
 
 const configureStore = () => {

@@ -1,5 +1,7 @@
 import { HomeInterface } from '../types';
-export const initState: HomeInterface.IHomeReducerState = {};
+export const initState: HomeInterface.IHomeReducerState = {
+  test: {},
+};
 
 export const ACTION_TYPES = {};
 
@@ -9,5 +11,7 @@ export function homeReducer(
   state = initState,
   action: any
 ): HomeInterface.IHomeReducerState {
-  return {};
+  return {
+    ...state,
+  };
 }

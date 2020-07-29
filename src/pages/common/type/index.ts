@@ -10,11 +10,31 @@ export interface DeptTreeData extends DeptItem {
   children?: DeptItem[];
 }
 
+export interface DictItem {
+  createBy: string;
+  createTime: string;
+  remark: string;
+  dictName: string;
+  dictType: string;
+  params: any;
+  dictId: number;
+  status: number;
+}
+
+export interface CommonHooksState {
+  deptList: DeptItem[];
+  deptTreeList: DeptTreeData[];
+  dictList: DictItem[];
+}
+
 export declare module CommonReducerInterface {
   // common reducer 的类型定义
   interface ICommonReducerState {
     deptData: DeptItem[];
     deptTreeData: DeptTreeData[];
+    dictList: {
+      [key: string]: DictItem[];
+    };
   }
 
   // connect common的类型定义

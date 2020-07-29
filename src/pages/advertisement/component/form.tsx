@@ -22,7 +22,7 @@ function renderTreeData(data: DeptTreeData) {
     );
   }
   // 无叶子结点
-  return <TreeNode value={data.id} title={data.name} />;
+  return <TreeNode key={data.id} value={data.id} title={data.name} />;
 }
 
 type Props = {
@@ -33,7 +33,8 @@ type Props = {
 
 function AdvertisementForm(props: Props) {
   const { form, submit, reset, common } = props;
-  const { deptTreeData } = common;
+  const { deptTreeData, dictList } = common;
+  console.log('dictList: ', dictList);
   return (
     <div>
       <Form form={form}>
@@ -62,7 +63,11 @@ function AdvertisementForm(props: Props) {
             <Item name="type">
               <Select placeholder="广告类型">
                 {advertisementType.map((item) => {
-                  return <Option value={item.value}>{item.title}</Option>;
+                  return (
+                    <Option value={item.value} key={item.value}>
+                      {item.title}
+                    </Option>
+                  );
                 })}
               </Select>
             </Item>
@@ -71,7 +76,11 @@ function AdvertisementForm(props: Props) {
             <Item name="adFileType">
               <Select placeholder="广告文件类型">
                 {advertisementFileType.map((item) => {
-                  return <Option value={item.value}>{item.title}</Option>;
+                  return (
+                    <Option value={item.value} key={item.value}>
+                      {item.title}
+                    </Option>
+                  );
                 })}
               </Select>
             </Item>

@@ -1,21 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Form, Table } from 'antd';
 import { useAntdTable, useMount } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { advertInfoList } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
-import { getDeptTreeData } from '@/pages/common/constants';
 
 import AdvertisementForm from '../component/form';
+import { useStore } from '@/pages/common/costom-hooks';
 
 type Props = {};
 
 function Page(props: Props) {
   // 请求dept数据
-  useMount(() => {
-    getDeptTreeData();
-  });
-
+  useStore('advert');
   const [form] = Form.useForm();
 
   const { tableProps, search }: any = useAntdTable(

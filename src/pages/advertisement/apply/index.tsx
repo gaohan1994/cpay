@@ -1,17 +1,13 @@
 import React from 'react';
 import { Form, Table } from 'antd';
-import { useAntdTable, useMount } from 'ahooks';
+import { useAntdTable } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { advertInfoList } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
 import AdvertisementForm from '../component/form';
-import { getDeptTreeData } from '@/pages/common/constants';
 
 export default () => {
   // 请求dept数据
-  useMount(() => {
-    getDeptTreeData();
-  });
 
   const [form] = Form.useForm();
 
