@@ -5,7 +5,7 @@ import { homeReducer } from '@/pages/home/reducers/home';
 import { common } from '@/pages/common/reducer';
 import { advert } from '@/pages/advertisement/reducers';
 
-const reducer = combineReducers({
+export const reducer = combineReducers({
   homeReducer,
   common,
   advert,

@@ -4,7 +4,6 @@ import { useAntdTable, useMount } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { advertInfoList } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
-
 import AdvertisementForm from '../component/form';
 import { useStore } from '@/pages/common/costom-hooks';
 

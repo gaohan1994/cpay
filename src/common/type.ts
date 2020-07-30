@@ -16,6 +16,15 @@ export interface IResponseResult<T> {
   serverTime?: string;
 }
 
+export interface IResponseListResult<T> {
+  code: string;
+  data: {
+    rows: Array<T>;
+    total: number;
+  };
+  msg: string;
+}
+
 /**
  * 使用useantdtable的格式化数据格式
  */

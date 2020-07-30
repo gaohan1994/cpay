@@ -19,12 +19,28 @@ export interface DictItem {
   params: any;
   dictId: number;
   status: number;
+  data: DictDetailItem[];
+}
+
+export interface DictDetailItem {
+  createBy: string;
+  createTime: string;
+  dictLabel: string;
+  dictValue: string;
+  dictType: string;
+  isDefault: string;
+  params: any;
+  dictCode: number;
+  dictSort: number;
+  status: number;
 }
 
 export interface CommonHooksState {
   deptList: DeptItem[];
   deptTreeList: DeptTreeData[];
-  dictList: DictItem[];
+  dictList: {
+    [key: string]: DictItem;
+  };
 }
 
 export declare module CommonReducerInterface {
@@ -33,7 +49,7 @@ export declare module CommonReducerInterface {
     deptData: DeptItem[];
     deptTreeData: DeptTreeData[];
     dictList: {
-      [key: string]: DictItem[];
+      [key: string]: DictItem;
     };
   }
 

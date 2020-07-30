@@ -41,7 +41,6 @@ export const jsonToForm = (json: any): string => {
 export const formatListResult = <T>(
   result: IResponseResult<any>
 ): IFormatResult<T> => {
-  console.log('result:', result);
   const mergeResult = merge({}, result);
   return {
     list: mergeResult.data.rows || [],
@@ -73,7 +72,7 @@ class ApiRequest {
       credentials: 'include',
       ...(!!data ? { body: data } : {}),
     };
-    console.log('option: ', option);
+    // console.log('option: ', option);
     return fetch(`${BASE_URL}${url}`, option)
       .then((res) => res.json())
       .catch((error) => {

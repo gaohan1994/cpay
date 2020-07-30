@@ -1,10 +1,8 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { Button, Col, Form, Input, Row, Table, Select, TreeSelect } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
-import { advertisementType, advertisementFileType } from '../types';
-import { connectCommonReducer } from '@/pages/common/reducer';
-import { CommonReducerInterface, DeptTreeData } from '@/pages/common/type';
+import { Col, Form, Input, Row, Select, TreeSelect } from 'antd';
+import { DeptTreeData } from '@/pages/common/type';
+import { useSelectorHook } from '@/common/redux-util';
+import FormButton, { FormButtonProps } from '@/component/form-button';
 
 const { Item } = Form;
 const { Option } = Select;
@@ -27,14 +25,14 @@ function renderTreeData(data: DeptTreeData) {
 
 type Props = {
   form: any;
-  submit: any;
-  reset: any;
-} & CommonReducerInterface.IConnectReducerState;
+} & FormButtonProps;
 
 function AdvertisementForm(props: Props) {
-  const { form, submit, reset, common } = props;
+  const { form, submit, reset, ...rest } = props;
+  const common = useSelectorHook((state) => state.common);
   const { deptTreeData, dictList } = common;
-  console.log('dictList: ', dictList);
+  const { advert_file_type, advert_type } = dictList;
+
   return (
     <div>
       <Form form={form}>
@@ -59,46 +57,35 @@ function AdvertisementForm(props: Props) {
               <Input placeholder="广告名称" />
             </Item>
           </Col>
-          <Col span={4}>
-            <Item name="type">
-              <Select placeholder="广告类型">
-                {advertisementType.map((item) => {
-                  return (
-                    <Option value={item.value} key={item.value}>
-                      {item.title}
-                    </Option>
-                  );
-                })}
-              </Select>
-            </Item>
-          </Col>
-          <Col span={4}>
-            <Item name="adFileType">
-              <Select placeholder="广告文件类型">
-                {advertisementFileType.map((item) => {
-                  return (
-                    <Option value={item.value} key={item.value}>
-                      {item.title}
-                    </Option>
-                  );
-                })}
-              </Select>
-            </Item>
-          </Col>
+          {[advert_file_type, advert_type]
+            .filter((i) => !!i)
+            .map((item, index) => {
+              return (
+                <Col span={4} key={index}>
+                  <Item name={item.dictType}>
+                    <Select placeholder={item.dictName}>
+                      {item.data.map((dictOption, index) => {
+                        return (
+                          <Option
+                            value={dictOption.dictValue}
+                            key={dictOption.dictValue}
+                          >
+                            {dictOption.dictLabel}
+                          </Option>
+                        );
+                      })}
+                    </Select>
+                  </Item>
+                </Col>
+              );
+            })}
         </Row>
         <Row>
-          <Form.Item style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button onClick={reset} style={{ marginRight: 12 }}>
-              重置
-            </Button>
-            <Button type="primary" onClick={submit} icon={<SearchOutlined />}>
-              查询
-            </Button>
-          </Form.Item>
+          <FormButton reset={reset} submit={submit} {...rest} />
         </Row>
       </Form>
     </div>
   );
 }
 
-export default connect(connectCommonReducer)(AdvertisementForm);
+export default AdvertisementForm;

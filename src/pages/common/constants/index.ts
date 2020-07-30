@@ -3,8 +3,13 @@
  */
 import ApiRequset, { jsonToQueryString } from '@/common/request-util';
 import { RESPONSE_CODE } from '@/common/config';
-import { DeptItem, DeptTreeData, DictItem } from '@/pages/common/type';
-import { IResponseResult } from '@/common/type';
+import {
+  DeptItem,
+  DeptTreeData,
+  DictItem,
+  DictDetailItem,
+} from '@/pages/common/type';
+import { IResponseResult, IResponseListResult } from '@/common/type';
 
 /**
  * @todo 递归循环获得treeData
@@ -68,7 +73,9 @@ export const getDeptTreeData = async (
 };
 
 /**
- * @todo 全局字典函数
+ * 全局字典函数类型
+ * 先用这个接口获取类型
+ * 然后获取具体字典数据
  * @param params
  */
 export const getDictList = async (
@@ -77,6 +84,22 @@ export const getDictList = async (
 ): Promise<IResponseResult<DictItem[]>> => {
   const result = await ApiRequset.get(
     `/cpay-admin/system/dict/list${jsonToQueryString({ dictType })}`
+  );
+  callback && callback((result.data && result.data.rows) || []);
+  return result;
+};
+
+/**
+ * 获取字典的具体数据
+ * @param dictType
+ * @param callback
+ */
+export const getDictData = async (
+  dictType: string,
+  callback?: (data: DictDetailItem[]) => void
+): Promise<IResponseListResult<DictDetailItem>> => {
+  const result = await ApiRequset.get(
+    `/cpay-admin/system/dict/data/list${jsonToQueryString({ dictType })}`
   );
   callback && callback((result.data && result.data.rows) || []);
   return result;
