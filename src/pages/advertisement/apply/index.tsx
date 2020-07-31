@@ -6,10 +6,12 @@ import { advertInfoList } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
 import Forms from '@/component/form';
 import { FormItmeType, FormItem } from '@/component/form/type';
+import { createTableColumns } from '@/component/table';
+import { useStore } from '@/pages/common/costom-hooks';
 
 export default () => {
   // 请求dept数据
-
+  useStore('advert');
   const [form] = Form.useForm();
 
   const { tableProps, search }: any = useAntdTable(
@@ -22,7 +24,7 @@ export default () => {
   );
 
   const { submit, reset } = search;
-  const columns = [
+  const columns = createTableColumns([
     {
       title: '操作',
       render: () => <a>审核</a>,
@@ -38,15 +40,18 @@ export default () => {
     },
     {
       title: '组别名称',
-      dataIndex: 'groupId',
+      dataIndex: 'groupName',
+      placeHolder: '无',
     },
     {
       title: '广告类型',
-      dataIndex: 'adFileType',
+      dataIndex: 'type',
+      dictType: 'advert_type',
     },
     {
       title: '广告文件类型',
       dataIndex: 'adFileType',
+      dictType: 'advert_file_type',
     },
     {
       title: '有效起始时间',
@@ -55,14 +60,9 @@ export default () => {
     {
       title: '审核状态',
       dataIndex: 'status',
+      dictType: 'advert_status',
     },
-  ].map((item) => {
-    return {
-      ...item,
-      key: item.title,
-    };
-  });
-
+  ]);
   const forms: FormItem[] = [
     {
       formName: 'deptId',

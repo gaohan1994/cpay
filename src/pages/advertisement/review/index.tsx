@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Form, Table } from 'antd';
-import { useAntdTable, useMount } from 'ahooks';
+import { useAntdTable } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { advertInfoList } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
-import { useSelectorHook } from '@/common/redux-util';
 import { FormItem, FormItmeType } from '@/component/form/type';
+import { createTableColumns } from '@/component/table';
 
 type Props = {};
 
@@ -26,7 +26,7 @@ function Page(props: Props) {
   );
 
   const { submit, reset } = search;
-  const columns = [
+  const columns = createTableColumns([
     {
       title: '操作',
       render: () => <a>审核</a>,
@@ -42,15 +42,18 @@ function Page(props: Props) {
     },
     {
       title: '组别名称',
-      dataIndex: 'groupId',
+      dataIndex: 'groupName',
+      placeHolder: '无',
     },
     {
       title: '广告类型',
-      dataIndex: 'adFileType',
+      dataIndex: 'type',
+      dictType: 'advert_type',
     },
     {
       title: '广告文件类型',
       dataIndex: 'adFileType',
+      dictType: 'advert_file_type',
     },
     {
       title: '有效起始时间',
@@ -59,13 +62,9 @@ function Page(props: Props) {
     {
       title: '审核状态',
       dataIndex: 'status',
+      dictType: 'advert_status',
     },
-  ].map((item) => {
-    return {
-      ...item,
-      key: item.title,
-    };
-  });
+  ]);
 
   const forms: FormItem[] = [
     {
