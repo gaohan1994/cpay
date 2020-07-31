@@ -8,6 +8,7 @@ import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
+import history from '@/common/history-util';
 
 type Props = {};
 
@@ -24,12 +25,16 @@ function Page(props: Props) {
       formatResult: formatListResult,
     }
   );
-
   const { submit, reset } = search;
+
+  const onClick = (item: any) => {
+    history.push(`/advertisement/review-detail?id=${item.id}`);
+  };
+
   const columns = createTableColumns([
     {
       title: '操作',
-      render: () => <a>审核</a>,
+      render: (key, item) => <a onClick={() => onClick(item)}>审核</a>,
       fixed: 'left',
     },
     {

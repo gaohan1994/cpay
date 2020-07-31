@@ -8,3 +8,9 @@ import { IAvertisementListField } from '../types';
  */
 export const advertInfoList = (params: IAvertisementListField) =>
   ApiRequest.get(`/cpay-admin/advert/info/list${jsonToQueryString(params)}`);
+
+export const advertInfoDetail = async (id: string, callback?: any) => {
+  const result = await ApiRequest.get(`/cpay-admin/advert/info/detail/${id}`);
+  console.log('result:', result);
+  return result;
+};

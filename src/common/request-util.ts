@@ -48,6 +48,17 @@ export const formatListResult = <T>(
   };
 };
 
+export const formatSearch = (search: string): any => {
+  let result: any = {};
+  search
+    .replace('?', '')
+    .split('&')
+    .forEach((item) => {
+      result[item.split('=')[0]] = item.split('=')[1];
+    });
+  return result;
+};
+
 /**
  * fetch 工具
  *

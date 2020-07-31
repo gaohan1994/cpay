@@ -1,17 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useMount } from 'ahooks';
 import { Form, Row, Col, Input, Button } from 'antd';
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import { useHistory } from 'react-router';
 import './index.scss';
+import { advertInfoDetail } from '@/pages/advertisement/constants/api';
+import { useHistory } from 'react-router-dom';
+import { formatSearch } from '@/common/request-util';
 
 type Props = {};
 
 export default (props: Props) => {
   const history = useHistory();
-  useMount(() => {
-    console.log('history', history);
-  });
+  useEffect(() => {
+    const { search } = history.location;
+    const field = formatSearch(search);
+    if (field.id) {
+      advertInfoDetail(field.id);
+    }
+  }, [history.location.search]);
   const [form] = Form.useForm();
 
   const getFields = () => {
@@ -20,7 +25,7 @@ export default (props: Props) => {
     for (let i = 0; i < count; i++) {
       children.push(
         <Form.Item name={`field-${i}`} label={`Field ${i}`}>
-          <Input placeholder='placeholder' />
+          <Input placeholder="placeholder" />
         </Form.Item>
       );
     }
@@ -34,15 +39,15 @@ export default (props: Props) => {
   return (
     <Form
       form={form}
-      name='advanced_search'
-      className='ant-advanced-search-form'
+      name="advanced_search"
+      className="ant-advanced-search-form"
       onFinish={onFinish}
     >
       <Row style={{ padding: 12 }}>
         <Col span={12}>
           {getFields()}
           <Col style={{ textAlign: 'left' }}>
-            <Button type='primary' htmlType='submit'>
+            <Button type="primary" htmlType="submit">
               通过
             </Button>
             <Button
