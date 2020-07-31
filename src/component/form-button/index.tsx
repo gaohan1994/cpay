@@ -29,7 +29,7 @@ const FormButton = React.memo((props: FormButtonProps) => {
   const buttonCss = { marginRight: 12 };
 
   return (
-    <Row>
+    <Row style={{ marginBottom: 12 }}>
       {reset && (
         <Button
           onClick={reset}

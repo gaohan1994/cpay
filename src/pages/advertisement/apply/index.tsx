@@ -4,7 +4,8 @@ import { useAntdTable } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { advertInfoList } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
-import AdvertisementForm from '../component/form';
+import Forms from '@/component/form';
+import { FormItmeType, FormItem } from '@/component/form/type';
 
 export default () => {
   // 请求dept数据
@@ -62,9 +63,33 @@ export default () => {
     };
   });
 
+  const forms: FormItem[] = [
+    {
+      formName: 'deptId',
+      formType: FormItmeType.TreeSelectCommon,
+    },
+    {
+      formName: 'adName',
+      placeholder: '广告名称',
+      formType: FormItmeType.Normal,
+    },
+    {
+      formName: ['adFileType', 'adType', 'status'],
+      formType: FormItmeType.SelectCommon,
+      dictList: ['advert_file_type', 'advert_type', 'advert_status'],
+    },
+  ];
+
   return (
     <div>
-      <AdvertisementForm form={form} submit={submit} reset={reset} />
+      <Forms
+        form={form}
+        forms={forms}
+        formButtonProps={{
+          submit,
+          reset,
+        }}
+      />
       <Table columns={columns} {...tableProps} />
     </div>
   );
