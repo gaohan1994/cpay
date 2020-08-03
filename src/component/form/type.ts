@@ -84,9 +84,9 @@ export function isCommonSelectForm(
  * 下拉框表单项
  */
 export interface IComponentFormCommonSelectForm extends SelectProps<any> {
-  formName: string[];
+  formName: string[] | string;
   formType: FormItmeType.SelectCommon;
-  dictList: string[];
+  dictList: string[] | string;
 }
 
 /**

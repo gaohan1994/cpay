@@ -49,21 +49,24 @@ export function UseCommonSelectData(
    * @param {renderDictList}
    */
   const renderDictListData: IComponentFormSelectForm[] = dictList
-    .map((listItem) => state[listItem])
+    .map((listItem) => state[listItem] || [])
     .filter((i) => !!i)
     .map((item, index) => {
-      return {
-        formName: formName[index] || item.dictType,
-        placeholder: item.dictName,
-        formType: FormItmeType.Select,
-        selectData: item.data.map((option) => {
-          return {
-            value: option.dictValue,
-            title: option.dictLabel,
-          };
-        }),
-      };
-    });
+      return !!item.dictType
+        ? {
+            formName: formName[index] || item.dictType,
+            placeholder: item.dictName,
+            formType: FormItmeType.Select,
+            selectData: item.data.map((option) => {
+              return {
+                value: option.dictValue,
+                title: option.dictLabel,
+              };
+            }),
+          }
+        : (undefined as any);
+    })
+    .filter((d) => !!d);
 
   return renderDictListData;
 }
@@ -112,8 +115,6 @@ export function renderNormalForm(data: IComponentFormNormalForm) {
  */
 export function renderSelectForm(data: IComponentFormSelectForm) {
   const { formName, span, selectData, ...rest } = data;
-  console.log('selectData:', selectData);
-  console.log('renderSelectForm rest', rest);
   return (
     <Col span={span || 4} key={formName}>
       <Item name={formName}>
@@ -137,14 +138,33 @@ export function renderSelectForm(data: IComponentFormSelectForm) {
  * @param data
  */
 export function renderCommonSelectForm(data: IComponentFormCommonSelectForm) {
-  const { dictList, formName } = data;
-  const renderDictListData = UseCommonSelectData(dictList, formName);
+  const { dictList, formName, ...rest } = data;
+
+  /**
+   * 如果是多个字典则直接渲染多个
+   */
+  if (Array.isArray(dictList) && Array.isArray(formName)) {
+    const renderDictListData = UseCommonSelectData(dictList, formName);
+    return (
+      <>
+        {renderDictListData.map((item) => {
+          return renderSelectForm(item);
+        })}
+      </>
+    );
+  }
+
+  const renderDictListData = UseCommonSelectData(
+    [dictList] as string[],
+    [formName] as string[]
+  );
+  const targetDictData = renderDictListData[0];
   return (
-    <>
-      {renderDictListData.map((item) => {
-        return renderSelectForm(item);
-      })}
-    </>
+    targetDictData &&
+    renderSelectForm({
+      ...rest,
+      ...targetDictData,
+    })
   );
 }
 

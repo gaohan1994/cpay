@@ -9,6 +9,11 @@ import { FormItem, FormItmeType } from '@/component/form/type';
 import Forms from '@/component/form';
 import { useStore } from '@/pages/common/costom-hooks';
 import { ITerminalGroupByDeptId } from './types';
+import { ITerminalFirmItem, ITerminalType } from '../types';
+import {
+  terminalFirmList as getTerminalFirmList,
+  terminalTypeListByFirm as getTerminalTypeListByFirm,
+} from '../constants';
 
 export default () => {
   useStore('terminal');
@@ -16,10 +21,21 @@ export default () => {
     formTreeValue: -1,
     terminalGroup: [] as ITerminalGroupByDeptId[],
     groupValue: '',
+    terminalFirmList: [] as ITerminalFirmItem[],
+    terminalFirmTypeList: {} as { [key: string]: ITerminalType[] },
   };
   const [groupValue, setGroupValue] = useState(initState.groupValue);
   const [formTreeValue, setFormTreeValue] = useState(initState.formTreeValue);
   const [terminalGroup, setTerminalGroup] = useState(initState.terminalGroup);
+  const [terminalFirmList, setTerminalFirmList] = useState(
+    initState.terminalFirmList
+  );
+  const [terminalFirmTypeList, setTerminalFirmTypeList] = useState(
+    initState.terminalFirmTypeList
+  );
+  useEffect(() => {
+    getTerminalFirmList({}, setTerminalFirmList);
+  }, []);
 
   useEffect(() => {
     terminalGroupListByDept(formTreeValue, (groupData) => {
@@ -42,6 +58,18 @@ export default () => {
 
   const onChange = (deptId: number) => {
     setFormTreeValue(deptId);
+  };
+
+  const onFirmLoadData = (selectedOptions: any) => {
+    const targetOption = selectedOptions[selectedOptions.length - 1];
+    targetOption.loading = true;
+    console.log('targetOption: ', targetOption);
+    getTerminalTypeListByFirm({ firmId: targetOption.value }, (data) => {
+      targetOption.loading = false;
+      setTerminalFirmTypeList({
+        [targetOption.value]: data,
+      });
+    });
   };
 
   const { submit, reset } = search;
@@ -145,22 +173,48 @@ export default () => {
         [],
       value: groupValue,
       onChange: (id: string) => {
-        // const { children } = params;
         setGroupValue(`${id}`);
       },
     },
-    //     {
-    //       终端厂商,
-    //     },
-    //     {
-    //       终端型号,
-    //     },
-    //     {
-    //       终端类型
-    //     },
-    //     {
-    //       是否支持DCC
-    //     },
+    {
+      placeholder: '终端厂商',
+      formType: FormItmeType.Cascader,
+      formName: 'firmId',
+      options:
+        (terminalFirmList &&
+          terminalFirmList.map((item) => {
+            return {
+              label: item.firmName,
+              value: `${item.id}`,
+              isLeaf: false,
+              ...(!!terminalFirmTypeList[item.id]
+                ? {
+                    children: terminalFirmTypeList[item.id].map((typeItem) => {
+                      return {
+                        label: typeItem.typeName,
+                        value: typeItem.typeCode,
+                      };
+                    }),
+                  }
+                : {}),
+            };
+          })) ||
+        [],
+      loadData: onFirmLoadData,
+      changeOnSelect: true,
+    },
+    {
+      placeholder: '终端类型',
+      formName: 'terminalTypeIds',
+      formType: FormItmeType.SelectCommon,
+      dictList: 'terminal_type',
+      mode: 'multiple',
+    },
+    // {
+    //   placeholder: '是否支持DCC',
+    //   formName: ''
+
+    // },
     //     {
     //       银联间直联
     //     },
