@@ -1,22 +1,37 @@
-import React, { useState } from 'react';
-import { Button, Col, Form, Input, Row, Table, Select, TreeSelect } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import { Form, Table } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
-import { terminalInfoList } from './constants/api';
+import { terminalInfoList, terminalGroupListByDept } from './constants/api';
 import { formatListResult } from '@/common/request-util';
-
-const { Item } = Form;
-const { Option } = Select;
+import { createTableColumns } from '@/component/table';
+import { FormItem, FormItmeType } from '@/component/form/type';
+import Forms from '@/component/form';
+import { useStore } from '@/pages/common/costom-hooks';
+import { ITerminalGroupByDeptId } from './types';
 
 export default () => {
+  useStore('terminal');
+  const initState = {
+    formTreeValue: -1,
+    terminalGroup: [] as ITerminalGroupByDeptId[],
+    groupValue: '',
+  };
+  const [groupValue, setGroupValue] = useState(initState.groupValue);
+  const [formTreeValue, setFormTreeValue] = useState(initState.formTreeValue);
+  const [terminalGroup, setTerminalGroup] = useState(initState.terminalGroup);
+
+  useEffect(() => {
+    terminalGroupListByDept(formTreeValue, (groupData) => {
+      setTerminalGroup(groupData);
+      setGroupValue(`${groupData[0].id}`);
+    });
+  }, [formTreeValue]);
+
   const [form] = Form.useForm();
 
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: PaginatedParams, tableProps: any) => {
-      console.log('paginatedParams', paginatedParams);
-      console.log('tableProps', tableProps);
-      // terminalInfoList(paginatedParams, tableProps)
       return terminalInfoList(paginatedParams, tableProps);
     },
     {
@@ -25,8 +40,13 @@ export default () => {
     }
   );
 
+  const onChange = (deptId: number) => {
+    setFormTreeValue(deptId);
+  };
+
   const { submit, reset } = search;
-  const columns = [
+
+  const columns = createTableColumns([
     {
       title: '操作',
       render: () => <a>审核</a>,
@@ -86,143 +106,82 @@ export default () => {
       title: '终端状态',
       dataIndex: 'tusn',
     },
-  ];
+  ]);
 
-  const treeData = [
+  const forms: FormItem[] = [
     {
-      title: 'Node1',
-      value: '0-0',
-      children: [
-        {
-          title: 'Child Node1',
-          value: '0-0-1',
-        },
-        {
-          title: 'Child Node2',
-          value: '0-0-2',
-        },
-      ],
+      placeholder: '终端序列号',
+      formName: 'tusn',
+      formType: FormItmeType.Normal,
     },
     {
-      title: 'Node2',
-      value: '0-1',
+      placeholder: '终端编号',
+      formName: 'terminalCode',
+      formType: FormItmeType.Normal,
     },
+    {
+      placeholder: '商户编号',
+      formName: 'merchantCode',
+      formType: FormItmeType.Normal,
+    },
+    {
+      span: 4,
+      formName: 'deptId',
+      formType: FormItmeType.TreeSelectCommon,
+      onChange: onChange,
+    },
+    {
+      placeholder: '所属组',
+      formName: 'groupId',
+      formType: FormItmeType.Select,
+      selectData:
+        (terminalGroup &&
+          terminalGroup.map((item) => {
+            return {
+              value: `${item.id}`,
+              title: `${item.remark}`,
+            };
+          })) ||
+        [],
+      value: groupValue,
+      onChange: (id: string) => {
+        // const { children } = params;
+        setGroupValue(`${id}`);
+      },
+    },
+    //     {
+    //       终端厂商,
+    //     },
+    //     {
+    //       终端型号,
+    //     },
+    //     {
+    //       终端类型
+    //     },
+    //     {
+    //       是否支持DCC
+    //     },
+    //     {
+    //       银联间直联
+    //     },
+    //     {
+    //       业务类型
+    //     },
+    //     {
+    //       终端状态
+    //     }
   ];
-
-  let tableWidth: number = 0;
-  columns.map((item) => {
-    if (!!item.width) {
-      tableWidth += item.width;
-    }
-  });
-
-  const treeProps = {
-    style: { width: '100%' },
-    name: 'treeSelect',
-    dropdownStyle: { maxHeight: 400, overflow: 'auto' },
-    treeData: treeData,
-    placeholder: '所属机构',
-    treeDefaultExpandAll: true,
-  };
-
-  const advanceSearchForm = (
-    <div>
-      <Form form={form}>
-        <Row gutter={24}>
-          <Col span={4}>
-            <Item name="tusn">
-              <Input placeholder="终端序列号" />
-            </Item>
-          </Col>
-          <Col span={4}>
-            <Item name="merchantId">
-              <Input placeholder="终端编号" />
-            </Item>
-          </Col>
-          <Col span={4}>
-            <Item name="merchantCode">
-              <Input placeholder="商户编号" />
-            </Item>
-          </Col>
-          <Col span={4}>
-            <Form.Item name="treeData">
-              <TreeSelect {...(treeProps as any)} />
-            </Form.Item>
-          </Col>
-          <Col span={4}>
-            <Form.Item name="select">
-              <Select placeholder="所属组">
-                <Option value="china">China</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={4}>
-            <Form.Item name="select">
-              <Select placeholder="终端厂商">
-                <Option value="china">China</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={4}>
-            <Form.Item name="select">
-              <Select placeholder="终端型号">
-                <Option value="china">China</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={4}>
-            <Form.Item name="select">
-              <Select placeholder="终端类型">
-                <Option value="china">China</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={4}>
-            <Form.Item name="select">
-              <Select placeholder="是否支持DCC">
-                <Option value="china">China</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={4}>
-            <Form.Item name="select">
-              <Select placeholder="银联间直联">
-                <Option value="china">China</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={4}>
-            <Form.Item name="select">
-              <Select placeholder="业务类型">
-                <Option value="china">China</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col span={4}>
-            <Form.Item name="select">
-              <Select placeholder="终端状态">
-                <Option value="china">China</Option>
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row>
-          <Form.Item style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button onClick={reset} style={{ marginRight: 12 }}>
-              重制
-            </Button>
-            <Button type="primary" onClick={submit} icon={<SearchOutlined />}>
-              查询
-            </Button>
-          </Form.Item>
-        </Row>
-      </Form>
-    </div>
-  );
 
   return (
     <div>
-      {advanceSearchForm}
+      <Forms
+        form={form}
+        forms={forms}
+        formButtonProps={{
+          reset,
+          submit,
+        }}
+      />
       <Table
         style={{ overflowX: 'auto' }}
         columns={columns}

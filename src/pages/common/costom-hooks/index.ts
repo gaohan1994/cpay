@@ -49,15 +49,17 @@ export function useStore(dictType: string): CommonHooksState {
         responses.filter((res) => res.code === RESPONSE_CODE.success)
       )
       .then((responses) => {
-        responses.forEach((response) => {
+        responses.forEach((response, index) => {
           const { data } = response;
           const { rows } = data;
           /**
            * @params {dictTypeItem} 找到分类父亲
            */
-          const dictTypeItem = dictList.find(
-            (d) => d.dictType === rows[0].dictType
-          );
+          const dictTypeItem =
+            rows.length > 0
+              ? dictList.find((d) => d.dictType === rows[0].dictType)
+              : dictList[index];
+
           dispatch({
             type: ACTION_TYPES_COMMON.RECEIVE_DICT_LIST,
             payload: {

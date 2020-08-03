@@ -5,7 +5,8 @@ import {
 } from '@/common/request-util';
 import ApiRequest from '@/common/request-util';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
-import { ITerminalListField } from '../types';
+import { ITerminalListField, ITerminalGroupByDeptId } from '../types';
+import { RESPONSE_CODE } from '@/common/config';
 
 export const getTableData = (
   { current, pageSize }: any,
@@ -43,3 +44,18 @@ export const terminalInfoList = (
   ApiRequest.get(
     `/cpay-admin/terminal/info/list${jsonToQueryString({ ...tableProps })}`
   );
+
+/**
+ * 查询机构本级及上级组别列表
+ * @param deptId
+ */
+export const terminalGroupListByDept = async (
+  deptId: number,
+  callback?: (params: ITerminalGroupByDeptId[]) => void
+): Promise<any> => {
+  const result = await ApiRequest.get(
+    `/cpay-admin/terminal/group/listByDept${jsonToQueryString({ deptId })}`
+  );
+  callback && result.code === RESPONSE_CODE.success && callback(result.data);
+  return result;
+};

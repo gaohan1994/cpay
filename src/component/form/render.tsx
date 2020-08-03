@@ -111,6 +111,8 @@ export function renderNormalForm(data: IComponentFormNormalForm) {
  */
 export function renderSelectForm(data: IComponentFormSelectForm) {
   const { formName, span, selectData, ...rest } = data;
+  console.log('selectData:', selectData);
+  console.log('renderSelectForm rest', rest);
   return (
     <Col span={span || 4} key={formName}>
       <Item name={formName}>
@@ -154,9 +156,11 @@ export function renderCommonTreeSelectForm(
 ) {
   const UseCommonTreeSelectData = (): IComponentFormTreeSelectForm => {
     const state = useSelectorHook((state) => state.common.deptTreeData);
+    const { formName, ...rest } = data;
     return {
+      ...rest,
       formType: FormItmeType.TreeSelect,
-      formName: data.formName || 'deptId',
+      formName: formName || 'deptId',
       treeSelectData: state,
       placeholder: '所属机构',
     };
