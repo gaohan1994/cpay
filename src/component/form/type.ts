@@ -2,6 +2,7 @@ import { InputProps } from 'antd/lib/input';
 import { SelectProps, OptionProps } from 'antd/lib/select';
 import { TreeSelectProps } from 'antd/lib/tree-select';
 import { DeptTreeData } from '@/pages/common/type';
+import { CascaderProps } from 'antd/lib/cascader';
 
 /**
  * 表单项
@@ -11,7 +12,8 @@ export type FormItem =
   | IComponentFormSelectForm
   | IComponentFormTreeSelectForm
   | IComponentFormCommonTreeSelectForm
-  | IComponentFormCommonSelectForm;
+  | IComponentFormCommonSelectForm
+  | IComponentFormCascader;
 
 export enum FormItmeType {
   Normal,
@@ -19,6 +21,7 @@ export enum FormItmeType {
   SelectCommon,
   TreeSelect,
   TreeSelectCommon,
+  Cascader,
 }
 
 /**
@@ -124,4 +127,21 @@ export interface IComponentFormCommonTreeSelectForm
   extends FormBaseProps,
     TreeSelectProps<any> {
   formType: FormItmeType.TreeSelectCommon;
+}
+
+/**
+ * 判断是否是连级选择
+ *
+ * @export
+ * @param {FormItem} data
+ * @returns {data is IComponentFormCascader}
+ */
+export function isCascaderFrom(data: FormItem): data is IComponentFormCascader {
+  return (<IComponentFormCascader>data).formType === FormItmeType.Cascader;
+}
+/**
+ * 连级选择
+ */
+export interface IComponentFormCascader extends FormBaseProps, CascaderProps {
+  formType: FormItmeType.Cascader;
 }

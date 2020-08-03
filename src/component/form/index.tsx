@@ -8,6 +8,7 @@ import {
   isCommonSelectForm,
   isCommonTreeSelectForm,
   isTreeSelectForm,
+  isCascaderFrom,
 } from './type';
 import {
   renderNormalForm,
@@ -15,6 +16,7 @@ import {
   renderTreeSelectForm,
   renderCommonSelectForm,
   renderCommonTreeSelectForm,
+  renderCascaderForm,
 } from './render';
 
 export type Props = {
@@ -57,6 +59,9 @@ function AdvertisementForm(props: Props) {
                 }
                 if (!!isSelectForm(item)) {
                   return renderSelectForm(item);
+                }
+                if (!!isCascaderFrom(item)) {
+                  return renderCascaderForm(item);
                 }
                 if (!!isTreeSelectForm(item)) {
                   return renderTreeSelectForm(item);

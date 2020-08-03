@@ -1,5 +1,5 @@
 import React from 'react';
-import { Col, Form, Input, Select, TreeSelect } from 'antd';
+import { Col, Form, Input, Select, TreeSelect, Cascader } from 'antd';
 import { DeptTreeData } from '@/pages/common/type';
 import {
   IComponentFormNormalForm,
@@ -8,6 +8,7 @@ import {
   IComponentFormCommonSelectForm,
   IComponentFormCommonTreeSelectForm,
   FormItmeType,
+  IComponentFormCascader,
 } from './type';
 import { useSelectorHook } from '@/common/redux-util';
 
@@ -167,4 +168,15 @@ export function renderCommonTreeSelectForm(
   };
 
   return renderTreeSelectForm(UseCommonTreeSelectData());
+}
+
+export function renderCascaderForm(data: IComponentFormCascader) {
+  const { formName, span, ...rest } = data;
+  return (
+    <Col span={span || 4} key={formName}>
+      <Item name={formName}>
+        <Cascader {...rest} />
+      </Item>
+    </Col>
+  );
 }
