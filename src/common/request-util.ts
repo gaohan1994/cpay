@@ -2,6 +2,7 @@ import { BASE_URL } from './config';
 import { notification } from 'antd';
 import { IResponseResult, IFormatResult } from './type';
 import { merge } from 'lodash';
+import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 
 export const formartQuery = (params: any) => {
   console.log('params', params);
@@ -57,6 +58,15 @@ export const formatSearch = (search: string): any => {
       result[item.split('=')[0]] = item.split('=')[1];
     });
   return result;
+};
+
+export const formatPaginate = (
+  params: PaginatedParams[0]
+): { pageSize: number; pageNum: number } => {
+  return {
+    pageSize: params.pageSize,
+    pageNum: params.current,
+  };
 };
 
 /**
