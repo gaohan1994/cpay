@@ -16,7 +16,13 @@ import {
 } from '../constants';
 
 export default () => {
-  useStore(['terminal']);
+  useStore([
+    'terminal_type',
+    'is_support_dcc',
+    'unionpay_connection',
+    'buss_type',
+    'term_real_status',
+  ]);
   const initState = {
     formTreeValue: -1,
     terminalGroup: [] as ITerminalGroupByDeptId[],
@@ -209,20 +215,30 @@ export default () => {
       dictList: 'terminal_type',
       mode: 'multiple',
     },
-    // {
-    //   placeholder: '是否支持DCC',
-    //   formName: ''
-
-    // },
-    //     {
-    //       银联间直联
-    //     },
-    //     {
-    //       业务类型
-    //     },
-    //     {
-    //       终端状态
-    //     }
+    {
+      placeholder: '是否支持DCC',
+      formName: 'is_support_dcc',
+      formType: FormItmeType.SelectCommon,
+      dictList: 'is_support_dcc',
+    },
+    {
+      placeholder: '银联间直联',
+      formName: 'unionpay_connection',
+      formType: FormItmeType.SelectCommon,
+      dictList: 'unionpay_connection',
+    },
+    {
+      placeholder: '业务类型',
+      formType: FormItmeType.SelectCommon,
+      formName: '',
+      dictList: 'buss_type',
+    },
+    {
+      placeholder: '终端状态',
+      formType: FormItmeType.SelectCommon,
+      formName: 'status',
+      dictList: 'term_real_status',
+    },
   ];
 
   return (
