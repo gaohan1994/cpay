@@ -13,7 +13,6 @@ export const getTableData = (
   formData: Object
 ): Promise<any> => {
   let query = `page=${current}&size=${pageSize}`;
-  console.log('formData', formData);
   Object.entries(formData).forEach(([key, value]) => {
     if (value) {
       query += `&${key}=${value}`;
@@ -33,7 +32,6 @@ export const merchantQueryBocoms = (
   formData: any
 ): Promise<any> => {
   formartQuery(params);
-  console.log('formData', formData);
   return ApiRequest.get(`/merchant/query.bocoms${jsonToQueryString(params)}`);
 };
 

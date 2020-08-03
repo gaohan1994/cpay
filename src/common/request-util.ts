@@ -83,7 +83,6 @@ class ApiRequest {
       credentials: 'include',
       ...(!!data ? { body: data } : {}),
     };
-    // console.log('option: ', option);
     return fetch(`${BASE_URL}${url}`, option)
       .then((res) => res.json())
       .catch((error) => {

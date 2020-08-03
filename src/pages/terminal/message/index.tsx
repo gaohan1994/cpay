@@ -16,7 +16,7 @@ import {
 } from '../constants';
 
 export default () => {
-  useStore('terminal');
+  useStore(['terminal']);
   const initState = {
     formTreeValue: -1,
     terminalGroup: [] as ITerminalGroupByDeptId[],
@@ -63,7 +63,6 @@ export default () => {
   const onFirmLoadData = (selectedOptions: any) => {
     const targetOption = selectedOptions[selectedOptions.length - 1];
     targetOption.loading = true;
-    console.log('targetOption: ', targetOption);
     getTerminalTypeListByFirm({ firmId: targetOption.value }, (data) => {
       targetOption.loading = false;
       setTerminalFirmTypeList({

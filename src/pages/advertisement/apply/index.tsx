@@ -11,7 +11,7 @@ import { useStore } from '@/pages/common/costom-hooks';
 
 export default () => {
   // 请求dept数据
-  useStore('advert');
+  useStore(['advert']);
   const [form] = Form.useForm();
 
   const { tableProps, search }: any = useAntdTable(

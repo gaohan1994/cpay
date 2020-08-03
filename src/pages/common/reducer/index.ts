@@ -18,7 +18,6 @@ export function common(
   switch (action.type) {
     case ACTION_TYPES_COMMON.RECEIVE_DEPT_DATA: {
       const { payload } = action;
-      console.log('payload:', payload);
       return {
         ...state,
         deptData: payload,
@@ -26,7 +25,6 @@ export function common(
     }
     case ACTION_TYPES_COMMON.RECEIVE_DEPT_TREE_DATA: {
       const { payload } = action;
-      console.log('RECEIVE_DEPT_TREE_DATA payload', payload);
       return {
         ...state,
         deptTreeData: payload,
@@ -34,7 +32,6 @@ export function common(
     }
     case ACTION_TYPES_COMMON.RECEIVE_DICT_LIST: {
       const { payload } = action;
-      console.log('RECEIVE_DICT_LIST payload', payload);
       return {
         ...state,
         dictList: {

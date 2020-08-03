@@ -16,15 +16,13 @@ import { useRedux } from '@/common/redux-util';
  * @export
  * @param {string} dictType
  */
-export function useStore(dictType: string): CommonHooksState {
+export function useStore(dictType: string[]): CommonHooksState {
   // const [state, dispatch] = useRedux(common, initState);
   const [useSelector, dispatch] = useRedux();
   const state = useSelector((state) => state.common);
 
   const getDeptCallback = useCallback((deptData: GetDeptTreeDataCallback) => {
     const [data, treeData] = deptData;
-    console.log('deptData:', deptData);
-    console.log('treeData:', treeData);
     dispatch({
       type: ACTION_TYPES_COMMON.RECEIVE_DEPT_DATA,
       payload: data,
@@ -83,7 +81,9 @@ export function useStore(dictType: string): CommonHooksState {
     /**
      * 请求字典数据
      */
-    getDictList(dictType, getDictListCallback);
+    const promises = dictType.map((type) =>
+      getDictList(type, getDictListCallback)
+    );
   }, []);
 
   return {

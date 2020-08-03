@@ -14,7 +14,7 @@ type Props = {};
 
 function Page(props: Props) {
   // 请求dept数据
-  useStore('advert');
+  useStore(['advert_file_type', 'advert_type']);
   const [form] = Form.useForm();
 
   const { tableProps, search }: any = useAntdTable(
