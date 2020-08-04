@@ -23,7 +23,7 @@ export const TerminalMenu = {
   name: '终端管理',
   icon: AndroidOutlined,
   path: 'terminal',
-  value: 'terminal'
+  value: 'terminal',
 };
 
 const routerConfig: any[] = [
@@ -32,70 +32,72 @@ const routerConfig: any[] = [
     path: '/terminal/message',
     name: '终端信息管理',
     component: Terminalmessage,
-    exact: true
+    exact: true,
   },
+
   {
-    // 终端应用信息
-    path: '/terminal/application',
-    name: '终端应用信息',
-    component: Terminalapplication,
-    exact: true
-  },
-  {
-    // 终端厂商管理
-    name: '终端厂商管理',
-    path: '/terminal/factory',
-    component: Terminalfactory,
-    exact: true
+    // 终端参数查询
+    name: '终端参数管理',
+    path: '/terminal/params',
+    component: Terminalparams,
+    exact: true,
   },
   {
     // 终端组别管理
     name: '终端组别管理',
     path: '/terminal/group',
     component: Terminalgroup,
-    exact: true
+    exact: true,
   },
   {
     // 终端分组管理
     name: '终端分组管理',
     path: '/terminal/grouping',
     component: Terminalgrouping,
-    exact: true
+    exact: true,
   },
   {
-    // 商户信息查询
-    name: '商户信息查询',
-    path: '/terminal/merchant',
-    component: Terminalmerchant,
-    exact: true
+    // 终端厂商管理
+    name: '终端厂商管理',
+    path: '/terminal/factory',
+    component: Terminalfactory,
+    exact: true,
   },
   {
     // 终端型号管理
+    name: '终端型号管理',
     path: '/terminal/model',
     component: Terminalmodel,
-    exact: true
+    exact: true,
   },
   {
-    // 终端参数查询
-    name: '终端参数查询',
-    path: '/terminal/params',
-    component: Terminalparams,
-    exact: true
+    // 终端系统信息
+    name: '终端系统管理',
+    path: '/terminal/system',
+    component: Terminalsystem,
+    exact: true,
   },
+  {
+    // 终端应用信息
+    path: '/terminal/application',
+    name: '终端应用信息',
+    component: Terminalapplication,
+    exact: true,
+  },
+  // {
+  //   // 商户信息查询
+  //   name: '商户信息查询',
+  //   path: '/terminal/merchant',
+  //   component: Terminalmerchant,
+  //   exact: true
+  // },
   {
     // 终端高级查询
     name: '终端高级查询',
     path: '/terminal/query',
     component: Terminalquery,
-    exact: true
+    exact: true,
   },
-  {
-    // 终端系统信息
-    name: '终端系统信息',
-    path: '/terminal/system',
-    component: Terminalsystem,
-    exact: true
-  }
 ];
 
 export default routerConfig;
