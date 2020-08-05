@@ -15,7 +15,7 @@ export const formartQuery = (params: any) => {
 export const jsonToQueryString = (json: any) => {
   const field = Object.keys(json)
     .map(function (key: any) {
-      if (!!json[key]) {
+      if (json[key] !== undefined) {
         return key + '=' + json[key];
       }
     })
@@ -28,15 +28,12 @@ export const jsonToQueryString = (json: any) => {
  * @todo 将body数据转成urlencoded类型
  * @param json
  */
-export const jsonToForm = (json: any): string => {
-  return Object.keys(json)
-    .map(function (key: any) {
-      if (!!json[key]) {
-        return key + '=' + json[key];
-      }
-    })
-    .filter((item) => !!item)
-    .join('&');
+export const jsonToForm = (json: any): FormData => {
+  const formData = new FormData();
+  Object.keys(json).map(function (key: any) {
+    formData.append(key, json[key]);
+  });
+  return formData;
 };
 
 export const formatListResult = <T>(
@@ -69,6 +66,34 @@ export const formatPaginate = (
   };
 };
 
+export const formatListWithKey = (result: any): any[] => {
+  const formatListUtil = (list: any[]) => {
+    const mergeList: any[] = merge([], list);
+    return mergeList.map((item) => {
+      return {
+        ...item,
+        key: item.id,
+      };
+    });
+  };
+
+  if (Array.isArray(result)) {
+    return formatListUtil(result);
+  }
+
+  if (Array.isArray(result.data)) {
+    return {
+      ...result,
+      data: formatListUtil(result.data),
+    };
+  }
+
+  return {
+    ...result,
+    data: formatListUtil(result.data.rows),
+  };
+};
+
 /**
  * fetch 工具
  *
@@ -78,10 +103,9 @@ export const formatPaginate = (
 class ApiRequest {
   baseOptions(params: any, method: string = 'GET'): Promise<any> {
     let { url, data } = params;
-    // let contentType = 'application/json';
     let contentType =
-      url === '/cpay-admin/login'
-        ? 'application/x-www-form-urlencoded'
+      url === '/cpay-admin/login' || method === 'POST'
+        ? 'application/x-www-form-urlencoded;charset=UTF-8'
         : 'application/json';
     contentType = params.contentType || contentType;
     const option: RequestInit = {
@@ -91,8 +115,9 @@ class ApiRequest {
         'content-type': contentType,
       },
       credentials: 'include',
-      ...(!!data ? { body: data } : {}),
+      ...(method === 'POST' ? { body: data } : {}),
     };
+    console.log('option', option);
     return fetch(`${BASE_URL}${url}`, option)
       .then((res) => res.json())
       .catch((error) => {
@@ -110,7 +135,7 @@ class ApiRequest {
   post(url: string, data: any) {
     let params = {
       url,
-      data: typeof data === 'string' ? data : JSON.stringify(data),
+      data: jsonToQueryString(data).replace('?', ''),
     };
     return this.baseOptions(params, 'POST');
   }
