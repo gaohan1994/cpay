@@ -1,6 +1,7 @@
 import { jsonToQueryString } from '@/common/request-util';
 import ApiRequest from '@/common/request-util';
-import { IAppInfoListField } from '../types';
+import { IAppInfoListField, IAppType } from '../types';
+import { RESPONSE_CODE } from '@/common/config';
 
 /**
  * @todo 请求应用列表
@@ -18,3 +19,13 @@ export const appAuditList = (params: IAppInfoListField) =>
 
 export const appInfoAdd = (params: any) =>
   ApiRequest.post(`/cpay-admin/app/info/add`, params);
+
+export const getAppTypeList = async (
+  callback?: (params: IAppType[]) => void
+): Promise<any> => {
+  const result = await ApiRequest.get(
+    `/cpay-admin/app/type/list`
+  );
+  callback && result.code === RESPONSE_CODE.success && callback(result.data.rows);
+  return result;
+};

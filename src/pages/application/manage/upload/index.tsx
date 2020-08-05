@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Form, Row, Col, Input, Button, Upload, message, Select } from 'antd';
+import { Form, Row, Col, Input, Button, Upload, message, Select, Checkbox } from 'antd';
 import UploadApp from '../component/UploadApp';
 import { renderCommonSelectForm, renderCascaderForm } from '@/component/form/render';
 import { FormItmeType } from '@/component/form/type';
@@ -14,11 +14,15 @@ import { useSelectorHook } from '@/common/redux-util';
 import { BASIC_CONFIG } from '@/common/config';
 import { ITerminalGroupByDeptId } from '@/pages/terminal/message/types';
 import { terminalGroupListByDept } from '@/pages/terminal/message/constants/api';
-import { appInfoAdd } from '../../constants/api';
+import { appInfoAdd, getAppTypeList } from '../../constants/api';
+import { RESPONSE_CODE } from '../../../../common/config';
+import { IAppType } from '../../types';
+import history from '@/common/history-util';
 
 const { Item } = Form;
 const { Option } = Select;
 const { TextArea } = Input;
+const CheckboxGroup = Checkbox.Group;
 
 type Props = {};
 
@@ -56,10 +60,15 @@ export default (props: Props) => {
     terminalFirmList: [] as ITerminalFirmItem[],
     terminalFirmValue: '',
     terminalFirmTypeList: [] as ITerminalType[],
-    terminalFirmTypeValue: '',
+    terminalFirmTypeOptions: [] as string[],
     appIcon: '',
     file: {} as any,
     key: '',
+    appTypeList: [] as IAppType[],
+    appTypeValue: '',
+    indeterminate: false,
+    checkAll: false,
+    checkedList: [] as string[],
   }
 
   const [terminalGroup, setTerminalGroup] = useState(initState.terminalGroup);
@@ -73,16 +82,21 @@ export default (props: Props) => {
   const [terminalFirmTypeList, setTerminalFirmTypeList] = useState(
     initState.terminalFirmTypeList
   );
-  const [terminalFirmTypeValue, setTerminalFirmTypeValue] = useState(
-    initState.terminalFirmTypeValue
+  const [terminalFirmTypeOptions, setTerminalFirmTypeOptions] = useState(
+    initState.terminalFirmTypeOptions
   );
   const [appIcon, setAppIcon] = useState(initState.appIcon);
   const [file, setFile] = useState(initState.file);
-  // const [keyWord, setKeyWord] = useState(initState.key);
+  const [appTypeList, setAppTypeList] = useState(initState.appTypeList);
+  const [appTypeValue, setAppTypeValue] = useState(initState.appTypeValue);
+  const [indeterminate, setIndeterminate] = useState(initState.indeterminate);
+  const [checkAll, setCheckAll] = useState(initState.checkAll);
+  const [checkedList, setCheckedList] = useState(initState.checkedList);
 
   const [form] = Form.useForm();
   let uploadRef: any = useRef();
 
+  /** 进入页面是获取组别列表以及应用类型列表 */
   useEffect(() => {
     getTerminalFirmList({}, setTerminalFirmList);
     form.setFieldsValue({
@@ -92,8 +106,12 @@ export default (props: Props) => {
       setTerminalGroup(groupData);
       setGroupValue(`${groupData[0].id}`);
     });
+    getAppTypeList((typeList: any[]) => {
+      setAppTypeList(typeList);
+    });
   }, []);
 
+  /** 监听上传的应用的应用信息，设置表单的值  */
   useEffect(() => {
     const appInfo = app.appInfo;
     console.log('appInfo', appInfo);
@@ -110,14 +128,56 @@ export default (props: Props) => {
     }
   }, [app.appInfo]);
 
+  /** 监听终端厂商的值，获取终端类型列表 */
   useEffect(() => {
-    terminalTypeListByFirm({firmId: terminalFirmValue}, setTerminalFirmTypeList);
+    if (terminalFirmValue.length > 0) {
+      terminalTypeListByFirm({ firmId: terminalFirmValue }, setTerminalFirmTypeList);
+    }
   }, [terminalFirmValue]);
+
+  /** 监听终端类型列表的值，设置表单中的终端类型对应的checkgroup的options */
+  useEffect(() => {
+    let arr: string[] = [];
+    for (let i = 0; i < terminalFirmTypeList.length; i++) {
+      arr.push(terminalFirmTypeList[i].typeName);
+    }
+    setTerminalFirmTypeOptions(arr);
+  }, [terminalFirmTypeList]);
+
+  /** 监听终端类型选中列表，设置相应表单的值，如果不这样写，表单获取不到相应的值 */
+  useEffect(() => {
+    if (checkedList.length > 0) {
+      form.setFieldsValue({
+        appTerminalTypes: checkedList
+      });
+    } else {
+      form.setFieldsValue({
+        appTerminalTypes: ''
+      });
+    }
+  }, [checkedList])
+
+  /** 终端类型checkbox的全选按钮点击事件 */
+  const onCheckAllChange = (e: any) => {
+    setCheckedList(e.target.checked ? terminalFirmTypeOptions : []);
+    setIndeterminate(false);
+    setCheckAll(e.target.checked);
+  }
+
+  /** 终端类型checkboxgroup的点击事件 */
+  const onChange = (checkedList: any[]) => {
+    setCheckedList(checkedList);
+    setIndeterminate(!!checkedList.length && checkedList.length < terminalFirmTypeOptions.length);
+    setCheckAll(checkedList.length === terminalFirmTypeOptions.length);
+  }
 
   const onFinish = (values: any) => {
     console.log('Received values of form: ', values);
   };
 
+  /**
+   * @todo 点击提交事件
+   */
   const onSubmit = async () => {
     try {
       const values = await form.validateFields();
@@ -128,10 +188,20 @@ export default (props: Props) => {
     }
   }
 
+  /**
+   * @todo 添加应用信息
+   */
   const onAddAppInfo = async () => {
     const fields = form.getFieldsValue();
     const appInfo = app.appInfo;
     console.log('test bbb', fields, file, appInfo);
+    let terminalTypes: string = '';
+    for (let i = 0; i < checkedList.length; i++) {
+      terminalTypes += checkedList[i];
+      if (i !== checkedList.length - 1) {
+        terminalTypes += ',';
+      }
+    }
     const params = {
       apkCode: fields.appPackage,
       apkCopsSign: 0,
@@ -146,7 +216,7 @@ export default (props: Props) => {
       iconPath: appInfo.iconPath,
       keyWord: fields.appKeyWord,
       signMd5: appInfo.signMd5,
-      termTypeId: fields.appTerminalType,
+      terminalTypes,
       typeId: fields.appType,
       versionCode: fields.appVersionCode,
       versionName: fields.appVersionName,
@@ -154,6 +224,12 @@ export default (props: Props) => {
       picPaths: 'group1/M00/00/05/rB4KcF8qJXmAWFh5AABRWFdKDBo920.jpg;group1/M00/00/05/rB4KcF8qJXmASyDJAABlEkdafSY060.png;group1/M00/00/05/rB4KcF8qJXmAI2djAAIMQQhSxcg651.jpg'
     }
     const res = await appInfoAdd(params);
+    if (res.code === RESPONSE_CODE.success) {
+      message.success('添加应用信息成功');
+      history.goBack();
+    } else {
+      message.error(res.msg || '添加应用信息失败，请重试');
+    }
   }
 
   return (
@@ -270,7 +346,25 @@ export default (props: Props) => {
         }]}
       >
         {renderCommonSelectForm(
-          { formName: 'appType', dictList: 'app_type', formType: FormItmeType.SelectCommon, span: 24 } as any, false
+          {
+            placeholder: '应用类别',
+            formName: 'appType',
+            formType: FormItmeType.Select,
+            selectData:
+              (Array.isArray(appTypeList) &&
+                appTypeList.map((item) => {
+                  return {
+                    value: `${item.id}`,
+                    title: `${item.typeName}`,
+                  };
+                })) ||
+              [],
+            value: appTypeValue,
+            onChange: (id: string) => {
+              setAppTypeValue(`${id}`);
+            }
+            , span: 24
+          } as any, false
         )}
       </Item>
 
@@ -303,33 +397,43 @@ export default (props: Props) => {
         )}
       </Item>
 
-      <Item label="终端型号" name='appTerminalType' rules={[
+      <Item label="终端型号" name='appTerminalTypes' rules={[
         {
           required: true,
           message: '请选择终端型号',
         }]}
       >
-        {renderCommonSelectForm(
+        <Col
+          span={24}
+          style={{
+            borderRadius: 2,
+            border: '1px solid #d9d9d9',
+            padding: 10,
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%'
+          }}
+        >
+          <div>
+            <Checkbox
+              indeterminate={indeterminate}
+              onChange={onCheckAllChange}
+              checked={checkAll}
+            >
+              全选
+          </Checkbox>
+          </div>
           {
-            placeholder: '终端型号',
-            formName: 'groupId',
-            formType: FormItmeType.Select,
-            selectData:
-              (terminalFirmTypeList &&
-                terminalFirmTypeList.map((item) => {
-                  return {
-                    value: `${item.id}`,
-                    title: `${item.typeName}`,
-                  };
-                })) ||
-              [],
-            value: terminalFirmTypeValue,
-            onChange: (id: string) => {
-              setTerminalFirmTypeValue(`${id}`);
-            },
-            span: 24
-          } as any, false
-        )}
+            terminalFirmTypeOptions.length > 0 && (
+              <CheckboxGroup
+                options={terminalFirmTypeOptions}
+                value={checkedList}
+                onChange={onChange}
+                style={{ marginTop: 10 }}
+              />
+            )
+          }
+        </Col>
       </Item>
 
       <Item label="关键词" name='appKeyWord' rules={[
@@ -342,7 +446,7 @@ export default (props: Props) => {
       >
         <Row style={{ alignItems: 'center' }} >
           <Col span={12}>
-            <Input/>
+            <Input />
           </Col>
           <div style={{ marginLeft: 10 }}> (多个关键词请以逗号分隔。)</div>
         </Row>

@@ -36,7 +36,7 @@ export type Props = {
  * @param {Props} props
  * @returns
  */
-function AdvertisementForm(props: Props) {
+function CommonForm(props: Props) {
   const { forms, form, formButtonProps } = props;
   // 渲染表单按钮
   const { reset, submit, ...rest } = formButtonProps;
@@ -78,4 +78,4 @@ function AdvertisementForm(props: Props) {
   );
 }
 
-export default AdvertisementForm;
+export default CommonForm;

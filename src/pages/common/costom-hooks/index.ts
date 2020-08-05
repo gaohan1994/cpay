@@ -81,9 +81,9 @@ export function useStore(dictType: string[]): CommonHooksState {
     /**
      * 请求字典数据
      */
-    const promises = dictType.map((type) =>
-      getDictList(type, getDictListCallback)
-    );
+    const promises =
+      dictType.length > 0 &&
+      dictType.map((type) => getDictList(type, getDictListCallback));
   }, []);
 
   return {

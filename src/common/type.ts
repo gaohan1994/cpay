@@ -2,7 +2,7 @@
  * 列表请求接口field的范型
  */
 export type IListField = {
-  page: number;
+  pageNum: number;
   pageSize: number;
 };
 
