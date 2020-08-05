@@ -54,16 +54,16 @@ export function UseCommonSelectData(
     .map((item, index) => {
       return !!item.dictType
         ? {
-            formName: formName[index] || item.dictType,
-            placeholder: item.dictName,
-            formType: FormItmeType.Select,
-            selectData: item.data.map((option) => {
-              return {
-                value: option.dictValue,
-                title: option.dictLabel,
-              };
-            }),
-          }
+          formName: formName[index] || item.dictType,
+          placeholder: item.dictName,
+          formType: FormItmeType.Select,
+          selectData: item.data.map((option) => {
+            return {
+              value: option.dictValue,
+              title: option.dictLabel,
+            };
+          }),
+        }
         : (undefined as any);
     })
     .filter((d) => !!d);
@@ -71,27 +71,38 @@ export function UseCommonSelectData(
   return renderDictListData;
 }
 
+export function renderTreeSelect(data: IComponentFormTreeSelectForm) {
+  const { formName, span, treeSelectData, ...rest } = data;
+  return (
+    <TreeSelect
+      treeDefaultExpandAll
+      dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+      {...rest}
+    >
+      {treeSelectData.map((item) => {
+        return renderTreeHelper(item);
+      })}
+    </TreeSelect>
+  );
+}
+
 /**
  * 渲染树形结构表单
  * @param data
  */
-export function renderTreeSelectForm(data: IComponentFormTreeSelectForm) {
+export function renderTreeSelectForm(data: IComponentFormTreeSelectForm, isFrom?: boolean) {
   const { formName, span, treeSelectData, ...rest } = data;
-  return (
-    <Col span={span || 6}>
-      <Item name={formName}>
-        <TreeSelect
-          treeDefaultExpandAll
-          dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-          {...rest}
-        >
-          {treeSelectData.map((item) => {
-            return renderTreeHelper(item);
-          })}
-        </TreeSelect>
-      </Item>
-    </Col>
-  );
+  if (isFrom !== false) {
+    return (
+      <Col span={span || 6}>
+        <Item name={formName}>
+          {renderTreeSelect(data)}
+        </Item>
+      </Col>
+    );
+  } else {
+    return renderTreeSelect(data);
+  }
 }
 
 /**
@@ -113,31 +124,49 @@ export function renderNormalForm(data: IComponentFormNormalForm) {
  * 渲染下拉框函数
  * @param data
  */
-export function renderSelectForm(data: IComponentFormSelectForm) {
+export function renderSelect(data: IComponentFormSelectForm) {
   const { formName, span, selectData, ...rest } = data;
   return (
-    <Col span={span || 4} key={formName}>
-      <Item name={formName}>
-        <Select {...rest}>
-          {selectData.map((option) => {
-            const { value, title, ...optionRest } = option;
-            return (
-              <Option value={value} key={value} {...optionRest}>
-                {title}
-              </Option>
-            );
-          })}
-        </Select>
-      </Item>
-    </Col>
+    <Select {...rest}>
+      {Array.isArray(selectData) && selectData.length > 0 && selectData.map((option) => {
+        const { value, title, ...optionRest } = option;
+        return (
+          <Option value={value} key={value} {...optionRest}>
+            {title}
+          </Option>
+        );
+      })}
+    </Select>
   );
+}
+
+/**
+ * 渲染下拉框函数
+ * @param data
+ */
+export function renderSelectForm(data: IComponentFormSelectForm, isForm?: boolean) {
+  const { formName, span } = data;
+  if (isForm !== false) {
+    return (
+      <Col span={span || 4} key={formName}>
+        <Item name={formName}>
+          {renderSelect(data)}
+        </Item>
+      </Col>
+    );
+  } else {
+    return (
+      renderSelect(data)
+    );
+  }
+
 }
 
 /**
  * 渲染通用字典下拉框
  * @param data
  */
-export function renderCommonSelectForm(data: IComponentFormCommonSelectForm) {
+export function renderCommonSelectForm(data: IComponentFormCommonSelectForm, isForm?: boolean) {
   const { dictList, formName, ...rest } = data;
 
   /**
@@ -148,7 +177,7 @@ export function renderCommonSelectForm(data: IComponentFormCommonSelectForm) {
     return (
       <>
         {renderDictListData.map((item) => {
-          return renderSelectForm(item);
+          return renderSelectForm(item, isForm);
         })}
       </>
     );
@@ -160,11 +189,10 @@ export function renderCommonSelectForm(data: IComponentFormCommonSelectForm) {
   );
   const targetDictData = renderDictListData[0];
   return (
-    targetDictData &&
     renderSelectForm({
       ...rest,
       ...targetDictData,
-    })
+    }, isForm)
   );
 }
 
@@ -173,7 +201,8 @@ export function renderCommonSelectForm(data: IComponentFormCommonSelectForm) {
  * @param data
  */
 export function renderCommonTreeSelectForm(
-  data: IComponentFormCommonTreeSelectForm
+  data: IComponentFormCommonTreeSelectForm,
+  isFrom?: boolean
 ) {
   const UseCommonTreeSelectData = (): IComponentFormTreeSelectForm => {
     const state = useSelectorHook((state) => state.common.deptTreeData);
@@ -187,16 +216,28 @@ export function renderCommonTreeSelectForm(
     };
   };
 
-  return renderTreeSelectForm(UseCommonTreeSelectData());
+  return renderTreeSelectForm(UseCommonTreeSelectData(), isFrom);
 }
 
-export function renderCascaderForm(data: IComponentFormCascader) {
+export function renderCascader(data: IComponentFormCascader) {
   const { formName, span, ...rest } = data;
   return (
-    <Col span={span || 4} key={formName}>
-      <Item name={formName}>
-        <Cascader {...rest} />
-      </Item>
-    </Col>
+    <Cascader {...rest} />
   );
+}
+
+
+export function renderCascaderForm(data: IComponentFormCascader, isForm?: boolean) {
+  const { formName, span, ...rest } = data;
+  if (isForm !== false) {
+    return (
+      <Col span={span || 4} key={formName}>
+        <Item name={formName}>
+          {renderCascader(data)}
+        </Item>
+      </Col>
+    );
+  } else {
+    return renderCascader(data);
+  }
 }

@@ -25,7 +25,7 @@ function LayoutContainer(props: Props) {
           <LayoutBread />
           <div
             className="site-layout-background"
-            style={{ padding: 12, marginTop: 8, textAlign: 'center' }}
+            style={{ padding: 12, marginTop: 8 }}
           >
             {props.children}
           </div>
