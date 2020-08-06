@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Form, Table } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
+import { ImportOutlined, LogoutOutlined } from '@ant-design/icons';
+import { ButtonProps } from 'antd/lib/button';
 import { terminalInfoList, terminalGroupListByDept } from './constants/api';
 import { formatListResult } from '@/common/request-util';
 import { createTableColumns } from '@/component/table';
@@ -16,7 +18,13 @@ import {
 } from '../constants';
 
 export default () => {
-  useStore(['terminal']);
+  useStore([
+    'terminal_type',
+    'is_support_dcc',
+    'unionpay_connection',
+    'buss_type',
+    'term_real_status',
+  ]);
   const initState = {
     formTreeValue: -1,
     terminalGroup: [] as ITerminalGroupByDeptId[],
@@ -72,68 +80,6 @@ export default () => {
   };
 
   const { submit, reset } = search;
-
-  const columns = createTableColumns([
-    {
-      title: '操作',
-      render: () => <a>审核</a>,
-      fixed: 'left',
-      width: 100,
-    },
-    {
-      title: '终端序列号',
-      dataIndex: 'tusn',
-    },
-    {
-      title: '商户编号',
-      width: 80,
-      dataIndex: 'merchantId',
-    },
-    {
-      title: '终端厂商',
-      width: 120,
-      dataIndex: 'merchantName',
-    },
-    {
-      title: '终端型号',
-      width: 80,
-      dataIndex: 'terminalTypeName',
-    },
-    {
-      title: '终端类型',
-      width: 80,
-      dataIndex: 'terminalTypeName',
-    },
-    {
-      title: '所属机构',
-      width: 80,
-      dataIndex: 'deptName',
-    },
-    {
-      title: '所属组',
-      dataIndex: 'tusn',
-    },
-    {
-      title: '商户名称',
-      dataIndex: 'tusn',
-    },
-    {
-      title: '是否支持DCC',
-      dataIndex: 'tusn',
-    },
-    {
-      title: '银联间直连',
-      dataIndex: 'tusn',
-    },
-    {
-      title: '业务类型',
-      dataIndex: 'tusn',
-    },
-    {
-      title: '终端状态',
-      dataIndex: 'tusn',
-    },
-  ]);
 
   const forms: FormItem[] = [
     {
@@ -209,20 +155,109 @@ export default () => {
       dictList: 'terminal_type',
       mode: 'multiple',
     },
-    // {
-    //   placeholder: '是否支持DCC',
-    //   formName: ''
+    {
+      placeholder: '是否支持DCC',
+      formName: 'is_support_dcc',
+      formType: FormItmeType.SelectCommon,
+      dictList: 'is_support_dcc',
+    },
+    {
+      placeholder: '银联间直联',
+      formName: 'unionpay_connection',
+      formType: FormItmeType.SelectCommon,
+      dictList: 'unionpay_connection',
+    },
+    {
+      placeholder: '业务类型',
+      formType: FormItmeType.SelectCommon,
+      formName: '',
+      dictList: 'buss_type',
+    },
+    {
+      placeholder: '终端状态',
+      formType: FormItmeType.SelectCommon,
+      formName: 'status',
+      dictList: 'term_real_status',
+    },
+  ];
 
-    // },
-    //     {
-    //       银联间直联
-    //     },
-    //     {
-    //       业务类型
-    //     },
-    //     {
-    //       终端状态
-    //     }
+  const columns = createTableColumns([
+    {
+      title: '操作',
+      render: () => <a>审核</a>,
+      fixed: 'left',
+      width: 100,
+    },
+    {
+      title: '终端序列号',
+      dataIndex: 'tusn',
+    },
+    {
+      title: '商户编号',
+      width: 80,
+      dataIndex: 'merchantId',
+    },
+    {
+      title: '终端厂商',
+      width: 120,
+      dataIndex: 'merchantName',
+    },
+    {
+      title: '终端型号',
+      width: 80,
+      dataIndex: 'terminalTypeName',
+    },
+    {
+      title: '终端类型',
+      width: 80,
+      dataIndex: 'terminalTypeName',
+    },
+    {
+      title: '所属机构',
+      width: 80,
+      dataIndex: 'deptName',
+    },
+    {
+      title: '所属组',
+      dataIndex: 'tusn',
+    },
+    {
+      title: '商户名称',
+      dataIndex: 'tusn',
+    },
+    {
+      title: '是否支持DCC',
+      dataIndex: 'tusn',
+    },
+    {
+      title: '银联间直连',
+      dataIndex: 'tusn',
+    },
+    {
+      title: '业务类型',
+      dataIndex: 'tusn',
+    },
+    {
+      title: '终端状态',
+      dataIndex: 'tusn',
+    },
+  ]);
+
+  const extraButtons: ButtonProps[] = [
+    {
+      title: '导入',
+      icon: <ImportOutlined />,
+      type: 'primary',
+    },
+    {
+      title: '导出',
+      icon: <LogoutOutlined />,
+      type: 'primary',
+    },
+    {
+      title: '高级查询',
+      type: 'primary',
+    },
   ];
 
   return (
@@ -233,6 +268,7 @@ export default () => {
         formButtonProps={{
           reset,
           submit,
+          extraButtons,
         }}
       />
       <Table

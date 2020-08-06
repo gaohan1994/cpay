@@ -10,6 +10,8 @@ import { AppstoreAddOutlined } from '@ant-design/icons';
 
 import Applicationmanage from '@/pages/application/manage';
 import Applicationupload from '@/pages/application/manage/upload';
+import Applicationdelete from '@/pages/application/manage/delete';
+import Applicationdetail from '@/pages/application/manage/detail';
 import Applicationpublish from '@/pages/application/publish';
 import Applicationreview from '@/pages/application/review';
 import Applicationtype from '@/pages/application/type';
@@ -30,8 +32,22 @@ const routerConfig: any[] = [
   },
   {
     path: '/application/manage-upload',
-    name: '广告审核详情',
+    name: '应用上传',
     component: Applicationupload,
+    exact: true,
+    inMenu: false,
+  },
+  {
+    path: '/application/manage-delete',
+    name: '应用回收站',
+    component: Applicationdelete,
+    exact: true,
+    inMenu: false,
+  },
+  {
+    path: '/application/manage-detail',
+    name: '应用详情',
+    component: Applicationdetail,
     exact: true,
     inMenu: false,
   },
