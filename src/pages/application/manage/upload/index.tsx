@@ -2,12 +2,12 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-10 14:50:09 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 09:57:55
+ * @Last Modified time: 2020-08-12 10:51:24
  * 
  * @todo 应用上传页面
  */
 import React, { useEffect, useState, useRef } from 'react';
-import { Form, Row, Col, Input, Button, Upload, Select, Checkbox, notification, Modal } from 'antd';
+import { Form, Row, Col, Input, Button, Upload, Select, Checkbox, notification, Modal, Spin } from 'antd';
 import UploadApp from '../component/UploadApp';
 import { renderCommonSelectForm } from '@/component/form/render';
 import { FormItmeType } from '@/component/form/type';
@@ -109,6 +109,7 @@ export default (props: Props) => {
   const [previewImage, setPreviewImage] = useState(initState.previewImage);
   const [previewVisible, setPreviewVisible] = useState(initState.previewVisible);
   const [previewTitle, setPreviewTitle] = useState(initState.previewTitle);
+  const [loading, setLoading] = useState(false);
 
   const [form] = Form.useForm();
   let uploadRef: any = useRef();
@@ -438,7 +439,9 @@ export default (props: Props) => {
     }
     if (field.id) {
       params = { ...params, id: field.id };
+      setLoading(true);
       const res = await appInfoEdit(params);
+      setLoading(false);
       if (res && res.code === RESPONSE_CODE.success) {
         notification.success({ message: '修改应用信息成功' });
         history.goBack();
@@ -446,7 +449,9 @@ export default (props: Props) => {
         notification.error({ message: res.msg || '修改应用信息失败，请重试' });
       }
     } else {
+      setLoading(true);
       const res = await appInfoAdd(params);
+      setLoading(false);
       if (res && res.code === RESPONSE_CODE.success) {
         notification.success({ message: '添加应用信息成功' });
         history.goBack();
@@ -518,287 +523,289 @@ export default (props: Props) => {
   }
 
   return (
-    <Form
-      form={form}
-      name="advanced_search"
-      className="ant-advanced-search-form"
-      {...formLayout}
-    >
-      {
-        field.id ? null : (
-          <Item label="上传应用包" name='appUpload' rules={[
-            {
-              required: true,
-              message: '请上传应用包',
-            }]}
-            labelCol={{ span: 3 }}
-            wrapperCol={{ span: 16 }}
-          >
-            <Row>
-              <Col span={12}>
-                <Input disabled={true} value={apkFile.name || ''} />
-              </Col>
-              <Col span={12}>
-                <UploadApp uploadRef={uploadRef} maxSize='100M' />
-              </Col>
-            </Row>
-          </Item>
-        )
-      }
-      <Item label="应用名称" name='appName' rules={[
-        {
-          required: true,
-          message: '请输入应用名称',
-        }]}
-      >
-        <Input />
-      </Item>
-      <Item label="应用包名" name='appPackage' rules={[
-        {
-          required: true,
-          message: '应用包名不能为空',
-        }]}
-      >
-        <Input disabled={true} />
-      </Item>
-      <Item label="应用版本" name='appVersionName' rules={[
-        {
-          required: true,
-          message: '应用版本不能为空',
-        }]}
-      >
-        <Input disabled={true} />
-      </Item>
-
-      <Item label="内部版本" name='appVersionCode' rules={[
-        {
-          required: true,
-          message: '内部版本不能为空',
-        }]}
-      >
-        <Input disabled={true} />
-      </Item>
-      <Item label="应用图标" name='appIcon' rules={[
-        {
-          required: true,
-          message: '应用图标不能为空',
-        }]}
+    <Spin spinning={loading}>
+      <Form
+        form={form}
+        name="advanced_search"
+        className="ant-advanced-search-form"
+        {...formLayout}
       >
         {
-          typeof appIcon === 'string' && appIcon.length > 0 ? (
-            <img
-              src={appIcon}
-              style={{ width: 80, height: 80, background: '#f2f2f2', borderRadius: 10 }}
-            />
-          ) : (
-              <div style={{ width: 80, height: 80, background: '#f2f2f2', borderRadius: 10 }}></div>
-            )
-        }
-      </Item>
-      <Item label="所属机构" name='appDept'>
-        <Input disabled={true} />
-      </Item>
-      <Item label="所属组别" name='appGroup' rules={[
-        {
-          required: true,
-          message: '请选择所属组别',
-        }]}
-      >
-        {renderCommonSelectForm(
-          {
-            placeholder: '所属组别',
-            formName: 'groupId',
-            formType: FormItmeType.Select,
-            selectData:
-              (terminalGroupList &&
-                terminalGroupList.map((item) => {
-                  return {
-                    value: `${item.id}`,
-                    title: `${item.name}`,
-                  };
-                })) ||
-              [],
-            value: terminalGroupValue,
-            onChange: (id: string) => {
-              setTerminalGroupValue(`${id}`);
-            },
-            span: 24
-          } as any, false
-        )}
-      </Item>
-
-      <Item label="应用类别" name='appType' rules={[
-        {
-          required: true,
-          message: '请选择应用类别',
-        }]}
-      >
-        {renderCommonSelectForm(
-          {
-            placeholder: '应用类别',
-            formName: 'typeName',
-            formType: FormItmeType.Select,
-            selectData:
-              (Array.isArray(appTypeList) &&
-                appTypeList.map((item) => {
-                  return {
-                    value: `${item.id}`,
-                    title: `${item.typeName}`,
-                  };
-                })) ||
-              [],
-            value: appTypeValue,
-            onChange: (id: string) => {
-              setAppTypeValue(`${id}`);
-            }
-            , span: 24
-          } as any, false
-        )}
-      </Item>
-
-      <Item label="终端厂商" name='appTerminalFirm' rules={[
-        {
-          required: true,
-          message: '请选择终端厂商',
-        }]}
-      >
-        {renderCommonSelectForm(
-          {
-            placeholder: '终端厂商',
-            formName: 'id',
-            formType: FormItmeType.Select,
-            selectData:
-              (terminalFirmList &&
-                terminalFirmList.map((item) => {
-                  return {
-                    value: `${item.id}`,
-                    title: `${item.firmName}`,
-                  };
-                })) ||
-              [],
-            value: terminalFirmValue,
-            onChange: (id: string) => {
-              setTerminalFirmValue(`${id}`);
-            },
-            span: 24
-          } as any, false
-        )}
-      </Item>
-
-      <Item label="终端型号" name='appTerminalTypes' rules={[
-        {
-          required: true,
-          message: '请选择终端型号',
-        }]}
-      >
-        <Col
-          span={24}
-          style={{
-            borderRadius: 2,
-            border: '1px solid #d9d9d9',
-            padding: 10,
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%'
-          }}
-        >
-          <div>
-            <Checkbox
-              indeterminate={indeterminate}
-              onChange={onCheckAllChange}
-              checked={checkAll}
+          field.id ? null : (
+            <Item label="上传应用包" name='appUpload' rules={[
+              {
+                required: true,
+                message: '请上传应用包',
+              }]}
+              labelCol={{ span: 3 }}
+              wrapperCol={{ span: 16 }}
             >
-              全选
-          </Checkbox>
-          </div>
+              <Row>
+                <Col span={12}>
+                  <Input disabled={true} value={apkFile.name || ''} />
+                </Col>
+                <Col span={12}>
+                  <UploadApp uploadRef={uploadRef} maxSize='100M' />
+                </Col>
+              </Row>
+            </Item>
+          )
+        }
+        <Item label="应用名称" name='appName' rules={[
           {
-            terminalTypeOptions.length > 0 && (
-              <CheckboxGroup
-                options={terminalTypeOptions}
-                value={checkedList}
-                onChange={onChange}
-                style={{ marginTop: 10 }}
+            required: true,
+            message: '请输入应用名称',
+          }]}
+        >
+          <Input />
+        </Item>
+        <Item label="应用包名" name='appPackage' rules={[
+          {
+            required: true,
+            message: '应用包名不能为空',
+          }]}
+        >
+          <Input disabled={true} />
+        </Item>
+        <Item label="应用版本" name='appVersionName' rules={[
+          {
+            required: true,
+            message: '应用版本不能为空',
+          }]}
+        >
+          <Input disabled={true} />
+        </Item>
+
+        <Item label="内部版本" name='appVersionCode' rules={[
+          {
+            required: true,
+            message: '内部版本不能为空',
+          }]}
+        >
+          <Input disabled={true} />
+        </Item>
+        <Item label="应用图标" name='appIcon' rules={[
+          {
+            required: true,
+            message: '应用图标不能为空',
+          }]}
+        >
+          {
+            typeof appIcon === 'string' && appIcon.length > 0 ? (
+              <img
+                src={appIcon}
+                style={{ width: 80, height: 80, background: '#f2f2f2', borderRadius: 10 }}
               />
-            )
+            ) : (
+                <div style={{ width: 80, height: 80, background: '#f2f2f2', borderRadius: 10 }}></div>
+              )
           }
-        </Col>
-      </Item>
+        </Item>
+        <Item label="所属机构" name='appDept'>
+          <Input disabled={true} />
+        </Item>
+        <Item label="所属组别" name='appGroup' rules={[
+          {
+            required: true,
+            message: '请选择所属组别',
+          }]}
+        >
+          {renderCommonSelectForm(
+            {
+              placeholder: '所属组别',
+              formName: 'groupId',
+              formType: FormItmeType.Select,
+              selectData:
+                (terminalGroupList &&
+                  terminalGroupList.map((item) => {
+                    return {
+                      value: `${item.id}`,
+                      title: `${item.name}`,
+                    };
+                  })) ||
+                [],
+              value: terminalGroupValue,
+              onChange: (id: string) => {
+                setTerminalGroupValue(`${id}`);
+              },
+              span: 24
+            } as any, false
+          )}
+        </Item>
 
-      <Item label="应用截图" name='appPics' rules={[
-        {
-          required: true,
-          message: '请上传3-5张应用图片',
-        }]}
-        labelCol={{ span: 3 }}
-        wrapperCol={{ span: 16 }}
-      >
-        <Row style={{ alignItems: 'center' }} >
-          <Upload
-            action={`${BASIC_CONFIG.BASE_URL}/cpay-admin/file/upload/tmp`}
-            listType="picture-card"
-            fileList={imageFileList}
-            beforeUpload={beforeUpload}
-            onPreview={handlePreview}
-            onChange={handleChange}
-            multiple={true}
-            withCredentials={true}
+        <Item label="应用类别" name='appType' rules={[
+          {
+            required: true,
+            message: '请选择应用类别',
+          }]}
+        >
+          {renderCommonSelectForm(
+            {
+              placeholder: '应用类别',
+              formName: 'typeName',
+              formType: FormItmeType.Select,
+              selectData:
+                (Array.isArray(appTypeList) &&
+                  appTypeList.map((item) => {
+                    return {
+                      value: `${item.id}`,
+                      title: `${item.typeName}`,
+                    };
+                  })) ||
+                [],
+              value: appTypeValue,
+              onChange: (id: string) => {
+                setAppTypeValue(`${id}`);
+              }
+              , span: 24
+            } as any, false
+          )}
+        </Item>
+
+        <Item label="终端厂商" name='appTerminalFirm' rules={[
+          {
+            required: true,
+            message: '请选择终端厂商',
+          }]}
+        >
+          {renderCommonSelectForm(
+            {
+              placeholder: '终端厂商',
+              formName: 'id',
+              formType: FormItmeType.Select,
+              selectData:
+                (terminalFirmList &&
+                  terminalFirmList.map((item) => {
+                    return {
+                      value: `${item.id}`,
+                      title: `${item.firmName}`,
+                    };
+                  })) ||
+                [],
+              value: terminalFirmValue,
+              onChange: (id: string) => {
+                setTerminalFirmValue(`${id}`);
+              },
+              span: 24
+            } as any, false
+          )}
+        </Item>
+
+        <Item label="终端型号" name='appTerminalTypes' rules={[
+          {
+            required: true,
+            message: '请选择终端型号',
+          }]}
+        >
+          <Col
+            span={24}
+            style={{
+              borderRadius: 2,
+              border: '1px solid #d9d9d9',
+              padding: 10,
+              display: 'flex',
+              flexDirection: 'column',
+              width: '100%'
+            }}
           >
-            {imageFileList.length >= 5 ? null : uploadButton}
-          </Upload>
-          <div>3-5张截图，文件格式：png或jpg，分辨率建议：960*540，大小：单张不得超过5M。</div>
-        </Row>
-      </Item>
-      <Item label="关键词" name='appKeyWord' rules={[
-        {
-          required: true,
-          message: '请输入关键词',
-        }]}
-        labelCol={{ span: 3 }}
-        wrapperCol={{ span: 16 }}
-      >
-        <Row style={{ alignItems: 'center' }} >
-          <Col span={12}>
-            <Input value={keyWord} onChange={({ target: { value } }) => setKeyWord(value)} />
+            <div>
+              <Checkbox
+                indeterminate={indeterminate}
+                onChange={onCheckAllChange}
+                checked={checkAll}
+              >
+                全选
+          </Checkbox>
+            </div>
+            {
+              terminalTypeOptions.length > 0 && (
+                <CheckboxGroup
+                  options={terminalTypeOptions}
+                  value={checkedList}
+                  onChange={onChange}
+                  style={{ marginTop: 10 }}
+                />
+              )
+            }
           </Col>
-          <div style={{ marginLeft: 10 }}> (多个关键词请以逗号分隔。)</div>
-        </Row>
-      </Item>
+        </Item>
 
-      <Item label="版本更新说明" name='appUpdateDesc' rules={[
-        {
-          required: true,
-          message: '请输入版本更新说明',
-        }]}
-      >
-        <TextArea />
-      </Item>
+        <Item label="应用截图" name='appPics' rules={[
+          {
+            required: true,
+            message: '请上传3-5张应用图片',
+          }]}
+          labelCol={{ span: 3 }}
+          wrapperCol={{ span: 16 }}
+        >
+          <Row style={{ alignItems: 'center' }} >
+            <Upload
+              action={`${BASIC_CONFIG.BASE_URL}/cpay-admin/file/upload/tmp`}
+              listType="picture-card"
+              fileList={imageFileList}
+              beforeUpload={beforeUpload}
+              onPreview={handlePreview}
+              onChange={handleChange}
+              multiple={true}
+              withCredentials={true}
+            >
+              {imageFileList.length >= 5 ? null : uploadButton}
+            </Upload>
+            <div>3-5张截图，文件格式：png或jpg，分辨率建议：960*540，大小：单张不得超过5M。</div>
+          </Row>
+        </Item>
+        <Item label="关键词" name='appKeyWord' rules={[
+          {
+            required: true,
+            message: '请输入关键词',
+          }]}
+          labelCol={{ span: 3 }}
+          wrapperCol={{ span: 16 }}
+        >
+          <Row style={{ alignItems: 'center' }} >
+            <Col span={12}>
+              <Input value={keyWord} onChange={({ target: { value } }) => setKeyWord(value)} />
+            </Col>
+            <div style={{ marginLeft: 10 }}> (多个关键词请以逗号分隔。)</div>
+          </Row>
+        </Item>
 
-      <Item label="应用简介" name='appIntro' rules={[
-        {
-          required: true,
-          message: '请输入应用简介',
-        }]}
-      >
-        <TextArea />
-      </Item>
+        <Item label="版本更新说明" name='appUpdateDesc' rules={[
+          {
+            required: true,
+            message: '请输入版本更新说明',
+          }]}
+        >
+          <TextArea />
+        </Item>
 
-      <Item {...buttonLayout} >
-        <Col>
-          <Button type="primary" onClick={onSubmit}>
-            保存
+        <Item label="应用简介" name='appIntro' rules={[
+          {
+            required: true,
+            message: '请输入应用简介',
+          }]}
+        >
+          <TextArea />
+        </Item>
+
+        <Item {...buttonLayout} >
+          <Col>
+            <Button type="primary" onClick={onSubmit}>
+              保存
         </Button>
-        </Col >
-      </Item>
+          </Col >
+        </Item>
 
-      <Modal
-        visible={previewVisible}
-        title={previewTitle}
-        footer={null}
-        onCancel={() => setPreviewVisible(false)}
-      >
-        <img alt="example" style={{ width: '100%' }} src={previewImage} />
-      </Modal>
-    </Form >
+        <Modal
+          visible={previewVisible}
+          title={previewTitle}
+          footer={null}
+          onCancel={() => setPreviewVisible(false)}
+        >
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        </Modal>
+      </Form >
+    </Spin>
   );
 };
 
