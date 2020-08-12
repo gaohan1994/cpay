@@ -15,6 +15,8 @@ import Forms from '@/component/form';
 import { formatListResult, formatPaginate } from '@/common/request-util';
 import { createTableColumns } from '@/component/table';
 import { RESPONSE_CODE } from '@/common/config';
+import { useModal } from '../../costom-hooks';
+import ImportModal from '../modal';
 
 const prefix = 'terminal-group-component';
 
@@ -26,6 +28,8 @@ type Props = {
 };
 
 export default (props: Props) => {
+  const { visible, setTrue, setFalse } = useModal();
+  console.log('setTrue:', setTrue);
   const [currentTab, setCurrentTab] = useState('1');
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);
   const { currentGroupSet } = props;
@@ -33,9 +37,7 @@ export default (props: Props) => {
   const [form] = Form.useForm();
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) => {
-      console.log('currentTab:', currentTab);
       const tap = currentTab ? { groupFlag: currentTab === '1' ? 1 : 0 } : {};
-      console.log('tap:', tap);
       return terminalInfoListByIsGroup({
         ...formatPaginate(paginatedParams),
         ...tableProps,
@@ -51,13 +53,11 @@ export default (props: Props) => {
   const { submit, reset } = search;
 
   useEffect(() => {
-    console.log('useEffect');
     reset();
     setSelectedRowKeys([]);
   }, [currentTab]);
 
   useEffect(() => {
-    console.log('useEffect currentGroupSet');
     reset();
     setSelectedRowKeys([]);
   }, [currentGroupSet]);
@@ -79,7 +79,6 @@ export default (props: Props) => {
 
   const onSelectRowUpdate = async () => {
     try {
-      console.log('currentTab: ', currentTab);
       invariant(selectedRowKeys.length > 0, '请选择记录');
 
       Modal.confirm({
@@ -157,6 +156,7 @@ export default (props: Props) => {
             title: '导入',
             icon: <ImportOutlined />,
             type: 'primary',
+            onClick: () => setTrue(),
           },
         ];
 
@@ -232,6 +232,7 @@ export default (props: Props) => {
             );
           })}
       </Tabs>
+      <ImportModal visible={visible} setFalse={setFalse} />
     </div>
   );
 };
