@@ -1,3 +1,11 @@
+/*
+ * @Author: centerm.gaozhiying 
+ * @Date: 2020-08-12 09:32:25 
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-08-12 09:32:46
+ * 
+ * @todo 应用模块的redux
+ */
 import { IAppReducerInterface, IUploadAppInfo } from '../types';
 export const initState: IAppReducerInterface.IReducerState = {
   appInfo: {} as IUploadAppInfo,

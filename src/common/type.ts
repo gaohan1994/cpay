@@ -32,3 +32,11 @@ export interface IFormatResult<T> {
   list: T[];
   total: number;
 }
+
+export type UserDept = {
+  deptId: number;     // 所属机构id
+  deptName: string;   // 所属机构名称
+  leader: string;
+  phone: string;
+  email: string;
+}

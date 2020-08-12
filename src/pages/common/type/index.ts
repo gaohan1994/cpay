@@ -1,3 +1,5 @@
+import { UserDept } from "@/common/type";
+
 export interface DeptItem {
   checked: boolean;
   pId: number;
@@ -51,6 +53,7 @@ export declare module CommonReducerInterface {
     dictList: {
       [key: string]: DictItem;
     };
+    userDept: UserDept;
   }
 
   // connect common的类型定义

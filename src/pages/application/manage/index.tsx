@@ -1,5 +1,13 @@
+/*
+ * @Author: centerm.gaozhiying 
+ * @Date: 2020-08-10 14:50:24 
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-08-12 09:42:08
+ * 
+ * @todo 应用管理列表页
+ */
 import React, { useState, useEffect } from 'react';
-import { Form, Table, Row, Popconfirm, Modal, notification, Divider } from 'antd';
+import { Form, Table, Row, Popconfirm, Modal, notification, Divider, Tag, Col } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { appInfoList, getAppTypeList, appInfoRemove, appAuditSubmit } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
@@ -10,40 +18,47 @@ import { createTableColumns } from '@/component/table';
 import history from '@/common/history-util';
 import { ITerminalGroupByDeptId } from '@/pages/terminal/message/types';
 import { terminalGroupListByDept } from '@/pages/terminal/message/constants/api';
-import { DeleteOutlined } from '@ant-design/icons';
+import { DeleteOutlined, UploadOutlined } from '@ant-design/icons';
 import { IAppType } from '../types';
-import '@/index.css';
 import { RESPONSE_CODE } from '@/common/config';
 import invariant from 'invariant';
+import { getAppStatusColor } from '../common/util';
 
 type Props = {};
 
 function Page(props: Props) {
-  // 请求dept数据
+  // 请求字典数据
   useStore(['app_status']);
+
   const initState = {
-    terminalGroup: [] as ITerminalGroupByDeptId[],
-    groupValue: '',
-    formTreeValue: -1,
-    appTypeList: [] as IAppType[],
-    appTypeValue: ''
+    terminalGroupList: [] as ITerminalGroupByDeptId[],  // 终端组别列表
+    terminalGroupValue: '',                             // 终端组别选中值
+    formTreeValue: -1,                                  // 机构树选中的值
+    appTypeList: [] as IAppType[],                      // 应用类型列表
+    appTypeValue: '',                                   // 应用类型选中的值
   };
-  const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);
-  const [terminalGroup, setTerminalGroup] = useState(initState.terminalGroup);
-  const [groupValue, setGroupValue] = useState(initState.groupValue);
+
+  const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);  // 选中的列的key值列表
+  const [terminalGroupList, setTerminalGroupList] = useState(initState.terminalGroupList);
+  const [terminalGroupValue, setTerminalGroupValue] = useState(initState.terminalGroupValue);
   const [formTreeValue, setFormTreeValue] = useState(initState.formTreeValue);
   const [appTypeList, setAppTypeList] = useState(initState.appTypeList);
   const [appTypeValue, setAppTypeValue] = useState(initState.appTypeValue);
 
+  /**
+   * @todo 根据选中的机构id的值去获取组别列表
+   */
   useEffect(() => {
     terminalGroupListByDept(formTreeValue, (groupData) => {
-      setTerminalGroup(groupData);
-      setGroupValue(`${groupData[0].id}`);
+      setTerminalGroupList(groupData);
     });
   }, [formTreeValue]);
 
+  /**
+   * @todo 进入页面的时候获取应用类型列表
+   */
   useEffect(() => {
-    getAppTypeList((typeList: any[]) => {
+    getAppTypeList({}, (typeList: any[]) => {
       setAppTypeList(typeList);
     });
   }, []);
@@ -60,37 +75,64 @@ function Page(props: Props) {
   );
   const { submit, reset } = search;
 
+  /**
+   * @todo 跳转上传页面
+   */
   const onUpload = () => {
     history.push(`/application/manage-upload`);
   }
 
+  /**
+   * @todo 跳转详情页面
+   * @param item 
+   */
   const onDetail = (item: any) => {
     history.push(`/application/manage-detail?id=${item.id}`);
   }
 
-  const onDelete = (item: any) => {
+  /**
+   * @todo 跳转应用修改页面
+   * @param item 
+   */
+  const onEdit = (item: any) => {
+    history.push(`/application/manage-upload?id=${item.id}`);
+  }
+
+  /**
+   * @todo 跳转回收站列表页面
+   */
+  const onDelete = () => {
     history.push(`/application/manage-delete`);
   }
 
-  const onChange = (deptId: number) => {
+  /**
+   * @todo 监听选中机构id的改变
+   * @param deptId 
+   */
+  const onChangeDept = (deptId: number) => {
     setFormTreeValue(deptId);
   };
 
+  /**
+   * @todo 删除应用（将应用移入回收站）
+   * @param item 
+   */
   const onRemoveItem = async (item: any) => {
     const res = await appInfoRemove({ ids: item.id });
-    if (res.code === RESPONSE_CODE.success) {
-      notification.success({message: '应用已放入回收站'});
+    if (res && res.code === RESPONSE_CODE.success) {
+      notification.success({ message: '应用已放入回收站' });
       submit();
     } else {
-      notification.warn({message: res.msg || '删除应用失败'});
+      notification.warn({ message: res.msg || '删除应用失败' });
     }
   }
 
+  /**
+   * @todo 提交审核
+   */
   const onAuditSubmit = async () => {
-    console.log('test aaa', selectedRowKeys);
     try {
       invariant(selectedRowKeys.length > 0, '请选择记录');
-
       Modal.confirm({
         title: '提示',
         content: `确认要将选中的记录提交审核吗`,
@@ -101,7 +143,7 @@ function Page(props: Props) {
             id: selectedRowKeys[0],
           };
           const result = await appAuditSubmit(params);
-          if (result.code === RESPONSE_CODE.success) {
+          if (result && result.code === RESPONSE_CODE.success) {
             notification.success({
               message: '提交审核成功',
             });
@@ -117,23 +159,38 @@ function Page(props: Props) {
     }
   }
 
+  /**
+   * @todo 创建table的列
+   */
   const columns = createTableColumns([
     {
       title: '操作',
       render: (key, item) => (
         <Row style={{ alignItems: 'center' }}>
           <a onClick={() => onDetail(item)}>详情</a>
-          <Divider type="vertical" />
-          <a>修改</a>
-          <Divider type="vertical" />
-          <Popconfirm
-            title="是否确认删除？"
-            onConfirm={() => onRemoveItem(item)}
-            okText="是"
-            cancelText="否"
-          >
-            <a href="#">删除</a>
-          </Popconfirm>
+          {
+            item.status !== 4 && (
+              <>
+                <Divider type="vertical" />
+                <a onClick={() => onEdit(item)}>修改</a>
+              </>
+            )
+          }
+          {
+            item.status !== 4 && (
+              <>
+                <Divider type="vertical" />
+                <Popconfirm
+                  title="是否确认删除？"
+                  onConfirm={() => onRemoveItem(item)}
+                  okText="是"
+                  cancelText="否"
+                >
+                  <a href="#">删除</a>
+                </Popconfirm>
+              </>
+            )
+          }
         </Row>
       ),
       fixed: 'left',
@@ -141,12 +198,28 @@ function Page(props: Props) {
     },
     {
       title: '应用名称',
-      dataIndex: 'apkName',
+      align: 'center',
+      // dataIndex: 'apkName',
+      render: (key, item: any) => {
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <img src={item.iconPath} style={{ width: 50, height: 50 }} />
+            <div style={{ paddingTop: 5 }}>{item.apkName}</div>
+          </div>
+        )
+      }
+    },
+    {
+      title: '应用状态',
+      dataIndex: 'status',
+      dictType: 'app_status',
+      render: (item: any) => {
+        return <Tag color={getAppStatusColor(item)}>{item}</Tag>
+      }
     },
     {
       title: '应用分类',
       dataIndex: 'typeName',
-      // dictType: 'app_type',
     },
     {
       title: '应用包名',
@@ -178,39 +251,37 @@ function Page(props: Props) {
       dataIndex: 'terminalTypes',
     },
     {
-      title: '应用状态',
-      dataIndex: 'status',
-      dictType: 'app_status',
-    },
-    {
       title: '上传时间',
       dataIndex: 'createTime',
     },
   ]);
 
+  /**
+   * @todo table查询表单
+   */
   const forms: FormItem[] = [
     {
       span: 4,
       formName: 'deptId',
       formType: FormItmeType.TreeSelectCommon,
-      onChange: onChange,
+      onChange: onChangeDept,
     },
     {
       placeholder: '所属组别',
       formName: 'groupId',
       formType: FormItmeType.Select,
       selectData:
-        (terminalGroup &&
-          terminalGroup.map((item) => {
+        (terminalGroupList &&
+          terminalGroupList.map((item) => {
             return {
               value: `${item.id}`,
               title: `${item.remark}`,
             };
           })) ||
         [],
-      value: groupValue,
+      value: terminalGroupValue,
       onChange: (id: string) => {
-        setGroupValue(`${id}`);
+        setTerminalGroupValue(`${id}`);
       },
     },
     {
@@ -225,7 +296,7 @@ function Page(props: Props) {
     },
     {
       placeholder: '应用类别',
-      formName: 'appType',
+      formName: 'typeId',
       formType: FormItmeType.Select,
       selectData:
         (Array.isArray(appTypeList) &&
@@ -249,7 +320,7 @@ function Page(props: Props) {
   ];
 
   const extraButtons = [
-    { title: '上传', onClick: onUpload },
+    { title: '上传', onClick: onUpload, icon: <UploadOutlined /> },
     { title: '提交审核', onClick: onAuditSubmit, type: "primary" as any },
     { title: '回收站', onClick: onDelete, icon: <DeleteOutlined /> }
   ]
@@ -259,7 +330,6 @@ function Page(props: Props) {
     selectedRowKeys,
     onChange: setSelectedRowKeys,
   };
-  console.log('rowSelection:', rowSelection);
 
   return (
     <div>
@@ -272,7 +342,7 @@ function Page(props: Props) {
           extraButtons
         }}
       />
-      <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} scroll={{ x: 1600 }} />
+      <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} scroll={{ x: 2200 }} />
     </div>
   );
 }
