@@ -1,5 +1,13 @@
+/*
+ * @Author: centerm.gaozhiying 
+ * @Date: 2020-08-12 09:35:39 
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-08-12 10:12:26
+ * 
+ * @todo 应用审核列表
+ */
 import React, { useState, useEffect } from 'react';
-import { Form, Table, Row, Popconfirm, Modal, notification } from 'antd';
+import { Form, Table, Tag } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { getAppTypeList, appAuditList } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
@@ -8,7 +16,8 @@ import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
 import { IAppType } from '../types';
-import '@/index.css';
+import history from '@/common/history-util';
+import { getAppStatusColor } from '../common/util';
 
 type Props = {};
 
@@ -16,15 +25,18 @@ function Page(props: Props) {
   // 请求dept数据
   useStore(['app_status']);
   const initState = {
-    formTreeValue: -1,
-    appTypeList: [] as IAppType[],
-    appTypeValue: ''
+    formTreeValue: -1,              // 机构树选中的值
+    appTypeList: [] as IAppType[],  // 应用类型列表
+    appTypeValue: '',               // 应用类型选中的值
   };
   const [appTypeList, setAppTypeList] = useState(initState.appTypeList);
   const [appTypeValue, setAppTypeValue] = useState(initState.appTypeValue);
 
+  /**
+   * @todo 获取应用类型列表
+   */
   useEffect(() => {
-    getAppTypeList((typeList: any[]) => {
+    getAppTypeList({}, (typeList: any[]) => {
       setAppTypeList(typeList);
     });
   }, []);
@@ -40,27 +52,50 @@ function Page(props: Props) {
     }
   );
   const { submit, reset } = search;
-  const onAudit = async (item: any) => {
 
+  /**
+   * @todo 跳转到应用审核页面
+   * @param item 
+   */
+  const onAudit = (item: any) => {
+    history.push(`/application/review-review?id=${item.id}`);
   }
 
+  /**
+   * @todo 创建table的列
+   */
   const columns = createTableColumns([
     {
       title: '操作',
       render: (key, item) => (
-        <a href="#" onClick={() => onAudit(item)}>审核</a>
+        <a onClick={() => onAudit(item)}>审核</a>
       ),
       fixed: 'left',
       width: 60,
     },
     {
       title: '应用名称',
-      dataIndex: 'apkName',
+      align: 'center',
+      render: (key, item: any) => {
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <img src={item.iconPath} style={{ width: 50, height: 50 }} />
+            <div style={{ paddingTop: 5 }}>{item.apkName}</div>
+          </div>
+        )
+      }
+    },
+    {
+      title: '应用状态',
+      dataIndex: 'status',
+      dictType: 'app_status',
+      render: (item: any) => {
+        return <Tag color={getAppStatusColor(item)}>{item}</Tag>
+      }
     },
     {
       title: '应用分类',
       dataIndex: 'typeName',
-      // dictType: 'app_type',
     },
     {
       title: '应用包名',
@@ -92,16 +127,14 @@ function Page(props: Props) {
       dataIndex: 'terminalTypes',
     },
     {
-      title: '应用状态',
-      dataIndex: 'status',
-      dictType: 'app_status',
-    },
-    {
-      title: '上传时间',
-      dataIndex: 'createTime',
+      title: '申请时间',
+      dataIndex: 'updateTime',
     },
   ]);
 
+  /**
+   * @todo table查询表单
+   */
   const forms: FormItem[] = [
     {
       span: 4,
@@ -120,7 +153,7 @@ function Page(props: Props) {
     },
     {
       placeholder: '应用类别',
-      formName: 'appType',
+      formName: 'typeId',
       formType: FormItmeType.Select,
       selectData:
         (Array.isArray(appTypeList) &&
@@ -148,7 +181,7 @@ function Page(props: Props) {
           reset,
         }}
       />
-      <Table rowKey="id" columns={columns}  {...tableProps} scroll={{ x: 1600 }} />
+      <Table rowKey="id" columns={columns}  {...tableProps} scroll={{ x: 2200 }} />
     </div>
   );
 }

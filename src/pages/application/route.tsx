@@ -1,9 +1,9 @@
 /**
- * 终端模块路由配置
+ * 应用模块路由配置
  * @Author: Ghan
  * @Date: 2020-07-20 17:28:31
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-03 16:35:14
+ * @Last Modified time: 2020-08-12 09:38:35
  */
 
 import { AppstoreAddOutlined } from '@ant-design/icons';
@@ -13,7 +13,9 @@ import Applicationupload from '@/pages/application/manage/upload';
 import Applicationdelete from '@/pages/application/manage/delete';
 import Applicationdetail from '@/pages/application/manage/detail';
 import Applicationpublish from '@/pages/application/publish';
+import ApplicationPublishForm from '@/pages/application/publish/publish';
 import Applicationreview from '@/pages/application/review';
+import ApplicationReviewForm from '@/pages/application/review/review';
 import Applicationtype from '@/pages/application/type';
 
 export const ApplicationMenu = {
@@ -58,10 +60,24 @@ const routerConfig: any[] = [
     exact: true
   },
   {
+    path: '/application/publish-publish',
+    name: '应用发布表单',
+    component: ApplicationPublishForm,
+    exact: true,
+    inMenu: false,
+  },
+  {
     path: '/application/review',
     name: '应用审核',
     component: Applicationreview,
     exact: true
+  },
+  {
+    path: '/application/review-review',
+    name: '应用审核表单',
+    component: ApplicationReviewForm,
+    exact: true,
+    inMenu: false,
   },
   {
     path: '/application/type',
@@ -69,7 +85,7 @@ const routerConfig: any[] = [
     component: Applicationtype,
     exact: true
   },
-  
+
 ];
 
 export default routerConfig;

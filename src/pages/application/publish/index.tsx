@@ -1,7 +1,15 @@
+/*
+ * @Author: centerm.gaozhiying 
+ * @Date: 2020-08-12 09:27:59 
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-08-12 10:12:18
+ * 
+ * @todo 应用发布列表页面
+ */
 import React, { useState, useEffect } from 'react';
-import { Form, Table, Row, Popconfirm, Modal, notification, Divider } from 'antd';
+import { Form, Table, Row, Popconfirm, notification, Divider, Tag } from 'antd';
 import { useAntdTable } from 'ahooks';
-import { appInfoList, getAppTypeList, appInfoRemove, appAuditSubmit, appPublishList, appShelve } from '../constants/api';
+import { getAppTypeList, appPublishList, appShelve } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
@@ -10,11 +18,9 @@ import { createTableColumns } from '@/component/table';
 import history from '@/common/history-util';
 import { ITerminalGroupByDeptId } from '@/pages/terminal/message/types';
 import { terminalGroupListByDept } from '@/pages/terminal/message/constants/api';
-import { DeleteOutlined } from '@ant-design/icons';
 import { IAppType } from '../types';
-import '@/index.css';
 import { RESPONSE_CODE } from '@/common/config';
-import invariant from 'invariant';
+import { getAppStatusColor } from '../common/util';
 
 type Props = {};
 
@@ -22,11 +28,11 @@ function Page(props: Props) {
   // 请求dept数据
   useStore(['app_status']);
   const initState = {
-    terminalGroup: [] as ITerminalGroupByDeptId[],
-    groupValue: '',
-    formTreeValue: -1,
-    appTypeList: [] as IAppType[],
-    appTypeValue: ''
+    terminalGroup: [] as ITerminalGroupByDeptId[],  // 终端组别
+    groupValue: '',                                 // 终端组别选中值
+    formTreeValue: -1,                              // 机构树选中值
+    appTypeList: [] as IAppType[],                  // 应用类型列表
+    appTypeValue: ''                                // 应用类型选中值
   };
   const [terminalGroup, setTerminalGroup] = useState(initState.terminalGroup);
   const [groupValue, setGroupValue] = useState(initState.groupValue);
@@ -34,6 +40,9 @@ function Page(props: Props) {
   const [appTypeList, setAppTypeList] = useState(initState.appTypeList);
   const [appTypeValue, setAppTypeValue] = useState(initState.appTypeValue);
 
+  /**
+   * @todo 根据机构id获取终端组别
+   */
   useEffect(() => {
     terminalGroupListByDept(formTreeValue, (groupData) => {
       setTerminalGroup(groupData);
@@ -41,8 +50,11 @@ function Page(props: Props) {
     });
   }, [formTreeValue]);
 
+  /**
+   * @todo 获取应用类型列表
+   */
   useEffect(() => {
-    getAppTypeList((typeList: any[]) => {
+    getAppTypeList({}, (typeList: any[]) => {
       setAppTypeList(typeList);
     });
   }, []);
@@ -59,32 +71,41 @@ function Page(props: Props) {
   );
   const { submit, reset } = search;
 
+  /**
+   * @todo 跳转到应用详情页
+   * @param item 
+   */
   const onDetail = (item: any) => {
     history.push(`/application/manage-detail?id=${item.id}`);
   }
 
+  /**
+   * @todo 监听机构表单的改变
+   */
   const onChange = (deptId: number) => {
     setFormTreeValue(deptId);
   };
 
+  /**
+   * @todo 下架应用
+   * @param item 
+   */
   const onUnshelveItem = async (item: any) => {
-    const res = await appShelve({ ids: item.id });
-    if (res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '应用已放入回收站' });
+    const res = await appShelve({ appId: item.id, isOnShelves: false });
+    if (res && res.code === RESPONSE_CODE.success) {
+      notification.success({ message: '应用已下架' });
       submit();
     } else {
-      notification.warn({ message: res.msg || '删除应用失败' });
+      notification.warn({ message: res.msg || '下架应用失败' });
     }
   }
 
-  const onShelve = async (item: any) => {
-    const res = await appInfoRemove({ ids: item.id });
-    if (res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '应用已放入回收站' });
-      submit();
-    } else {
-      notification.warn({ message: res.msg || '删除应用失败' });
-    }
+  /**
+   * @todo 跳转到发布应用的页面
+   * @param item 
+   */
+  const onPublish = (item: any) => {
+    history.push(`/application/publish-publish?id=${item.id}`);
   }
 
   const columns = createTableColumns([
@@ -93,15 +114,29 @@ function Page(props: Props) {
       render: (key, item) => (
         <Row style={{ alignItems: 'center' }}>
           <a onClick={() => onDetail(item)}>详情</a>
-          <Divider type="vertical" />
-          <Popconfirm
-            title="是否确认下架？"
-            onConfirm={() => onUnshelveItem(item)}
-            okText="是"
-            cancelText="否"
-          >
-            <a href="#">下架</a>
-          </Popconfirm>
+          {
+            (item.status === 2 || item.status === 5) && (
+              <>
+                <Divider type="vertical" />
+                <a onClick={() => onPublish(item)}>发布</a>
+              </>
+            )
+          }
+          {
+            item.status === 4 && (
+              <>
+                <Divider type="vertical" />
+                <Popconfirm
+                  title="是否确认下架？"
+                  onConfirm={() => onUnshelveItem(item)}
+                  okText="是"
+                  cancelText="否"
+                >
+                  <a href="#">下架</a>
+                </Popconfirm>
+              </>
+            )
+          }
         </Row>
       ),
       fixed: 'left',
@@ -109,12 +144,27 @@ function Page(props: Props) {
     },
     {
       title: '应用名称',
-      dataIndex: 'apkName',
+      align: 'center',
+      render: (key, item: any) => {
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <img src={item.iconPath} style={{ width: 50, height: 50 }} />
+            <div style={{ paddingTop: 5 }}>{item.apkName}</div>
+          </div>
+        )
+      }
+    },
+    {
+      title: '应用状态',
+      dataIndex: 'status',
+      dictType: 'app_status',
+      render: (item: any) => {
+        return <Tag color={getAppStatusColor(item)}>{item}</Tag>
+      }
     },
     {
       title: '应用分类',
       dataIndex: 'typeName',
-      // dictType: 'app_type',
     },
     {
       title: '应用包名',
@@ -146,13 +196,8 @@ function Page(props: Props) {
       dataIndex: 'terminalTypes',
     },
     {
-      title: '应用状态',
-      dataIndex: 'status',
-      dictType: 'app_status',
-    },
-    {
-      title: '上传时间',
-      dataIndex: 'createTime',
+      title: '发布时间',
+      dataIndex: 'updateTime',
     },
   ]);
 
@@ -193,7 +238,7 @@ function Page(props: Props) {
     },
     {
       placeholder: '应用类别',
-      formName: 'appType',
+      formName: 'typeId',
       formType: FormItmeType.Select,
       selectData:
         (Array.isArray(appTypeList) &&
@@ -222,7 +267,7 @@ function Page(props: Props) {
           reset,
         }}
       />
-      <Table rowKey="id" columns={columns}  {...tableProps} scroll={{ x: 1600 }} />
+      <Table rowKey="id" columns={columns}  {...tableProps} scroll={{ x: 2200 }} />
     </div>
   );
 }

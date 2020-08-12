@@ -4,7 +4,7 @@ import { useSelectorHook } from '@/common/redux-util';
  * table属性渲染helper
  */
 
-export function UseDictRenderHelper(data: string, dictType: string) {
+export function UseDictRenderHelper(data: string, dictType: string, render?: any) {
   /**
    * dictList 字典数据
    */
@@ -16,7 +16,11 @@ export function UseDictRenderHelper(data: string, dictType: string) {
     targetDict.data &&
     targetDict.data.find((dictItem) => dictItem.dictValue === String(data));
   if (targetDictItem) {
-    return <span>{targetDictItem.dictLabel}</span>;
+    if (render) {
+      return render(targetDictItem.dictLabel);
+    }
+
+    return <span>{targetDictItem.dictLabel || '-'}</span>;
   }
   return <span>--</span>;
 }
