@@ -20,5 +20,9 @@ export const RESPONSE_CODE = {
 export const BASIC_CONFIG = {
   BASE_URL,
   RESPONSE_CODE,
-  SOURCE_URL
+  SOURCE_URL,
+};
+
+export const getDownloadPath = (filename: string): string => {
+  return `${BASE_URL}/cpay-admin/tmp/download?fileName=${filename}`;
 };

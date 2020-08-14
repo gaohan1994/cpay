@@ -7,6 +7,7 @@ import ApiRequest from '@/common/request-util';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { ITerminalListField, ITerminalGroupByDeptId } from '../types';
 import { RESPONSE_CODE } from '@/common/config';
+import { result } from 'lodash';
 
 export const getTableData = (
   { current, pageSize }: any,
@@ -36,7 +37,6 @@ export const merchantQueryBocoms = (
 };
 
 export const terminalInfoList = (
-  paginatedParams: PaginatedParams,
   tableProps: ITerminalListField
 ) =>
   ApiRequest.get(
@@ -55,5 +55,14 @@ export const terminalGroupListByDept = async (
     `/cpay-admin/terminal/group/listByDept${jsonToQueryString({ deptId })}`
   );
   callback && result.code === RESPONSE_CODE.success && callback(result.data);
+  return result;
+};
+
+/**
+ * 导出终端信息列表
+ * @param params
+ */
+export const terminalInfoExport = async (params?: any) => {
+  const result = await ApiRequest.post(`terminal/info/export`, params);
   return result;
 };

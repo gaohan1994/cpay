@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Table } from 'antd';
+import { Form, Table, notification, Modal } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { ImportOutlined, LogoutOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd/lib/button';
-import { terminalInfoList, terminalGroupListByDept } from './constants/api';
-import { formatListResult } from '@/common/request-util';
+import {
+  terminalInfoList,
+  terminalGroupListByDept,
+  terminalInfoExport,
+} from './constants/api';
+import { formatListResult, formatPaginate } from '@/common/request-util';
+import invariant from 'invariant';
 import { createTableColumns } from '@/component/table';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import Forms from '@/component/form';
@@ -16,6 +21,7 @@ import {
   terminalFirmList as getTerminalFirmList,
   terminalTypeListByFirm as getTerminalTypeListByFirm,
 } from '../constants';
+import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
 
 export default () => {
   useStore([
@@ -55,8 +61,11 @@ export default () => {
   const [form] = Form.useForm();
 
   const { tableProps, search }: any = useAntdTable(
-    (paginatedParams: PaginatedParams, tableProps: any) => {
-      return terminalInfoList(paginatedParams, tableProps);
+    (paginatedParams: PaginatedParams[0], tableProps: any) => {
+      return terminalInfoList({
+        ...formatPaginate(paginatedParams),
+        ...tableProps,
+      });
     },
     {
       form,
@@ -78,8 +87,27 @@ export default () => {
       });
     });
   };
-
   const { submit, reset } = search;
+
+  const onExport = () => {
+    Modal.confirm({
+      title: '确认要导出终端信息？',
+      onOk: async () => {
+        try {
+          const result = await terminalInfoExport();
+          invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
+
+          const href = getDownloadPath(result.data);
+          window.open(href, '_blank');
+          notification.success({ message: '导出成功' });
+        } catch (error) {
+          notification.warn({ message: error.message });
+        }
+      },
+      okText: '确定',
+      cancelText: '取消',
+    });
+  };
 
   const forms: FormItem[] = [
     {
@@ -253,11 +281,12 @@ export default () => {
       title: '导出',
       icon: <LogoutOutlined />,
       type: 'primary',
+      onClick: onExport,
     },
-    {
-      title: '高级查询',
-      type: 'primary',
-    },
+    // {
+    //   title: '高级查询',
+    //   type: 'primary',
+    // },
   ];
 
   return (

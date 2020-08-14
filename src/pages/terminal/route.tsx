@@ -91,13 +91,13 @@ const routerConfig: any[] = [
   //   component: Terminalmerchant,
   //   exact: true
   // },
-  {
-    // 终端高级查询
-    name: '终端高级查询',
-    path: '/terminal/query',
-    component: Terminalquery,
-    exact: true,
-  },
+  // {
+  //   // 终端高级查询
+  //   name: '终端高级查询',
+  //   path: '/terminal/query',
+  //   component: Terminalquery,
+  //   exact: true,
+  // },
 ];
 
 export default routerConfig;

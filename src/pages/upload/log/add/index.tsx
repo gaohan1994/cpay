@@ -66,7 +66,7 @@ function Page() {
   const [addForm] = Form.useForm();
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) =>
-      terminalInfoList({} as any, { firmId: terminalFirmValue, terminalTypeCodes: checkedList.join(','), pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
+      terminalInfoList({ firmId: terminalFirmValue, terminalTypeCodes: checkedList.join(','), pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
     {
       form,
       formatResult: formatListResult,
