@@ -19,6 +19,8 @@ import { ACTION_TYPES_APP } from '../../reducers';
 type Props = {
   uploadRef: any;
   maxSize?: string;
+  renderRequire?: () => any;
+  renderButton?: () => any;
 }
 
 type State = {
@@ -155,13 +157,19 @@ function UploadApp(props: Props) {
     <div style={{ display: 'flex', flex: 1, flexDirection: 'column', marginLeft: 10 }}>
       <div style={{ display: 'flex', flex: 1, flexDirection: 'row', alignItems: 'center' }}>
         <Upload {...uploadProps} showUploadList={false}>
-          <Button style={{ width: 120 }}>
-            <UploadOutlined /> 上传应用包
-          </Button>
+          {
+            props.renderButton
+              ? props.renderButton()
+              : (
+                <Button style={{ width: 120 }}>
+                  <UploadOutlined /> 上传应用包
+                </Button>
+              )
+          }
         </Upload>
-        <div style={{ marginLeft: 10, whiteSpace: 'nowrap' }}>
-          (请上传不超过100M的APK)
-        </div>
+        {
+          props.renderRequire && props.renderRequire()
+        }
       </div >
       {
         showProgress && (

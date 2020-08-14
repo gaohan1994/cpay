@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-12 09:24:53 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 10:57:07
+ * @Last Modified time: 2020-08-12 11:18:48
  * 
  * @todo 应用发布页面
  */
@@ -227,6 +227,7 @@ function Page() {
           name="advanced_search"
           className="ant-advanced-search-form"
           {...formLayout}
+          style={{ backgroundColor: 'white' }}
         >
           {
             detailArr.length > 0 && detailArr.map((item: any) => {

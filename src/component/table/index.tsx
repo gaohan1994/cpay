@@ -35,7 +35,7 @@ export function createTableColumns(columnsConfig: ColumnConfigItem[]) {
     if (!item.render && !dictType && dataIndex && typeof dataIndex === 'string') {
       useDict = {
         render: (key: any, item: any) => {
-          return (item[dataIndex] || '--')
+          return (item[dataIndex] || typeof item[dataIndex] === 'number' ? item[dataIndex] : '--')
         }
       }
     }

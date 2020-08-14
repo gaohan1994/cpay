@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-10 14:45:02 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 10:38:40
+ * @Last Modified time: 2020-08-12 11:30:01
  * 
  * @todo 应用类型页面
  */
@@ -144,9 +144,9 @@ function Page(props: Props) {
       modalForm.setFieldsValue({
         typeCode: item.typeCode,
         typeName: item.typeName,
-        typeIcon: item.iconPath.replace(BASIC_CONFIG.SOURCE_URL, ''),
+        typeIcon: item.iconPath.replace(`${BASIC_CONFIG.SOURCE_URL}/`, ''),
       });
-      setImageUrl(item.iconPath.replace(BASIC_CONFIG.SOURCE_URL, ''));
+      setImageUrl(item.iconPath.replace(`${BASIC_CONFIG.SOURCE_URL}/`, ''));
     }
     setModalVisible(true);
   };
@@ -198,10 +198,10 @@ function Page(props: Props) {
    * @todo 关闭弹窗的时候调用，清空当前修改项、清空modal里的表单、关闭弹窗
    */
   const handleCancel = () => {
+    setModalVisible(false);
     setEditItem({} as IAppType);
     modalForm.resetFields();
     setImageUrl('');
-    setModalVisible(false);
   };
 
   /**
