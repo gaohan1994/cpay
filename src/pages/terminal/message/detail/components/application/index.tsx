@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAntdTable } from 'ahooks';
 import { ITerminalSystemDetailInfo } from '../../types';
-import { Descriptions, Row, Col, Table, Form } from 'antd';
-import { merge } from 'lodash';
+import { Table, Form } from 'antd';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
-import Application from '../application';
 import { terminalAppList } from '@/pages/terminal/application/constants';
-import { formatListResult, formatPaginate } from '@/common/request-util';
+import { formatListResult } from '@/common/request-util';
 import { createTableColumns } from '@/component/table';
 
 type Props = {
@@ -19,22 +17,22 @@ export default (props: Props) => {
   const forms: FormItem[] = [
     {
       placeholder: '应用包名',
-      formName: '',
+      formName: 'appCode',
       formType: FormItmeType.Normal,
     },
     {
       placeholder: '应用名称',
-      formName: '',
+      formName: 'appName',
       formType: FormItmeType.Normal,
     },
     {
       placeholder: '应用版本',
-      formName: '',
+      formName: 'versionCode',
       formType: FormItmeType.Normal,
     },
     {
-      placeholder: '内部版本',
-      formName: '',
+      placeholder: '外部版本',
+      formName: 'versionName',
       formType: FormItmeType.Normal,
     },
   ];

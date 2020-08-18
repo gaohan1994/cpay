@@ -9,9 +9,8 @@ export const terminalFlowList = async (
   params: FetchField.TerminalFlowList,
   callback?: (data: IResponseListResult<FlowItem>) => void
 ): Promise<IResponseListResult<FlowItem>> => {
-  const result = await ApiRequest.post(
-    `/cpay-admin/terminal/flow/list`,
-    params
+  const result = await ApiRequest.get(
+    `/cpay-admin/terminal/flow/list${jsonToQueryString(params)}`
   );
   callback && callback(result);
   return result;

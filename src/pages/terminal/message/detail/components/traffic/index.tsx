@@ -19,7 +19,6 @@ export default (props: Props) => {
   const { terminalDetailInfo } = props;
 
   const [form] = Form.useForm();
-
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) => {
       return terminalFlowList({
@@ -29,6 +28,11 @@ export default (props: Props) => {
           (terminalDetailInfo.terminalInfo &&
             terminalDetailInfo.terminalInfo.tusn) ||
           '',
+        recordMonth: `${new Date().getFullYear()}${
+          new Date().getMonth() >= 9
+            ? new Date().getMonth() + 1
+            : `0${new Date().getMonth() + 1}`
+        }`,
       });
     },
     {
@@ -39,26 +43,16 @@ export default (props: Props) => {
   const { submit, reset } = search;
 
   const forms: FormItem[] = [
-    {
-      formType: FormItmeType.DatePicker,
-      formName: '',
-      placeholder: '开始日期',
-    },
-    {
-      formType: FormItmeType.DatePicker,
-      formName: '',
-      placeholder: '结束日期',
-    },
-    {
-      placeholder: '最小流量',
-      formName: '',
-      formType: FormItmeType.Normal,
-    },
-    {
-      placeholder: '最大流量',
-      formName: '',
-      formType: FormItmeType.Normal,
-    },
+    // {
+    //   placeholder: '最小流量',
+    //   formName: '',
+    //   formType: FormItmeType.Normal,
+    // },
+    // {
+    //   placeholder: '最大流量',
+    //   formName: '',
+    //   formType: FormItmeType.Normal,
+    // },
   ];
 
   const columns = createTableColumns([
@@ -107,7 +101,7 @@ export default (props: Props) => {
   ];
   return (
     <div>
-      <Forms
+      {/* <Forms
         forms={forms}
         form={form}
         formButtonProps={{
@@ -115,8 +109,8 @@ export default (props: Props) => {
           submit,
           extraButtons,
         }}
-      />
-      <div>总计（移动流量）：0MB</div>
+      /> */}
+      <div style={{ margin: 12, marginTop: 0 }}>总计（移动流量）：0MB</div>
       <Table columns={columns} {...tableProps} />
     </div>
   );
