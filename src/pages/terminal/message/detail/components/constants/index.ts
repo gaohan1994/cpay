@@ -1,6 +1,6 @@
 import ApiRequest, { jsonToQueryString } from '@/common/request-util';
 import { FlowItem, ITerminalPower, FetchField } from '../types';
-import { IResponseListResult } from '@/common/type';
+import { IResponseListResult, IResponseResult } from '@/common/type';
 
 /**
  * 查询终端流量（月统计）列表
@@ -11,6 +11,21 @@ export const terminalFlowList = async (
 ): Promise<IResponseListResult<FlowItem>> => {
   const result = await ApiRequest.post(
     `/cpay-admin/terminal/flow/list`,
+    params
+  );
+  callback && callback(result);
+  return result;
+};
+
+/**
+ * 查询终端流量（月统计）列表
+ */
+export const terminalFlowExport = async (
+  params: FetchField.TerminalFlowList,
+  callback?: (data: IResponseResult<any>) => void
+): Promise<IResponseResult<any>> => {
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/flow/export`,
     params
   );
   callback && callback(result);

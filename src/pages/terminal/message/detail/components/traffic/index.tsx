@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { useAntdTable } from 'ahooks';
+import { LogoutOutlined } from '@ant-design/icons';
 import { ITerminalSystemDetailInfo } from '../../types';
-import { Descriptions, Row, Col, Table, Form } from 'antd';
-
+import { Table, Form, Modal, notification } from 'antd';
+import invariant from 'invariant';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
-import { terminalFlowList } from '../constants';
+import { terminalFlowList, terminalFlowExport } from '../constants';
 import { formatListResult } from '@/common/request-util';
 import { createTableColumns } from '@/component/table';
+import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
 
 type Props = {
   terminalDetailInfo: ITerminalSystemDetailInfo;
@@ -38,6 +40,16 @@ export default (props: Props) => {
 
   const forms: FormItem[] = [
     {
+      formType: FormItmeType.DatePicker,
+      formName: '',
+      placeholder: '开始日期',
+    },
+    {
+      formType: FormItmeType.DatePicker,
+      formName: '',
+      placeholder: '结束日期',
+    },
+    {
       placeholder: '最小流量',
       formName: '',
       formType: FormItmeType.Normal,
@@ -61,7 +73,28 @@ export default (props: Props) => {
   ]);
 
   const exportList = () => {
-    console.log('exportList');
+    Modal.confirm({
+      title: '确认要导出终端流量信息？',
+      onOk: async () => {
+        try {
+          const result = await terminalFlowExport({
+            tusn:
+              (terminalDetailInfo.terminalInfo &&
+                terminalDetailInfo.terminalInfo.tusn) ||
+              '',
+          } as any);
+          invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
+
+          const href = getDownloadPath(result.data);
+          window.open(href, '_blank');
+          notification.success({ message: '导出成功' });
+        } catch (error) {
+          notification.warn({ message: error.message });
+        }
+      },
+      okText: '确定',
+      cancelText: '取消',
+    });
   };
 
   const extraButtons: any[] = [
@@ -69,6 +102,7 @@ export default (props: Props) => {
       title: '流量信息导出',
       type: 'primary',
       onClick: exportList,
+      icon: <LogoutOutlined />,
     },
   ];
   return (

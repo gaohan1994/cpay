@@ -157,9 +157,10 @@ export interface IComponentFormCascader extends FormBaseProps, CascaderProps {
  * @interface IComponentFormDatePicker
  * @extends {FormBaseProps}
  */
-export interface IComponentFormDatePicker extends FormBaseProps {
+export type IComponentFormDatePicker = {
   formType: FormItmeType.DatePicker;
-}
+} & FormBaseProps &
+  DatePickerProps;
 
 export function isDatePickerForm(
   data: FormItem
