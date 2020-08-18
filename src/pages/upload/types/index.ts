@@ -81,3 +81,29 @@ export interface ISoftVersionInfo {
   versionCode: string;
   versionName: string;
 }
+
+/** 终端上传任务详情 */
+export interface TaskUploadJobDetail {
+  appCode: string;  // 应用编号
+  createBy: string;  // 创建人
+  createTime: string; // 创建时间
+  deptCode: string; // 机构号
+  deptId: number; // 机构ID
+  deptName: string; // 机构名称
+  firmId: number; // 厂商id
+  firmName: string; // 厂商名称
+  id: number; // 主键id
+  jobName: string;  // 任务名称
+  logBeginTime: string; // 日志开始时间
+  logEndTime: string; // 日志结束时间
+  remark: string; // 备注
+  status: number;  // 状态
+  terminalType: string; // 终端型号
+  tusns: string;  // 终端集合
+  type: string; // 类型
+  updateBy: string; // 更新人
+  updateTime: string; // 更新时间
+  userId: number; // 
+  validEndTime: string; // 有效截止日期
+  validStartTime: string; // 有效起始日期
+}

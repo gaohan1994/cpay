@@ -65,11 +65,11 @@ export const getDeptTreeData = async (
 ): Promise<GetDeptTreeDataCallback> => {
   const data: any = await ApiRequset.get(`/cpay-admin/system/dept/treeData`);
   const treeData =
-    (data.code === RESPONSE_CODE.success && formatDeptTreeData(data.data)) ||
+    (data && data.code === RESPONSE_CODE.success && formatDeptTreeData(data.data)) ||
     [];
 
-  callback && callback([data.data || [], treeData]);
-  return [data.data || [], treeData];
+  callback && callback([data && data.data || [], treeData]);
+  return [data && data.data || [], treeData];
 };
 
 /**
@@ -85,7 +85,7 @@ export const getDictList = async (
   const result = await ApiRequset.get(
     `/cpay-admin/system/dict/list${jsonToQueryString({ dictType })}`
   );
-  callback && callback((result.data && result.data.rows) || []);
+  callback && callback((result && result.data && result.data.rows) || []);
   return result;
 };
 

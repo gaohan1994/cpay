@@ -95,10 +95,6 @@ function Page(props: Props) {
       fixed: 'left',
       width: 150,
     },
-    // {
-    //   title: '软件名称',
-    //   dataIndex: 'appName',
-    // },
     {
       title: '软件名称',
       align: 'center',
@@ -106,7 +102,11 @@ function Page(props: Props) {
       render: (key, item: any) => {
         return (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <img src={item.iconPath} style={{ width: 50, height: 50 }} />
+            {
+              item.iconPath && (
+                <img src={item.iconPath} style={{ width: 50, height: 50 }} />
+              )
+            }
             <div style={{ paddingTop: 5 }}>{item.appName}</div>
           </div>
         )

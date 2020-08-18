@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-13 10:49:40 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-13 11:25:07
+ * @Last Modified time: 2020-08-17 16:28:24
  * 
  * @todo 日志提取列表
  */
@@ -15,7 +15,7 @@ import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
 import history from '@/common/history-util';
-import { softInfoRemove, taskUploadJobList } from '../constants/api';
+import { softInfoRemove, taskUploadJobList, taskUploadJobRemove, taskUploadJobPublish } from '../constants/api';
 import { PlusOutlined, CloseOutlined, BarsOutlined, CheckOutlined } from '@ant-design/icons';
 import { useRedux } from '@/common/redux-util';
 import { RESPONSE_CODE } from '@/common/config';
@@ -28,6 +28,7 @@ function Page(props: Props) {
   const [useSelector, dispatch] = useRedux();
 
   const [form] = Form.useForm();
+  const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);  // 选中的列的key值列表
 
 
   const { tableProps, search }: any = useAntdTable(
@@ -49,19 +50,81 @@ function Page(props: Props) {
   }
 
   /**
+   * @todo 跳转到编辑页面
+   * @param item 
+   */
+  const onEdit = (item: any) => {
+    history.push(`/upload/log-add?id=${item.id}`);
+  }
+
+  /**
+   * @todo 单项删除
+   * @param item 
+   */
+  const onRemoveItem = async (item: any) => {
+    const param = {
+      ids: item.id
+    }
+    const res = await taskUploadJobRemove(param);
+    if (res && res.code === RESPONSE_CODE.success) {
+      notification.success({ message: '删除任务成功' });
+      submit();
+    } else {
+      notification.error({ message: res && res.msg || '删除任务失败，请重试' });
+    }
+  }
+
+  /**
    * @todo 批量删除
    */
   const onRemoveBatch = async () => {
-    // const param = {
-    //   ids: item.id
-    // }
-    // const res = await softInfoRemove(param);
-    // if (res && res.code === RESPONSE_CODE.success) {
-    //   notification.success({ message: '删除软件信息成功' });
-    //   submit();
-    // } else {
-    //   notification.error({ message: res && res.msg || '删除软件信息失败，请重试' });
-    // }
+    if (selectedRowKeys.length === 0) {
+      notification.error({ message: "请选择任务" });
+      return;
+    }
+    const param = {
+      ids: selectedRowKeys.join(',')
+    }
+    const res = await taskUploadJobRemove(param);
+    if (res && res.code === RESPONSE_CODE.success) {
+      notification.success({ message: '删除任务成功' });
+      submit();
+    } else {
+      notification.error({ message: res && res.msg || '删除任务失败，请重试' });
+    }
+  }
+
+  /**
+   * @todo 执行任务
+   */
+  const onPublish = async () => {
+    if (selectedRowKeys.length === 0) {
+      notification.error({ message: "请选择任务" });
+      return;
+    }
+    if (selectedRowKeys.length > 1) {
+      notification.error({ message: "请选择一条任务" });
+      return;
+    }
+    const res = await taskUploadJobPublish(selectedRowKeys[0]);
+    if (res && res.code === RESPONSE_CODE.success) {
+      notification.success({ message: '执行任务成功' });
+      submit();
+    } else {
+      notification.error({ message: res && res.msg || '执行任务失败，请重试' });
+    }
+  }
+
+  const onOperationDetail = () => {
+    if (selectedRowKeys.length === 0) {
+      notification.error({ message: "请选择任务" });
+      return;
+    }
+    if (selectedRowKeys.length > 1) {
+      notification.error({ message: "请选择一条任务" });
+      return;
+    }
+    history.push(`/upload/log-operation?id=${selectedRowKeys[0]}`);
   }
 
   /**
@@ -73,10 +136,33 @@ function Page(props: Props) {
       render: (key, item) => (
         <div>
           <a onClick={() => onDetail(item)}>详情</a>
+          {
+            item.status === 0 && (
+              <>
+                <Divider type="vertical" />
+                <a onClick={() => onEdit(item)}>修改</a>
+              </>
+            )
+          }
+          {
+            item.status === 0 && (
+              <>
+                <Divider type="vertical" />
+                <Popconfirm
+                  title="是否确认删除？"
+                  onConfirm={() => onRemoveItem(item)}
+                  okText="是"
+                  cancelText="否"
+                >
+                  <a>删除</a>
+                </Popconfirm>
+              </>
+            )
+          }
         </div>
       ),
       fixed: 'left',
-      width: 60,
+      width: 150,
     },
     {
       title: '任务名称',
@@ -122,9 +208,14 @@ function Page(props: Props) {
   const extraButtons = [
     { title: '新增', onClick: onAdd, icon: <PlusOutlined />, type: "primary" as any, },
     { title: '批量删除', onClick: onRemoveBatch, icon: <CloseOutlined /> },
-    { title: '执行情况查询', onClick: onRemoveBatch, icon: <BarsOutlined /> },
-    { title: '执行任务', onClick: onRemoveBatch, icon: <CheckOutlined />, type: "primary" as any,  },
+    { title: '执行情况查询', onClick: onOperationDetail, icon: <BarsOutlined /> },
+    { title: '执行任务', onClick: onPublish, icon: <CheckOutlined />, type: "primary" as any, },
   ]
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: setSelectedRowKeys,
+  };
 
   return (
     <div>
@@ -137,7 +228,7 @@ function Page(props: Props) {
           extraButtons
         }}
       />
-      <Table rowKey="id" columns={columns}  {...tableProps} />
+      <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} />
     </div>
   );
 }

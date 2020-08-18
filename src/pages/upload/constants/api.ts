@@ -88,8 +88,63 @@ export const taskUploadJobList = (params: any) =>
   ApiRequest.get(`/cpay-admin/task/uploadJob/list${jsonToQueryString(params)}`);
 
 /**
+* @todo 查询终端上传任务详情(日志提取详情)
+* @param id 
+*/
+export const taskUploadJobDetail = async (
+  id: number,
+  callback?: (params: any) => void
+): Promise<any> => {
+  const result = await ApiRequest.get(`/cpay-admin/task/uploadJob/detail/${id}`);
+  callback && callback(result);
+  return result;
+};
+
+/**
 * @todo 添加终端上传任务(日志提取新增)
 * @param params 
 */
 export const taskUploadJobAdd = (params: any) =>
   ApiRequest.post(`/cpay-admin/task/uploadJob/add`, params);
+
+/**
+* @todo 修改终端上传任务(日志提取修改)
+* @param params 
+*/
+export const taskUploadJobEdit = (params: any) =>
+  ApiRequest.post(`/cpay-admin/task/uploadJob/edit`, params);
+
+/**
+* @todo 删除终端上传任务删除（日志提取删除）
+* @param params
+*/
+export const taskUploadJobRemove = (params: { ids: string }) =>
+  ApiRequest.post(`/cpay-admin/task/uploadJob/remove`, params);
+
+/**
+* @todo 删除终端上传任务发布（日志提取执行任务）
+* @param params
+*/
+export const taskUploadJobPublish = (id: number) =>
+  ApiRequest.post(`/cpay-admin/task/uploadJob/publish/${id}`, {});
+
+/**
+ * @todo 查询终端上传任务列表(日志提取)
+ * @param params 
+ */
+export const taskUploadTaskList = (params: any) =>
+  ApiRequest.get(`/cpay-admin/task/uploadTask/list${jsonToQueryString(params)}`);
+
+/**
+* @todo 重置终端上传任务
+* @param params
+*/
+export const taskUploadTaskReset = (params: { ids: string }) =>
+  ApiRequest.post(`/cpay-admin/task/uploadTask/reset`, params);
+
+/**
+* @todo 取消终端上传任务
+* @param params
+*/
+export const taskUploadTaskCancel = (params: { ids: string }) =>
+  ApiRequest.post(`/cpay-admin/task/uploadTask/cancel`, params);

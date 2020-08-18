@@ -3,7 +3,7 @@
  * @Author: Ghan
  * @Date: 2020-07-20 17:28:31
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-13 11:38:38
+ * @Last Modified time: 2020-08-17 16:27:22
  */
 
 import { AppstoreAddOutlined } from '@ant-design/icons';
@@ -17,6 +17,7 @@ import Uploadupload from '@/pages/upload/upload';
 import Uploadlog from '@/pages/upload/log';
 import UploadLogDetail from '@/pages/upload/log/detail';
 import UploadLogAdd from '@/pages/upload/log/add';
+import UploadLogOperation from '@/pages/upload/log/operation';
 
 export const UploadMenu = {
   name: '远程更新',
@@ -88,6 +89,13 @@ const routerConfig: any[] = [
     path: '/upload/log-add',
     name: '终端日志提取新增',
     component: UploadLogAdd,
+    exact: true,
+    inMenu: false,
+  },
+  {
+    path: '/upload/log-operation',
+    name: '终端日志提取执行情况',
+    component: UploadLogOperation,
     exact: true,
     inMenu: false,
   },
