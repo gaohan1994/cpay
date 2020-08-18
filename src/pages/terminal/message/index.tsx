@@ -9,7 +9,7 @@ import {
   terminalGroupListByDept,
   terminalInfoExport,
 } from './constants/api';
-import { formatListResult } from '@/common/request-util';
+import { formatListResult, formatPaginate } from '@/common/request-util';
 import invariant from 'invariant';
 import { createTableColumns } from '@/component/table';
 import { FormItem, FormItmeType } from '@/component/form/type';
@@ -62,8 +62,11 @@ export default () => {
   const [form] = Form.useForm();
 
   const { tableProps, search }: any = useAntdTable(
-    (paginatedParams: PaginatedParams, tableProps: any) => {
-      return terminalInfoList(paginatedParams, tableProps);
+    (paginatedParams: PaginatedParams[0], tableProps: any) => {
+      return terminalInfoList({
+        ...formatPaginate(paginatedParams),
+        ...tableProps,
+      });
     },
     {
       form,

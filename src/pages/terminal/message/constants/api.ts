@@ -37,7 +37,6 @@ export const merchantQueryBocoms = (
 };
 
 export const terminalInfoList = (
-  paginatedParams: PaginatedParams,
   tableProps: ITerminalListField
 ) =>
   ApiRequest.get(

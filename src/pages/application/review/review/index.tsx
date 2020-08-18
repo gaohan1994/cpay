@@ -2,12 +2,12 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-12 09:32:53 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 09:35:19
+ * @Last Modified time: 2020-08-12 11:18:59
  * 
  * @todo 审核页面 
  */
 import React, { useEffect, useState } from 'react';
-import { notification, Row, Form, Input, Button } from 'antd';
+import { notification, Row, Form, Input, Button, Spin } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { formatSearch } from '@/common/request-util';
 import { appInfoDetail, appAuditApk } from '../../constants/api';
@@ -38,6 +38,7 @@ function Page() {
   const { search } = history.location;
   const field = formatSearch(search);
   const [detailArr, setDetailArr] = useState([] as any[]);
+  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
   /**
@@ -181,7 +182,9 @@ function Page() {
         reviewMsg: form.getFieldValue('currentReviewMsg'),
         isPass
       };
+      setLoading(true);
       const res = await appAuditApk(params);
+      setLoading(false);
       if (res && res.code === RESPONSE_CODE.success) {
         notification.success({ message: '审核成功' });
         history.goBack();
@@ -195,40 +198,43 @@ function Page() {
   }
 
   return (
-    <div style={{ paddingLeft: '30px', paddingTop: '10px', width: '60vw' }}>
-      <Form
-        form={form}
-        name="advanced_search"
-        className="ant-advanced-search-form"
-        {...formLayout}
-      >
-        {
-          detailArr.length > 0 && detailArr.map((item: any) => {
-            if (item.renderItem) {
-              return item.renderItem(item);
-            } else {
-              return (
-                <Item label={item.label} name={item.name}  >
-                  {
-                    item.render ? item.render(item.value) : (
-                      <Input disabled />
-                    )
-                  }
-                </Item>
-              )
-            }
-          })
-        }
-        <Item {...buttonLayout} >
-          <Button type="primary" onClick={() => onReview(true)}>
-            通过
+    <Spin spinning={loading}>
+      <div style={{ paddingLeft: '30px', paddingTop: '10px', width: '60vw' }}>
+        <Form
+          form={form}
+          name="advanced_search"
+          className="ant-advanced-search-form"
+          {...formLayout}
+          style={{ backgroundColor: 'white' }}
+        >
+          {
+            detailArr.length > 0 && detailArr.map((item: any) => {
+              if (item.renderItem) {
+                return item.renderItem(item);
+              } else {
+                return (
+                  <Item label={item.label} name={item.name}  >
+                    {
+                      item.render ? item.render(item.value) : (
+                        <Input disabled />
+                      )
+                    }
+                  </Item>
+                )
+              }
+            })
+          }
+          <Item {...buttonLayout} >
+            <Button type="primary" onClick={() => onReview(true)}>
+              通过
             </Button>
-          <Button type="primary" onClick={() => onReview(false)} style={{ marginLeft: 20 }}>
-            不通过
+            <Button type="primary" onClick={() => onReview(false)} style={{ marginLeft: 20 }}>
+              不通过
           </Button>
-        </Item>
-      </Form>
-    </div>
+          </Item>
+        </Form>
+      </div>
+    </Spin>
   )
 }
 

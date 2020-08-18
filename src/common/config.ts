@@ -7,7 +7,7 @@ export const isDevelopment = () => process.env.NODE_ENV === 'development';
  */
 export const BASE_URL = isDevelopment()
   ? 'http://172.30.20.100:48089'
-  : 'http://172.30.20.100:9080';
+  : 'http://172.30.20.100:48089';
 
 export const SOURCE_URL = 'http://172.30.20.100:9200';
 

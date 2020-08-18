@@ -2,12 +2,12 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-10 14:50:24 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 09:42:08
+ * @Last Modified time: 2020-08-12 10:53:27
  * 
  * @todo 应用管理列表页
  */
 import React, { useState, useEffect } from 'react';
-import { Form, Table, Row, Popconfirm, Modal, notification, Divider, Tag, Col } from 'antd';
+import { Form, Table, Row, Popconfirm, Modal, notification, Divider, Tag, Col, Spin } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { appInfoList, getAppTypeList, appInfoRemove, appAuditSubmit } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
@@ -44,6 +44,7 @@ function Page(props: Props) {
   const [formTreeValue, setFormTreeValue] = useState(initState.formTreeValue);
   const [appTypeList, setAppTypeList] = useState(initState.appTypeList);
   const [appTypeValue, setAppTypeValue] = useState(initState.appTypeValue);
+  const [loading, setLoading] = useState(false);
 
   /**
    * @todo 根据选中的机构id的值去获取组别列表
@@ -118,7 +119,9 @@ function Page(props: Props) {
    * @param item 
    */
   const onRemoveItem = async (item: any) => {
+    setLoading(true);
     const res = await appInfoRemove({ ids: item.id });
+    setLoading(false);
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '应用已放入回收站' });
       submit();
@@ -142,7 +145,9 @@ function Page(props: Props) {
           const params: any = {
             id: selectedRowKeys[0],
           };
+          setLoading(true);
           const result = await appAuditSubmit(params);
+          setLoading(false);
           if (result && result.code === RESPONSE_CODE.success) {
             notification.success({
               message: '提交审核成功',
@@ -332,7 +337,7 @@ function Page(props: Props) {
   };
 
   return (
-    <div>
+    <Spin spinning={loading}>
       <Forms
         form={form}
         forms={forms}
@@ -343,7 +348,7 @@ function Page(props: Props) {
         }}
       />
       <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} scroll={{ x: 2200 }} />
-    </div>
+    </Spin>
   );
 }
 export default Page;

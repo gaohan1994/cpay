@@ -2,12 +2,12 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-11 18:00:33 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 10:08:04
+ * @Last Modified time: 2020-08-12 10:43:47
  * 
  * @todo 应用管理的回收站页面
  */
 import React, { useState } from 'react';
-import { Form, Table, Row, Popconfirm, Modal, notification, Divider, Tag } from 'antd';
+import { Form, Table, Row, Popconfirm, Modal, notification, Divider, Tag, Spin } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { appInfoDeleteList, appInfoRecove, appInfoDelete } from '../../constants/api';
 import { formatListResult } from '@/common/request-util';
@@ -26,6 +26,7 @@ function Page(props: Props) {
   // 请求dept数据
   useStore(['app_status']);
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);
+  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
   const { tableProps, search }: any = useAntdTable(
@@ -43,7 +44,9 @@ function Page(props: Props) {
    * @param item 
    */
   const onRecoveItem = async (item: any) => {
+    setLoading(true);
     const res = await appInfoRecove({ ids: item.id });
+    setLoading(false);
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '还原应用成功' });
       submit();
@@ -57,7 +60,9 @@ function Page(props: Props) {
    * @param item 
    */
   const onDeleteItem = async (item: any) => {
+    setLoading(true);
     const res = await appInfoDelete({ ids: item.id });
+    setLoading(false);
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '删除应用成功' });
       submit();
@@ -82,7 +87,9 @@ function Page(props: Props) {
           const params: any = {
             ids: selectedRowKeys.join(','),
           };
+          setLoading(true);
           const result = await appInfoDelete(params);
+          setLoading(false);
 
           if (result && result.code === RESPONSE_CODE.success) {
             notification.success({
@@ -212,16 +219,18 @@ function Page(props: Props) {
 
   return (
     <div>
-      <Forms
-        form={form}
-        forms={forms}
-        formButtonProps={{
-          submit,
-          reset,
-          extraButtons
-        }}
-      />
-      <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} scroll={{ x: 2200 }} />
+      <Spin spinning={loading}>
+        <Forms
+          form={form}
+          forms={forms}
+          formButtonProps={{
+            submit,
+            reset,
+            extraButtons
+          }}
+        />
+        <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} scroll={{ x: 2200 }} />
+      </Spin>
     </div>
   );
 }

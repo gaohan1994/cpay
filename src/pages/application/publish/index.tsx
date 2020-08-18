@@ -2,12 +2,12 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-12 09:27:59 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 10:12:18
+ * @Last Modified time: 2020-08-12 10:59:08
  * 
  * @todo 应用发布列表页面
  */
 import React, { useState, useEffect } from 'react';
-import { Form, Table, Row, Popconfirm, notification, Divider, Tag } from 'antd';
+import { Form, Table, Row, Popconfirm, notification, Divider, Tag, Spin } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { getAppTypeList, appPublishList, appShelve } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
@@ -39,6 +39,7 @@ function Page(props: Props) {
   const [formTreeValue, setFormTreeValue] = useState(initState.formTreeValue);
   const [appTypeList, setAppTypeList] = useState(initState.appTypeList);
   const [appTypeValue, setAppTypeValue] = useState(initState.appTypeValue);
+  const [loading, setLoading] = useState(false);
 
   /**
    * @todo 根据机构id获取终端组别
@@ -91,7 +92,9 @@ function Page(props: Props) {
    * @param item 
    */
   const onUnshelveItem = async (item: any) => {
+    setLoading(true);
     const res = await appShelve({ appId: item.id, isOnShelves: false });
+    setLoading(false);
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '应用已下架' });
       submit();
@@ -258,7 +261,7 @@ function Page(props: Props) {
 
 
   return (
-    <div>
+    <Spin spinning={loading}>
       <Forms
         form={form}
         forms={forms}
@@ -268,7 +271,7 @@ function Page(props: Props) {
         }}
       />
       <Table rowKey="id" columns={columns}  {...tableProps} scroll={{ x: 2200 }} />
-    </div>
+    </Spin>
   );
 }
 export default Page;

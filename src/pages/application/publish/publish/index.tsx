@@ -2,12 +2,12 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-12 09:24:53 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 09:27:51
+ * @Last Modified time: 2020-08-12 11:18:48
  * 
  * @todo 应用发布页面
  */
 import React, { useEffect, useState } from 'react';
-import { notification, Row, Form, Input, Button, Radio, Rate } from 'antd';
+import { notification, Row, Form, Input, Button, Radio, Rate, Spin } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { formatSearch } from '@/common/request-util';
 import { appInfoDetail, appAuditApk, appShelve } from '../../constants/api';
@@ -38,6 +38,7 @@ function Page() {
   const { search } = history.location;
   const field = formatSearch(search);
   const [detailArr, setDetailArr] = useState([] as any[]);
+  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
 
   /**
@@ -109,6 +110,7 @@ function Page() {
         picPaths: detail.picPaths,
         reviewMsg: detail.reviewMsg,
         isUninstall: detail.isUninstall || 1,
+        reDegree: detail.reDegree || 0
       })
       setDetailArr(arr);
     } else {
@@ -203,7 +205,9 @@ function Page() {
         isUninstall: form.getFieldValue('isUninstall'),
         reDegree: form.getFieldValue('reDegree'),
       };
+      setLoading(true);
       const res = await appShelve(params);
+      setLoading(false);
       if (res && res.code === RESPONSE_CODE.success) {
         notification.success({ message: '审核成功' });
         history.goBack();
@@ -216,40 +220,43 @@ function Page() {
   }
 
   return (
-    <div style={{ paddingLeft: '30px', paddingTop: '10px', width: '60vw' }}>
-      <Form
-        form={form}
-        name="advanced_search"
-        className="ant-advanced-search-form"
-        {...formLayout}
-      >
-        {
-          detailArr.length > 0 && detailArr.map((item: any) => {
-            if (item.renderItem) {
-              return item.renderItem(item);
-            } else {
-              return (
-                <Item label={item.label} name={item.name}  >
-                  {
-                    item.render ? item.render(item.value) : (
-                      <Input disabled />
-                    )
-                  }
-                </Item>
-              )
-            }
-          })
-        }
-        <Item {...buttonLayout} >
-          <Button type="primary" onClick={() => onPublish(true)}>
-            发布
+    <Spin spinning={loading}>
+      <div style={{ paddingLeft: '30px', paddingTop: '10px', width: '60vw' }}>
+        <Form
+          form={form}
+          name="advanced_search"
+          className="ant-advanced-search-form"
+          {...formLayout}
+          style={{ backgroundColor: 'white' }}
+        >
+          {
+            detailArr.length > 0 && detailArr.map((item: any) => {
+              if (item.renderItem) {
+                return item.renderItem(item);
+              } else {
+                return (
+                  <Item label={item.label} name={item.name}  >
+                    {
+                      item.render ? item.render(item.value) : (
+                        <Input disabled />
+                      )
+                    }
+                  </Item>
+                )
+              }
+            })
+          }
+          <Item {...buttonLayout} >
+            <Button type="primary" onClick={() => onPublish(true)}>
+              发布
             </Button>
-          <Button type="primary" onClick={() => history.goBack()} style={{ marginLeft: 20 }}>
-            返回
+            <Button type="primary" onClick={() => history.goBack()} style={{ marginLeft: 20 }}>
+              返回
           </Button>
-        </Item>
-      </Form>
-    </div>
+          </Item>
+        </Form>
+      </div>
+    </Spin>
   )
 }
 

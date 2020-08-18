@@ -2,12 +2,12 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-10 14:45:02 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 09:38:56
+ * @Last Modified time: 2020-08-12 11:30:01
  * 
  * @todo 应用类型页面
  */
 import React, { useState } from 'react';
-import { Form, Table, Row, Popconfirm, Modal, notification, Divider, Input, Upload, Col } from 'antd';
+import { Form, Table, Row, Popconfirm, Modal, notification, Divider, Input, Upload, Col, Spin } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { getAppTypeList, appTypeRemove, appTypeAdd, appTypeEdit } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
@@ -41,6 +41,7 @@ function Page(props: Props) {
   const [imageUrl, setImageUrl] = useState('');
   // 当前修改的类型item（若是新增为空，一次判断是新增还是编辑）
   const [editItem, setEditItem] = useState({} as IAppType);
+  const [loading, setLoading] = useState(false);
 
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) =>
@@ -143,9 +144,9 @@ function Page(props: Props) {
       modalForm.setFieldsValue({
         typeCode: item.typeCode,
         typeName: item.typeName,
-        typeIcon: item.iconPath.replace(BASIC_CONFIG.SOURCE_URL, ''),
+        typeIcon: item.iconPath.replace(`${BASIC_CONFIG.SOURCE_URL}/`, ''),
       });
-      setImageUrl(item.iconPath.replace(BASIC_CONFIG.SOURCE_URL, ''));
+      setImageUrl(item.iconPath.replace(`${BASIC_CONFIG.SOURCE_URL}/`, ''));
     }
     setModalVisible(true);
   };
@@ -167,17 +168,21 @@ function Page(props: Props) {
         ...param,
         id: editItem.id
       }
+      setLoading(true);
       const res = await appTypeEdit(param);
+      setLoading(false);
       setConfirmLoading(false);
       if (res && res.code === RESPONSE_CODE.success) {
         notification.success({ message: "修改应用类型成功" });
         handleCancel();
         submit();
       } else {
-        notification.error({ message: res.msg || "修改应用类型失败" });
+        notification.error({ message: res && res.msg || "修改应用类型失败" });
       }
     } else {
+      setLoading(true);
       const res = await appTypeAdd(param);
+      setLoading(false);
       setConfirmLoading(false);
       if (res && res.code === RESPONSE_CODE.success) {
         notification.success({ message: "新增应用类型成功" });
@@ -193,9 +198,10 @@ function Page(props: Props) {
    * @todo 关闭弹窗的时候调用，清空当前修改项、清空modal里的表单、关闭弹窗
    */
   const handleCancel = () => {
+    setModalVisible(false);
     setEditItem({} as IAppType);
     modalForm.resetFields();
-    setModalVisible(false);
+    setImageUrl('');
   };
 
   /**
@@ -272,7 +278,7 @@ function Page(props: Props) {
   );
 
   return (
-    <div>
+    <Spin spinning={loading}>
       <Forms
         form={form}
         forms={forms}
@@ -339,7 +345,7 @@ function Page(props: Props) {
           </Item>
         </Form>
       </Modal>
-    </div>
+    </Spin>
   );
 }
 export default Page;

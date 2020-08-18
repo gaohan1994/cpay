@@ -2,12 +2,12 @@
  * @Author: centerm.gaozhiying
  * @Date: 2020-08-12 09:13:05
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 09:22:25
+ * @Last Modified time: 2020-08-12 10:47:30
  *
  * @todo 应用管理的详情页
  */
 import React, { useEffect, useState } from 'react';
-import { Descriptions, notification, Col, Row, Rate } from 'antd';
+import { Descriptions, notification, Col, Row, Rate, Spin } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { formatSearch } from '@/common/request-util';
 import { appInfoDetail } from '../../constants/api';
@@ -24,10 +24,12 @@ function Page() {
 
   const history = useHistory();
   const [detailArr, setDetailArr] = useState([] as any[]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const { search } = history.location;
     const field = formatSearch(search);
+    setLoading(true);
     if (field.id) {
       appInfoDetail(field.id, getDetailCallback);
     }
@@ -76,6 +78,7 @@ function Page() {
    * @param result
    */
   const getDetailCallback = (result: any) => {
+    setLoading(false);
     if (result && result.code === RESPONSE_CODE.success) {
       let detail: IAppInfoDetail = result.data;
       let arr: any[] = [];
@@ -175,22 +178,24 @@ function Page() {
   };
 
   return (
-    <div style={{ paddingLeft: '30px', paddingTop: '10px', width: '60vw' }}>
-      <Descriptions bordered column={1} title="应用详情">
-        {detailArr.length > 0 &&
-          detailArr.map((item: any) => {
-            return (
-              <Descriptions.Item
-                label={<div style={{ width: '100px' }}>{item.label}</div>}
-              >
-                <div style={{ width: 'calc(60vw - 200px)' }}>
-                  {item.render ? item.render(item.value) : item.value}
-                </div>
-              </Descriptions.Item>
-            );
-          })}
-      </Descriptions>
-    </div>
+    <Spin spinning={loading}>
+      <div style={{ paddingLeft: '30px', paddingTop: '10px', width: '60vw' }}>
+        <Descriptions bordered column={1} title="应用详情">
+          {detailArr.length > 0 &&
+            detailArr.map((item: any) => {
+              return (
+                <Descriptions.Item
+                  label={<div style={{ width: '100px' }}>{item.label}</div>}
+                >
+                  <div style={{ width: 'calc(60vw - 200px)' }}>
+                    {item.render ? item.render(item.value) : item.value}
+                  </div>
+                </Descriptions.Item>
+              );
+            })}
+        </Descriptions>
+      </div>
+    </Spin>
   );
 }
 
