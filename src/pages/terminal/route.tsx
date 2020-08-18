@@ -9,6 +9,7 @@
 import { AndroidOutlined } from '@ant-design/icons';
 
 import Terminalmessage from '@/pages/terminal/message';
+import TerminalmessageDetail from '@/pages/terminal/message/detail';
 import Terminalapplication from '@/pages/terminal/application';
 import Terminalfactory from '@/pages/terminal/factory';
 import Terminalgroup from '@/pages/terminal/group';
@@ -34,7 +35,14 @@ const routerConfig: any[] = [
     component: Terminalmessage,
     exact: true,
   },
-
+  {
+    // 终端信息管理
+    path: '/terminal/message-detail',
+    name: '终端信息管理详情',
+    component: TerminalmessageDetail,
+    inMenu: false,
+    exact: true,
+  },
   {
     // 终端参数查询
     name: '终端参数管理',

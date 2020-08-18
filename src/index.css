@@ -21,3 +21,7 @@
 .ant-table tfoot > tr > td {
   padding: 10px !important;
 }
+
+.ant-descriptions-item-label {
+  padding: 12px !important;
+}

@@ -22,6 +22,7 @@ import {
   terminalTypeListByFirm as getTerminalTypeListByFirm,
 } from '../constants';
 import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
+import history from '@/common/history-util';
 
 export default () => {
   useStore([
@@ -209,7 +210,15 @@ export default () => {
   const columns = createTableColumns([
     {
       title: '操作',
-      render: () => <a>审核</a>,
+      render: (key, item: any) => (
+        <a
+          onClick={() => {
+            history.push(`/terminal/message-detail?id=${item.id}`);
+          }}
+        >
+          详情
+        </a>
+      ),
       fixed: 'left',
       width: 100,
     },
