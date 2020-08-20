@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Form, Table } from 'antd';
+import { Form, Table, notification } from 'antd';
 import { useAntdTable } from 'ahooks';
+import invariant from 'invariant';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { PlusOutlined, CopyOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd/lib/button';
@@ -10,6 +11,8 @@ import { createTableColumns } from '@/component/table';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import Forms from '@/component/form';
 import { useStore } from '@/pages/common/costom-hooks';
+import history from '@/common/history-util';
+import { DetailType } from './types';
 
 export default () => {
   useStore([]);
@@ -27,6 +30,27 @@ export default () => {
   );
   const { submit, reset } = search;
 
+  const onCopy = () => {
+    try {
+      invariant(selectedRowKeys.length === 1, '请选择一条记录');
+      history.push(
+        `/terminal/params-detail?id=${selectedRowKeys[0]}&type=${DetailType.COPY}`
+      );
+    } catch (error) {
+      notification.warn({ message: error.message });
+    }
+  };
+
+  const onAdd = () => {
+    history.push(`/terminal/params-detail?type=${DetailType.ADD}`);
+  };
+
+  const onEdit = (item: any) => {
+    history.push(
+      `/terminal/params-detail?id=${item.id}&type=${DetailType.EDIT}`
+    );
+  };
+
   const forms: FormItem[] = [
     {
       formName: 'deptId',
@@ -37,9 +61,9 @@ export default () => {
   const columns = createTableColumns([
     {
       title: '操作',
-      render: () => (
+      render: (item) => (
         <div>
-          <a>修改</a>
+          <a onClick={() => onEdit(item)}>修改</a>
           {` | `}
           <a>删除</a>
         </div>
@@ -64,42 +88,47 @@ export default () => {
     },
   ]);
 
+  const rowSelection = {
+    type: 'radio',
+    selectedRowKeys,
+    onChange: setSelectedRowKeys,
+  };
+
   const extraButtons: any[] = [
     {
       title: '新增',
       type: 'primary',
       icon: <PlusOutlined />,
+      onClick: onAdd,
     },
     {
       title: '复制',
       type: 'primary',
       icon: <CopyOutlined />,
+      onClick: onCopy,
     },
   ];
 
-  const onSelectChange = (keys: any[], selectedRows: any[]) => {
-    console.log('selectedRowKeys:', keys);
-    console.log('selectedRows:', selectedRows);
-    setSelectedRowKeys(keys.concat(selectedRows));
+  const formButtons = {
+    reset: () => {
+      reset();
+      setSelectedRowKeys([]);
+    },
+    submit: () => {
+      setSelectedRowKeys([]);
+      submit();
+    },
+    extraButtons,
   };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-  console.log('rowSelection:', rowSelection);
   return (
     <div>
-      <Forms
-        form={form}
-        forms={forms}
-        formButtonProps={{
-          reset,
-          submit,
-          extraButtons,
-        }}
+      <Forms form={form} forms={forms} formButtonProps={formButtons} />
+      <Table
+        rowKey="id"
+        rowSelection={rowSelection}
+        columns={columns}
+        {...tableProps}
       />
-      <Table rowSelection={rowSelection} columns={columns} {...tableProps} />
     </div>
   );
 };

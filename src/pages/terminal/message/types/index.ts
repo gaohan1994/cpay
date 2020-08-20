@@ -11,3 +11,5 @@ export interface ITerminalGroupByDeptId {
   remark: string;
   createTime: string;
 }
+
+export interface ITerminalDetailInfo {}

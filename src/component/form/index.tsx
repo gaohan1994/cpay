@@ -9,6 +9,7 @@ import {
   isCommonTreeSelectForm,
   isTreeSelectForm,
   isCascaderFrom,
+  isDatePickerForm,
 } from './type';
 import {
   renderNormalForm,
@@ -17,6 +18,7 @@ import {
   renderCommonSelectForm,
   renderCommonTreeSelectForm,
   renderCascaderForm,
+  renderDatePickerForm,
 } from './render';
 
 export type Props = {
@@ -65,6 +67,9 @@ function CommonForm(props: Props) {
                 }
                 if (!!isTreeSelectForm(item)) {
                   return renderTreeSelectForm(item);
+                }
+                if (!!isDatePickerForm(item)) {
+                  return renderDatePickerForm(item);
                 }
               })}
             </>

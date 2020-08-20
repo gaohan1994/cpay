@@ -9,6 +9,7 @@
 import { AndroidOutlined } from '@ant-design/icons';
 
 import Terminalmessage from '@/pages/terminal/message';
+import TerminalmessageDetail from '@/pages/terminal/message/detail';
 import Terminalapplication from '@/pages/terminal/application';
 import Terminalfactory from '@/pages/terminal/factory';
 import Terminalgroup from '@/pages/terminal/group';
@@ -16,6 +17,7 @@ import Terminalgrouping from '@/pages/terminal/grouping';
 import Terminalmerchant from '@/pages/terminal/merchant';
 import Terminalmodel from '@/pages/terminal/model';
 import Terminalparams from '@/pages/terminal/params';
+import TerminalparamsDetail from '@/pages/terminal/params/detail';
 import Terminalquery from '@/pages/terminal/query';
 import Terminalsystem from '@/pages/terminal/system';
 
@@ -34,13 +36,28 @@ const routerConfig: any[] = [
     component: Terminalmessage,
     exact: true,
   },
-
+  {
+    // 终端信息管理
+    path: '/terminal/message-detail',
+    name: '终端信息管理详情',
+    component: TerminalmessageDetail,
+    inMenu: false,
+    exact: true,
+  },
   {
     // 终端参数查询
     name: '终端参数管理',
     path: '/terminal/params',
     component: Terminalparams,
     exact: true,
+  },
+  {
+    // 终端参数查询
+    name: '终端参数管理',
+    path: '/terminal/params-detail',
+    component: TerminalparamsDetail,
+    exact: true,
+    inMenu: false,
   },
   {
     // 终端组别管理

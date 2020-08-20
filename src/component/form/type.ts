@@ -3,6 +3,8 @@ import { SelectProps, OptionProps } from 'antd/lib/select';
 import { TreeSelectProps } from 'antd/lib/tree-select';
 import { DeptTreeData } from '@/pages/common/type';
 import { CascaderProps } from 'antd/lib/cascader';
+import { DatePickerProps } from 'antd/lib/date-picker';
+import { PickerProps } from 'antd/lib/date-picker/generatePicker';
 
 /**
  * 表单项
@@ -13,7 +15,8 @@ export type FormItem =
   | IComponentFormTreeSelectForm
   | IComponentFormCommonTreeSelectForm
   | IComponentFormCommonSelectForm
-  | IComponentFormCascader;
+  | IComponentFormCascader
+  | IComponentFormDatePicker;
 
 export enum FormItmeType {
   Normal,
@@ -22,6 +25,7 @@ export enum FormItmeType {
   TreeSelect,
   TreeSelectCommon,
   Cascader,
+  DatePicker,
 }
 
 /**
@@ -144,4 +148,22 @@ export function isCascaderFrom(data: FormItem): data is IComponentFormCascader {
  */
 export interface IComponentFormCascader extends FormBaseProps, CascaderProps {
   formType: FormItmeType.Cascader;
+}
+
+/**
+ * 日期选择
+ *
+ * @export
+ * @interface IComponentFormDatePicker
+ * @extends {FormBaseProps}
+ */
+export type IComponentFormDatePicker = {
+  formType: FormItmeType.DatePicker;
+} & FormBaseProps &
+  DatePickerProps;
+
+export function isDatePickerForm(
+  data: FormItem
+): data is IComponentFormDatePicker {
+  return (<IComponentFormDatePicker>data).formType === FormItmeType.DatePicker;
 }

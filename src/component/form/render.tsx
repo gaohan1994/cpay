@@ -1,5 +1,13 @@
 import React from 'react';
-import { Col, Form, Input, Select, TreeSelect, Cascader } from 'antd';
+import {
+  Col,
+  Form,
+  Input,
+  Select,
+  TreeSelect,
+  Cascader,
+  DatePicker,
+} from 'antd';
 import { DeptTreeData } from '@/pages/common/type';
 import {
   IComponentFormNormalForm,
@@ -9,6 +17,7 @@ import {
   IComponentFormCommonTreeSelectForm,
   FormItmeType,
   IComponentFormCascader,
+  IComponentFormDatePicker,
 } from './type';
 import { useSelectorHook } from '@/common/redux-util';
 
@@ -54,16 +63,16 @@ export function UseCommonSelectData(
     .map((item, index) => {
       return !!item.dictType
         ? {
-          formName: formName[index] || item.dictType,
-          placeholder: item.dictName,
-          formType: FormItmeType.Select,
-          selectData: item.data.map((option) => {
-            return {
-              value: option.dictValue,
-              title: option.dictLabel,
-            };
-          }),
-        }
+            formName: formName[index] || item.dictType,
+            placeholder: item.dictName,
+            formType: FormItmeType.Select,
+            selectData: item.data.map((option) => {
+              return {
+                value: option.dictValue,
+                title: option.dictLabel,
+              };
+            }),
+          }
         : (undefined as any);
     })
     .filter((d) => !!d);
@@ -90,14 +99,15 @@ export function renderTreeSelect(data: IComponentFormTreeSelectForm) {
  * 渲染树形结构表单
  * @param data
  */
-export function renderTreeSelectForm(data: IComponentFormTreeSelectForm, isFrom?: boolean) {
+export function renderTreeSelectForm(
+  data: IComponentFormTreeSelectForm,
+  isFrom?: boolean
+) {
   const { formName, span, treeSelectData, ...rest } = data;
   if (isFrom !== false) {
     return (
       <Col span={span || 6}>
-        <Item name={formName}>
-          {renderTreeSelect(data)}
-        </Item>
+        <Item name={formName}>{renderTreeSelect(data)}</Item>
       </Col>
     );
   } else {
@@ -128,14 +138,16 @@ export function renderSelect(data: IComponentFormSelectForm) {
   const { formName, span, selectData, ...rest } = data;
   return (
     <Select {...rest}>
-      {Array.isArray(selectData) && selectData.length > 0 && selectData.map((option) => {
-        const { value, title, ...optionRest } = option;
-        return (
-          <Option value={value} key={value} {...optionRest}>
-            {title}
-          </Option>
-        );
-      })}
+      {Array.isArray(selectData) &&
+        selectData.length > 0 &&
+        selectData.map((option) => {
+          const { value, title, ...optionRest } = option;
+          return (
+            <Option value={value} key={value} {...optionRest}>
+              {title}
+            </Option>
+          );
+        })}
     </Select>
   );
 }
@@ -144,29 +156,30 @@ export function renderSelect(data: IComponentFormSelectForm) {
  * 渲染下拉框函数
  * @param data
  */
-export function renderSelectForm(data: IComponentFormSelectForm, isForm?: boolean) {
+export function renderSelectForm(
+  data: IComponentFormSelectForm,
+  isForm?: boolean
+) {
   const { formName, span } = data;
   if (isForm !== false) {
     return (
       <Col span={span || 4} key={formName}>
-        <Item name={formName}>
-          {renderSelect(data)}
-        </Item>
+        <Item name={formName}>{renderSelect(data)}</Item>
       </Col>
     );
   } else {
-    return (
-      renderSelect(data)
-    );
+    return renderSelect(data);
   }
-
 }
 
 /**
  * 渲染通用字典下拉框
  * @param data
  */
-export function renderCommonSelectForm(data: IComponentFormCommonSelectForm, isForm?: boolean) {
+export function renderCommonSelectForm(
+  data: IComponentFormCommonSelectForm,
+  isForm?: boolean
+) {
   const { dictList, formName, ...rest } = data;
 
   /**
@@ -188,11 +201,12 @@ export function renderCommonSelectForm(data: IComponentFormCommonSelectForm, isF
     [formName] as string[]
   );
   const targetDictData = renderDictListData[0];
-  return (
-    renderSelectForm({
+  return renderSelectForm(
+    {
       ...rest,
       ...targetDictData,
-    }, isForm)
+    },
+    isForm
   );
 }
 
@@ -221,23 +235,33 @@ export function renderCommonTreeSelectForm(
 
 export function renderCascader(data: IComponentFormCascader) {
   const { formName, span, ...rest } = data;
-  return (
-    <Cascader {...rest} />
-  );
+  return <Cascader {...rest} />;
 }
 
-
-export function renderCascaderForm(data: IComponentFormCascader, isForm?: boolean) {
+export function renderCascaderForm(
+  data: IComponentFormCascader,
+  isForm?: boolean
+) {
   const { formName, span, ...rest } = data;
   if (isForm !== false) {
     return (
       <Col span={span || 4} key={formName}>
-        <Item name={formName}>
-          {renderCascader(data)}
-        </Item>
+        <Item name={formName}>{renderCascader(data)}</Item>
       </Col>
     );
   } else {
     return renderCascader(data);
   }
+}
+
+export function renderDatePickerForm(data: IComponentFormDatePicker) {
+  const { formName, span, ...rest } = data;
+
+  return (
+    <Col span={span || 4} key={formName}>
+      <Item name={formName}>
+        <DatePicker style={{ width: '100%' }} {...rest} />
+      </Item>
+    </Col>
+  );
 }

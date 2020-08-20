@@ -3,6 +3,7 @@ import { notification } from 'antd';
 import { IResponseResult, IFormatResult } from './type';
 import { merge } from 'lodash';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
+import { useHistory } from 'react-router-dom';
 
 export const formartQuery = (params: any) => {
   console.log('params', params);
@@ -55,6 +56,12 @@ export const formatSearch = (search: string): any => {
       result[item.split('=')[0]] = item.split('=')[1];
     });
   return result;
+};
+
+export const useQueryParam = (paramId: string) => {
+  const history = useHistory();
+  const params = formatSearch(history.location.search);
+  return params[paramId] || undefined;
 };
 
 export const formatPaginate = (
