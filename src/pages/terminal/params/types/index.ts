@@ -21,3 +21,12 @@ export interface TerminalParamItem {
   updateTime: string;
   deptName: string;
 }
+
+/**
+ * 详情页面的三种状态
+ */
+export enum DetailType {
+  ADD = 'ADD',
+  EDIT = 'EDIT',
+  COPY = 'COPY',
+}

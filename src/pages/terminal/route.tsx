@@ -17,6 +17,7 @@ import Terminalgrouping from '@/pages/terminal/grouping';
 import Terminalmerchant from '@/pages/terminal/merchant';
 import Terminalmodel from '@/pages/terminal/model';
 import Terminalparams from '@/pages/terminal/params';
+import TerminalparamsDetail from '@/pages/terminal/params/detail';
 import Terminalquery from '@/pages/terminal/query';
 import Terminalsystem from '@/pages/terminal/system';
 
@@ -49,6 +50,14 @@ const routerConfig: any[] = [
     path: '/terminal/params',
     component: Terminalparams,
     exact: true,
+  },
+  {
+    // 终端参数查询
+    name: '终端参数管理',
+    path: '/terminal/params-detail',
+    component: TerminalparamsDetail,
+    exact: true,
+    inMenu: false,
   },
   {
     // 终端组别管理
