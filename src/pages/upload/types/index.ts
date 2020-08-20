@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-12 14:49:27 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 15:36:39
+ * @Last Modified time: 2020-08-20 11:28:25
  * 
  * @todo 远程更新模块的类型文件
  */
@@ -106,4 +106,23 @@ export interface TaskUploadJobDetail {
   userId: number; // 
   validEndTime: string; // 有效截止日期
   validStartTime: string; // 有效起始日期
+}
+
+export interface ITaskOperationJobDetail {
+  createTime: string;       // 创建时间
+  deptId: number;           // 所属机构编码
+  deptName: string;         // 所属机构名称
+  firmId: number;           // 终端厂商编码
+  firmName: string;         // 终端厂商名称
+  id: string;               // 主键id
+  jobName: string;          // 任务名称
+  groupIds: string;         // 组别id集合
+  operatorCommand: string;  // 操作指令
+  releaseType: number;      // 发布类型
+  status: number;           // 发布状态
+  updateTime: string;       // 更新时间
+  terminalTypeId: number;   // 终端型号id
+  typeName: string;         // 终端型号
+  isGroupUpdate: number;    // 组别更新方式(0:无 1:指定 2:排除)
+  tusns: string;            // 终端集合
 }

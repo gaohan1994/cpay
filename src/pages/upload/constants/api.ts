@@ -148,3 +148,65 @@ export const taskUploadTaskReset = (params: { ids: string }) =>
 */
 export const taskUploadTaskCancel = (params: { ids: string }) =>
   ApiRequest.post(`/cpay-admin/task/uploadTask/cancel`, params);
+
+/**
+* @todo 查询终端操作任务列表(远程运维)
+* @param params 
+*/
+export const taskOperationJobList = (params: any) =>
+  ApiRequest.get(`/cpay-admin/task/operationJob/list${jsonToQueryString(params)}`);
+
+/**
+* @todo 查询终端操作任务详情(远程运维详情)
+* @param id 
+*/
+export const taskOperationJobDetail = async (
+  id: number,
+  callback?: (params: any) => void
+): Promise<any> => {
+  const result = await ApiRequest.get(`/cpay-admin/task/operationJob/detail/${id}`);
+  callback && callback(result);
+  return result;
+};
+
+/**
+ * @todo 添加终端操作任务(远程运维新增)
+ * @param params 
+ */
+export const taskOperationJobAdd = (params: any) =>
+  ApiRequest.post(`/cpay-admin/task/operationJob/add`, params);
+
+/**
+* @todo 添加终端操作任务任务(远程运维新增)
+* @param params 
+*/
+export const taskOperationJobPublish = (id: number) =>
+  ApiRequest.post(`/cpay-admin/task/operationJob/publish/${id}`, {});
+
+/**
+* @todo 查询终端操作任务列表(远程运维执行情况)
+* @param params 
+*/
+export const taskOperationTaskList = (params: any) =>
+  ApiRequest.get(`/cpay-admin/task/operationTask/list${jsonToQueryString(params)}`);
+
+/**
+* @todo 终端操作任务列表导出(远程运维执行情况导出)
+* @param params 
+*/
+export const taskOperationTaskExport = (params: any) =>
+  ApiRequest.post(`/cpay-admin/task/operationTask/export`, params);
+
+/**
+ * @todo 终端操作任务重置(远程运维执行情况启动任务)
+ * @param params 
+ */
+export const taskOperationTaskReset = (params: any) =>
+  ApiRequest.post(`/cpay-admin/task/operationTask/reset`, params);
+
+/**
+* @todo 终端操作任务暂停(远程运维执行情况暂停任务)
+* @param params 
+*/
+export const taskOperationTaskPause = (params: any) =>
+  ApiRequest.post(`/cpay-admin/task/operationTask/pause`, params);

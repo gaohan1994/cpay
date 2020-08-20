@@ -25,7 +25,7 @@ import { useStore } from '@/pages/common/costom-hooks';
 import numeral from 'numeral';
 import { useHistory } from 'react-router-dom';
 import { RESPONSE_CODE } from '@/common/config';
-import { renderCommonSelectForm } from '@/component/form/render';
+import { renderSelectForm } from '@/component/form/render';
 
 const { Item } = Form;
 const CheckboxGroup = Checkbox.Group;
@@ -432,7 +432,7 @@ function Page() {
               message: '请选择终端厂商',
             }]}
           >
-            {renderCommonSelectForm(
+            {renderSelectForm(
               {
                 placeholder: '终端厂商',
                 formName: 'id',

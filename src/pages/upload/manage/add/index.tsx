@@ -8,7 +8,7 @@
  */
 import React, { useEffect, useState, useRef } from 'react';
 import { Form, Row, Col, Input, Button, Upload, Select, Checkbox, notification, Modal, Spin } from 'antd';
-import { renderCommonSelectForm } from '@/component/form/render';
+import { renderSelectForm } from '@/component/form/render';
 import { FormItmeType } from '@/component/form/type';
 import { ITerminalFirmItem, ITerminalType } from '@/pages/terminal/types';
 import {
@@ -285,7 +285,7 @@ export default (props: Props) => {
               message: '请选择软件类型',
             }]}
           >
-            {renderCommonSelectForm(
+            {renderSelectForm(
               {
                 placeholder: '软件类型',
                 formName: 'id',
@@ -392,7 +392,7 @@ export default (props: Props) => {
               message: '请选择终端厂商',
             }]}
           >
-            {renderCommonSelectForm(
+            {renderSelectForm(
               {
                 placeholder: '终端厂商',
                 formName: 'id',

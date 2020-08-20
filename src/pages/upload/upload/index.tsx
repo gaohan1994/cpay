@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-13 09:36:52 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-13 10:47:47
+ * @Last Modified time: 2020-08-20 11:32:50
  * 
  * @todo 软件更新任务列表
  */
@@ -16,7 +16,7 @@ import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
 import history from '@/common/history-util';
 import { taskDownloadJobList, taskDownloadJobRemove } from '../constants/api';
-import { PlusOutlined, CopyOutlined, BarsOutlined, CaretRightOutlined, PauseOutlined, ScheduleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { PlusOutlined, CopyOutlined, BarsOutlined, CaretRightOutlined, PauseOutlined, ScheduleOutlined, SyncOutlined } from '@ant-design/icons';
 import { useRedux } from '@/common/redux-util';
 import { RESPONSE_CODE } from '@/common/config';
 
@@ -111,6 +111,10 @@ function Page(props: Props) {
       title: '有效截止日期',
       dataIndex: 'validEndTime',
     },
+    {
+      title: '创建日期',
+      dataIndex: 'createTime',
+    }
   ]);
 
   /**
@@ -140,7 +144,7 @@ function Page(props: Props) {
     { title: '启动', onClick: onAdd, icon: <CaretRightOutlined />, type: "primary" as any, },
     { title: '暂停', onClick: onAdd, icon: <PauseOutlined />, type: "primary" as any, },
     { title: '延时', onClick: onAdd, icon: <ScheduleOutlined /> },
-    { title: '增量同步', onClick: onAdd, icon: <ReloadOutlined /> },
+    { title: '增量同步', onClick: onAdd, icon: <SyncOutlined /> },
   ]
 
   return (

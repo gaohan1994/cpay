@@ -3,7 +3,7 @@
  * @Author: Ghan
  * @Date: 2020-07-20 17:28:31
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-17 16:27:22
+ * @Last Modified time: 2020-08-19 14:32:07
  */
 
 import { AppstoreAddOutlined } from '@ant-design/icons';
@@ -13,6 +13,9 @@ import UploadManageAdd from '@/pages/upload/manage/add';
 import UploadManageDetail from '@/pages/upload/manage/detail';
 import Uploaddownload from '@/pages/upload/download';
 import Uploadoperation from '@/pages/upload/operation';
+import UploadOperationAdd from '@/pages/upload/operation/add';
+import UploadOperationDetail from '@/pages/upload/operation/detail';
+import UploadOperationOperation from '@/pages/upload/operation/operation';
 import Uploadupload from '@/pages/upload/upload';
 import Uploadlog from '@/pages/upload/log';
 import UploadLogDetail from '@/pages/upload/log/detail';
@@ -71,6 +74,27 @@ const routerConfig: any[] = [
     name: '远程运维',
     component: Uploadoperation,
     exact: true
+  },
+  {
+    path: '/upload/operation-add',
+    name: '远程运维新增',
+    component: UploadOperationAdd,
+    exact: true,
+    inMenu: false,
+  },
+  {
+    path: '/upload/operation-detail',
+    name: '远程运维详情',
+    component: UploadOperationDetail,
+    exact: true,
+    inMenu: false,
+  },
+  {
+    path: '/upload/operation-operation',
+    name: '远程运维执行情况',
+    component: UploadOperationOperation,
+    exact: true,
+    inMenu: false,
   },
   {
     path: '/upload/log',

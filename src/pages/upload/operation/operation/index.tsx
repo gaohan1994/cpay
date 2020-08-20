@@ -1,10 +1,10 @@
 /*
  * @Author: centerm.gaozhiying 
- * @Date: 2020-08-17 16:20:07 
+ * @Date: 2020-08-19 14:29:27 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-17 17:50:31
+ * @Last Modified time: 2020-08-20 13:46:26
  * 
- * @todo 执行情况详情
+ * @todo 执行情况查询
  */
 import React, { useState, useEffect } from 'react';
 import { Form, Table, Tag, Divider, Popconfirm, notification } from 'antd';
@@ -15,17 +15,17 @@ import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
 import history from '@/common/history-util';
-import { CheckOutlined, CloseOutlined, DownloadOutlined, SyncOutlined } from '@ant-design/icons';
+import { DownloadOutlined, SyncOutlined, PauseOutlined, CaretRightOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useRedux } from '@/common/redux-util';
-import { RESPONSE_CODE } from '@/common/config';
-import { taskUploadTaskList, taskUploadTaskReset, taskUploadTaskCancel } from '../../constants/api';
+import { RESPONSE_CODE, BASIC_CONFIG } from '@/common/config';
+import { taskUploadTaskList, taskUploadTaskReset, taskUploadTaskCancel, taskOperationTaskList, taskOperationTaskExport, taskOperationTaskReset, taskOperationTaskPause } from '../../constants/api';
 import { useHistory } from 'react-router-dom';
 
 type Props = {};
 
 function Page(props: Props) {
   // 请求dept数据
-  useStore(['log_upload_status']);
+  useStore(['task_job_status', 'terminal_operator_command']);
   const [useSelector, dispatch] = useRedux();
   const history = useHistory();
   const { search: historySearch } = history.location;
@@ -37,7 +37,7 @@ function Page(props: Props) {
 
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) =>
-      taskUploadTaskList({ jobId: field.id, pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
+      taskOperationTaskList({ jobId: field.id, pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
     {
       form,
       formatResult: formatListResult,
@@ -56,23 +56,24 @@ function Page(props: Props) {
     {
       title: '状态',
       dataIndex: 'status',
-      dictType: 'log_upload_status'
+      dictType: 'task_job_status',
     },
     {
-      title: '提取开始时间',
-      dataIndex: 'logBeginTime',
+      title: '终端厂商',
+      dataIndex: 'firmName',
     },
     {
-      title: '提取结束日期',
-      dataIndex: 'logEndTime',
+      title: '终端型号',
+      dataIndex: 'typeName'
     },
     {
-      title: '有效期起始日期',
-      dataIndex: 'validStartTime',
+      title: '操作指令',
+      dataIndex: 'operatorCommand',
+      dictType: 'terminal_operator_command'
     },
     {
-      title: '有效期截止日期',
-      dataIndex: 'validEndTime',
+      title: '创建时间',
+      dataIndex: 'createTime',
     },
   ]);
 
@@ -88,14 +89,14 @@ function Page(props: Props) {
     {
       formName: ['status'],
       formType: FormItmeType.SelectCommon,
-      dictList: ['log_upload_status'],
+      dictList: ['task_job_status'],
     },
   ];
 
   /**
    * @todo 重置任务
    */
-  const onResetTask = async () => {
+  const onStartTask = async () => {
     if (selectedRowKeys.length === 0) {
       notification.error({ message: "请选择任务" });
       return;
@@ -103,19 +104,19 @@ function Page(props: Props) {
     const param = {
       ids: selectedRowKeys.join(',')
     }
-    const res = await taskUploadTaskReset(param);
+    const res = await taskOperationTaskReset(param);
     if (res && res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '重置任务成功' });
+      notification.success({ message: '启动任务成功' });
       submit();
     } else {
-      notification.error({ message: res && res.msg || '重置任务失败，请重试' });
+      notification.error({ message: res && res.msg || '启动任务失败，请重试' });
     }
   }
 
   /**
    * @todo 取消任务
    */
-  const onCancelTask = async () => {
+  const onPauseTask = async () => {
     if (selectedRowKeys.length === 0) {
       notification.error({ message: "请选择任务" });
       return;
@@ -123,36 +124,36 @@ function Page(props: Props) {
     const param = {
       ids: selectedRowKeys.join(',')
     }
-    const res = await taskUploadTaskCancel(param);
+    const res = await taskOperationTaskPause(param);
     if (res && res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '取消任务成功' });
+      notification.success({ message: '暂停任务成功' });
       submit();
     } else {
-      notification.error({ message: res && res.msg || '取消任务失败，请重试' });
+      notification.error({ message: res && res.msg || '暂停任务失败，请重试' });
     }
   }
 
-  const onLogDownload = () => {
-    if (selectedRowKeys.length === 0) {
-      notification.error({ message: "请选择任务" });
-      return;
+  const onLogOut = async () => {
+    const param = {
+      id: field.id
     }
-    if (selectedRowKeys.length > 1) {
-      notification.error({ message: "请选择一条任务" });
-      return;
-    }
-    if (selectedRows[0].logPath) {
-      window.location.href = selectedRows[0].logPath;
+    const res = await taskOperationTaskExport(param);
+    if (res && res.code === RESPONSE_CODE.success) {
+      // notification.success({ message: '取消任务成功' });
+      // submit();
+      if (res.data) {
+        window.location.href = `${BASIC_CONFIG.SOURCE_URL}/${res.data}`;
+      }
     } else {
-      notification.error({ message: "没有日志下载地址" });
+      notification.error({ message: res && res.msg || '导出失败，请重试' });
     }
   }
 
   const extraButtons = [
-    { title: '重置任务', onClick: onResetTask, icon: <CheckOutlined /> },
-    { title: '取消任务', onClick: onCancelTask, icon: <CloseOutlined /> },
-    { title: '日志下载', onClick: onLogDownload, icon: <DownloadOutlined /> },
+    { title: '启动任务', onClick: onStartTask, icon: <CaretRightOutlined />, type: "primary" as any, },
+    { title: '暂停任务', onClick: onPauseTask, icon: <PauseOutlined /> },
     { title: '刷新状态', onClick: () => reset(), icon: <SyncOutlined />, type: "primary" as any, },
+    { title: '导出', onClick: onLogOut, icon: <LogoutOutlined />, type: "primary" as any, },
   ]
 
   const onChangeSelectedRows = (selectedRowKeys: any[], selectedRows: any[]) => {

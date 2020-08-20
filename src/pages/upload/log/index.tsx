@@ -171,7 +171,10 @@ function Page(props: Props) {
     {
       title: '发布状态',
       dataIndex: 'status',
-      dictType: 'task_job_status'
+      dictType: 'task_job_status',
+      render: (item: any) => {
+        return <Tag color={item === '待发布' ? '#f8ac59' : '#3D7DE9'}>{item}</Tag>
+      }
     },
     {
       title: '有效起始日期',

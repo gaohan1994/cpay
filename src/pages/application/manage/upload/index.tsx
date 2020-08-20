@@ -9,7 +9,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Form, Row, Col, Input, Button, Upload, Select, Checkbox, notification, Modal, Spin } from 'antd';
 import UploadApp from '../component/UploadApp';
-import { renderCommonSelectForm } from '@/component/form/render';
+import { renderSelectForm } from '@/component/form/render';
 import { FormItmeType } from '@/component/form/type';
 import { ITerminalFirmItem, ITerminalType } from '@/pages/terminal/types';
 import {
@@ -619,7 +619,7 @@ export default (props: Props) => {
               message: '请选择所属组别',
             }]}
           >
-            {renderCommonSelectForm(
+            {renderSelectForm(
               {
                 placeholder: '所属组别',
                 formName: 'groupId',
@@ -648,7 +648,7 @@ export default (props: Props) => {
               message: '请选择应用类别',
             }]}
           >
-            {renderCommonSelectForm(
+            {renderSelectForm(
               {
                 placeholder: '应用类别',
                 formName: 'typeName',
@@ -677,7 +677,7 @@ export default (props: Props) => {
               message: '请选择终端厂商',
             }]}
           >
-            {renderCommonSelectForm(
+            {renderSelectForm(
               {
                 placeholder: '终端厂商',
                 formName: 'id',

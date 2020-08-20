@@ -1,19 +1,27 @@
+/*
+ * @Author: centerm.gaozhiying 
+ * @Date: 2020-08-20 14:03:06 
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-08-20 15:06:12
+ * 
+ * @todo 日志提取新增
+ */
 import React, { useState, useEffect } from 'react';
 import { Form, Spin, Input, Col, Button, notification, Checkbox, DatePicker, Row, Space, Table, message, Modal } from 'antd';
 import { taskUploadJobAdd, taskUploadJobDetail, taskUploadJobEdit } from '../../constants/api';
 import { RESPONSE_CODE } from '@/common/config';
 import { useHistory } from 'react-router-dom';
-import { renderCommonSelectForm } from '@/component/form/render';
+import { renderSelectForm } from '@/component/form/render';
 import { FormItmeType, FormItem } from '@/component/form/type';
 import { useStore } from '@/pages/common/costom-hooks';
 import { useSelectorHook } from '@/common/redux-util';
 import { DictDetailItem } from '@/pages/common/type';
-import { ITerminalFirmItem, ITerminalType, TerminalInfo } from '@/pages/terminal/types';
+import { ITerminalFirmItem, ITerminalType } from '@/pages/terminal/types';
 import {
   terminalFirmList as getTerminalFirmList,
   terminalTypeListByFirm,
 } from '@/pages/terminal/constants';
-import { range, curry } from 'lodash';
+import { range } from 'lodash';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 import { PlusOutlined, CloseOutlined, UploadOutlined, ClearOutlined } from '@ant-design/icons';
@@ -27,7 +35,6 @@ import numeral from 'numeral';
 
 const { Item } = Form;
 const CheckboxGroup = Checkbox.Group;
-const { TextArea } = Input;
 
 const formLayout = {
   labelCol: {
@@ -46,18 +53,15 @@ const buttonLayout = {
 }
 
 const initState = {
-  typeList: [] as DictDetailItem[],
-  typeValue: '',
-  terminalFirmList: [] as ITerminalFirmItem[],        // 终端厂商列表
-  terminalFirmValue: '',                              // 终端厂商选中的值
-  terminalTypeList: [] as ITerminalType[],            // 终端类型列表（与终端厂商有关）
-  terminalTypeOptions: [] as string[],                // 终端类型列表选项
-  indeterminate: false,                               // 复选框的全选按钮是否不定
-  checkAll: false,                                    // 复选框是否全选
-  checkedList: [] as string[],                        // 复选框列表,
-  terminalsModalVisible: false,                       // 终端选择的modal是否展示
-  selectedTerminalOptions: [] as string[],
-  seletedDeleteTerminals: [] as string[],
+  typeList: [] as DictDetailItem[],             // 日志提取方式列表
+  typeValue: '',                                // 日志提取方式取值
+  terminalFirmList: [] as ITerminalFirmItem[],  // 终端厂商列表
+  terminalFirmValue: '',                        // 终端厂商选中的值
+  terminalTypeList: [] as ITerminalType[],      // 终端类型列表（与终端厂商有关）
+  terminalTypeValue: '',                        // 终端类型选中值
+  terminalsModalVisible: false,                 // 终端选择的modal是否展示
+  selectedTerminals: [] as string[],            // 选中的终端集合
+  seletedDeleteTerminals: [] as string[],       // 选中要删除的终端
 }
 
 function Page() {
@@ -65,13 +69,13 @@ function Page() {
   const history = useHistory();
   const { search: histortSearch } = history.location;
   const field = formatSearch(histortSearch);
-
   const common = useSelectorHook(state => state.common);
-  const [form] = Form.useForm();
   const [addForm] = Form.useForm();
+
+  const [form] = Form.useForm();
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) =>
-      terminalInfoList({ firmId: terminalFirmValue, terminalTypeCodes: checkedList.join(','), pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
+      terminalInfoList({ firmId: terminalFirmValue, terminalTypeCodes: terminalTypeValue, pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
     {
       form,
       formatResult: formatListResult,
@@ -82,36 +86,30 @@ function Page() {
   const [loading, setLoading] = useState(false);
   const [typeList, setTypeList] = useState(initState.typeList);
   const [typeValue, setTypeValue] = useState(initState.typeValue);
-  const [terminalFirmList, setTerminalFirmList] = useState(
-    initState.terminalFirmList
-  );
-  const [terminalFirmValue, setTerminalFirmValue] = useState(
-    initState.terminalFirmValue
-  );
-  const [terminalTypeList, setTerminalTypeList] = useState(
-    initState.terminalTypeList
-  );
-  const [terminalTypeOptions, setTerminalTypeOptions] = useState(
-    initState.terminalTypeOptions
-  );
-  const [indeterminate, setIndeterminate] = useState(initState.indeterminate);
-  const [checkAll, setCheckAll] = useState(initState.checkAll);
-  const [checkedList, setCheckedList] = useState(initState.checkedList);
+  const [terminalFirmList, setTerminalFirmList] = useState(initState.terminalFirmList);
+  const [terminalFirmValue, setTerminalFirmValue] = useState(initState.terminalFirmValue);
+  const [terminalTypeList, setTerminalTypeList] = useState(initState.terminalTypeList);
+  const [terminalTypeValue, setTerminalTypeValue] = useState(initState.terminalTypeValue);
   const [terminalsModalVisible, setTerminalsModalVisible] = useState(initState.terminalsModalVisible);
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);  // 选中的列的key值列表
-  const [selectedTerminalOptions, setSelectedTerminalOptions] = useState(initState.selectedTerminalOptions);
+  const [selectedTerminals, setSelectedTerminals] = useState(initState.selectedTerminals);
   const [seletedDeleteTerminals, setSeletedDeleteTerminals] = useState(initState.seletedDeleteTerminals);
 
+  /**
+   * @todo 获取终端厂商列表 
+   */
   useEffect(() => {
-    setTypeList(common.dictList && common.dictList.log_upload_type && common.dictList.log_upload_type.data || []);
-  }, [common.dictList]);
-
-  useEffect(() => {
-    /** 获取终端厂商列表 */
     getTerminalFirmList({}, (firmList: any[]) => {
       setTerminalFirmList(firmList);
     });
   }, []);
+
+  /**
+   * @todo 从redux中拿取字典数据：log_upload_type（日志提取方式）
+   */
+  useEffect(() => {
+    setTypeList(common.dictList && common.dictList.log_upload_type && common.dictList.log_upload_type.data || []);
+  }, [common.dictList]);
 
   /**
    * @todo 监听终端厂商的值，获取终端类型列表
@@ -123,18 +121,7 @@ function Page() {
   }, [terminalFirmValue]);
 
   /**
-   * @todo 监听终端类型列表的值，设置表单中的终端类型对应的checkgroup的options
-   */
-  useEffect(() => {
-    let arr: string[] = [];
-    for (let i = 0; i < terminalTypeList.length; i++) {
-      arr.push(terminalTypeList[i].typeName);
-    }
-    setTerminalTypeOptions(arr);
-  }, [terminalTypeList]);
-
-  /**
-   * @todo 监听终端厂商列表和终端厂商选中值的变化，当终端厂商选中值不在终端厂商列表中，需要清空终端厂商选中值
+   * @todo 监听终端厂商列表和终端厂商选中值的变化，当终端厂商选中值不在终端厂商列表中，需要清空终端厂商选中值和终端类型列表
    */
   useEffect(() => {
     if (terminalFirmValue.length > 0 && terminalFirmList.length > 0) {
@@ -149,38 +136,22 @@ function Page() {
       if (!flag) {
         setTerminalFirmValue('');
         addForm.setFieldsValue({ firmId: undefined });
-        setIndeterminate(false);
-        setCheckAll(false);
-        setCheckedList([]);
+        setTerminalTypeValue('');
+        addForm.setFieldsValue({ terminalType: undefined });
       }
     }
   }, [terminalFirmList, terminalFirmValue])
 
-  /** 
-   * @todo 监听终端类型选中列表，设置相应表单的值，如果不这样写，表单获取不到相应的值
-   */
-  useEffect(() => {
-    if (checkedList.length > 0) {
-      addForm.setFieldsValue({
-        terminalTypes: checkedList
-      });
-    } else {
-      addForm.setFieldsValue({
-        terminalTypes: ''
-      });
-    }
-  }, [checkedList]);
-
   /**
-   * @todo 监听选中终端的改变，改变相应的选中终端选项（用于checkboxgroup）
+   * @todo 监听选中终端的改变，改变相应的选中终端选项
    */
   useEffect(() => {
-    addForm.setFieldsValue({ tusns: selectedTerminalOptions });
-  }, [selectedTerminalOptions]);
+    addForm.setFieldsValue({ tusns: selectedTerminals });
+  }, [selectedTerminals]);
 
   /** 
- * @todo 根据field.id判断是否为编辑页面，编辑页面需要获取应用详情，并设置相应的值 
- */
+   * @todo 根据field.id判断是否为编辑页面，编辑页面需要获取应用详情，并设置相应的值 
+   */
   useEffect(() => {
     if (field.id) {
       taskUploadJobDetail(field.id, getDetailCallback);
@@ -204,8 +175,8 @@ function Page() {
         setTerminalFirmValue(`${detail.firmId}`);
       }
       if (detail.terminalType) {
-        let arr: string[] = detail.terminalType.split(',');
-        setCheckedList(arr);
+        addForm.setFieldsValue({ terminalType: detail.terminalType });
+        setTerminalTypeValue(detail.terminalType);
       }
       if (detail.logBeginTime) {
         addForm.setFieldsValue({ logBeginTime: moment(detail.logBeginTime) });
@@ -221,31 +192,11 @@ function Page() {
       }
       if (detail.tusns) {
         let arr = detail.tusns.split(',');
-        setSelectedTerminalOptions(arr);
+        setSelectedTerminals(arr);
       }
     } else {
       notification.warn(result && result.msg || '获取详情失败，请刷新页面重试');
     }
-  }
-
-  /**
-   * @todo 终端类型checkbox的全选按钮点击事件
-   * @param e 
-   */
-  const onCheckAllChange = (e: any) => {
-    setCheckedList(e.target.checked ? terminalTypeOptions : []);
-    setIndeterminate(false);
-    setCheckAll(e.target.checked);
-  }
-
-  /**
-   * @todo 终端类型checkboxgroup的点击事件
-   * @param checkedList 
-   */
-  const onChange = (checkedList: any[]) => {
-    setCheckedList(checkedList);
-    setIndeterminate(!!checkedList.length && checkedList.length < terminalTypeOptions.length);
-    setCheckAll(checkedList.length === terminalTypeOptions.length);
   }
 
   /**
@@ -261,6 +212,9 @@ function Page() {
     }
   }
 
+  /**
+   * @todo 添加/修改任务
+   */
   const onAddJob = async () => {
     const fields = addForm.getFieldsValue();
     if (fields.logBeginTime.diff(fields.logEndTime) >= 0) {
@@ -281,15 +235,17 @@ function Page() {
       validStartTime: fields.validStartTime.format('YYYY-MM-DD HH:mm:ss'),
       validEndTime: fields.validEndTime.format('YYYY-MM-DD HH:mm:ss'),
       firmId: fields.firmId,
-      terminalTypes: checkedList.join(','),
-      tusns: selectedTerminalOptions.join(';')
+      terminalType: terminalTypeValue,
+      tusns: selectedTerminals.join(';')
     }
     if (field.id) {
       param = {
         ...param,
         id: field.id
       }
+      setLoading(true);
       const res = await taskUploadJobEdit(param);
+      setLoading(false);
       if (res && res.code === RESPONSE_CODE.success) {
         notification.success({ message: '终端提取日志修改成功' });
         history.goBack();
@@ -297,7 +253,9 @@ function Page() {
         notification.error({ message: res && res.msg || '终端提取日志修改失败，请重试' });
       }
     } else {
+      setLoading(true);
       const res = await taskUploadJobAdd(param);
+      setLoading(false);
       if (res && res.code === RESPONSE_CODE.success) {
         notification.success({ message: '终端提取日志新增成功' });
         history.goBack();
@@ -307,47 +265,19 @@ function Page() {
     }
   }
 
-  function disabledDate(current: any, type?: string) {
-    switch (type) {
-      case 'VALID_END':
-        const validStartTime = addForm.getFieldValue('validStartTime');
-        return validStartTime && current.add(1, 'days') < validStartTime.endOf('day');
-      default:
-        return false;
-    }
-  }
-
-  function disabledDateTime(current: any, type?: string) {
-    switch (type) {
-      case 'VALID_END':
-        const validStartTime = addForm.getFieldValue('validStartTime');
-        if (validStartTime) {
-          return {
-            disabledHours: () => range(0, validStartTime.get('hour')),
-            disabledMinutes: () => range(0, validStartTime.get('minute')),
-            disabledSeconds: () => range(0, validStartTime.get('second')),
-          }
-        }
-      default: {
-        return {
-          disabledHours: () => range(0, 0),
-          disabledMinutes: () => range(0, 0),
-          disabledSeconds: () => range(0, 0),
-        };
-      }
-    }
-  }
-
+  /**
+   * @todo 选择终端集合modal点击确定，将选中终端集合放入终端集合列表中
+   */
   const pushSelectedRows = () => {
-    if (selectedTerminalOptions.length === 0) {
-      setSelectedTerminalOptions(selectedRowKeys);
+    if (selectedTerminals.length === 0) {
+      setSelectedTerminals(selectedRowKeys);
     } else {
-      const arr = [...selectedTerminalOptions];
+      const arr = [...selectedTerminals];
       for (let i = 0; i < selectedRowKeys.length; i++) {
         let item = selectedRowKeys[i];
         let flag = false;
-        for (let j = 0; j < selectedTerminalOptions.length; j++) {
-          if (item === selectedTerminalOptions[j]) {
+        for (let j = 0; j < selectedTerminals.length; j++) {
+          if (item === selectedTerminals[j]) {
             flag = true;
             break;
           }
@@ -356,25 +286,30 @@ function Page() {
           arr.push(item);
         }
       }
-      setSelectedTerminalOptions(arr);
+      setSelectedTerminals(arr);
     }
   }
 
+  /**
+   * @todo 展示选择终端集合modal
+   */
   const showTerminalsModal = () => {
     if (terminalFirmValue.length === 0) {
       message.error('请选择终端厂商');
       return;
     }
-    if (checkedList.length === 0) {
+    if (terminalTypeValue.length === 0) {
       message.error('请选择终端型号');
       return;
     }
     setSelectedRowKeys([]);
-    // setSelectedRows([]);
     reset();
     setTerminalsModalVisible(true);
   }
 
+  /**
+   * @todo 选择终端集合modal点击确定调用
+   */
   const handleOk = () => {
     if (selectedRowKeys.length === 0) {
       message.error('请选择终端');
@@ -384,6 +319,9 @@ function Page() {
     setTerminalsModalVisible(false);
   }
 
+  /**
+   * @todo 选择终端集合modal点击取消调用
+   */
   const handleCancel = () => {
     setTerminalsModalVisible(false);
   }
@@ -437,13 +375,12 @@ function Page() {
     },
   ];
 
-  const onSelectedRowChange = (selectedRowKeys: any) => {
-    setSelectedRowKeys(selectedRowKeys);
-  }
-
+  /**
+   * @todo 终端集合
+   */
   const rowSelection = {
     selectedRowKeys,
-    onChange: onSelectedRowChange,
+    onChange: setSelectedRowKeys,
   };
 
   /**
@@ -452,23 +389,39 @@ function Page() {
    */
   const onDeleTerminals = (type?: string) => {
     if (type === 'ALL') {
-      setSelectedTerminalOptions([]);
+      setSelectedTerminals([]);
     } else if (seletedDeleteTerminals.length > 0) {
       const arr: string[] = [];
-      for (let i = 0; i < selectedTerminalOptions.length; i++) {
+      for (let i = 0; i < selectedTerminals.length; i++) {
         let flag = false;
         for (let j = 0; j < seletedDeleteTerminals.length; j++) {
-          if (selectedTerminalOptions[i] === seletedDeleteTerminals[j]) {
+          if (selectedTerminals[i] === seletedDeleteTerminals[j]) {
             flag = true;
             break;
           }
         }
         if (!flag) {
-          arr.push(selectedTerminalOptions[i]);
+          arr.push(selectedTerminals[i]);
         }
       }
-      setSelectedTerminalOptions(arr);
+      setSelectedTerminals(arr);
     }
+    setSeletedDeleteTerminals([]);
+  }
+
+  /**
+   * 终端集合select改变调用（设置选中的终端用以批量删除）
+   * @param e 
+   */
+  const handleSelectChange = (e: any) => {
+    const options = e.target.options;
+    let arr: string[] = [];
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].selected) {
+        arr.push(options[i].value);
+      }
+    }
+    setSeletedDeleteTerminals(arr);
   }
 
   return (
@@ -495,7 +448,7 @@ function Page() {
               message: '请选择日志提取方式',
             }]}
           >
-            {renderCommonSelectForm(
+            {renderSelectForm(
               {
                 placeholder: '日志提取方式',
                 formName: 'id',
@@ -531,7 +484,7 @@ function Page() {
               message: '请选择终端厂商',
             }]}
           >
-            {renderCommonSelectForm(
+            {renderSelectForm(
               {
                 placeholder: '终端厂商',
                 formName: 'id',
@@ -554,43 +507,33 @@ function Page() {
             )}
           </Item>
 
-          <Item label="终端型号" name='terminalTypes' rules={[
+          <Item label="终端型号" name='terminalType' rules={[
             {
               required: true,
               message: '请选择终端型号',
             }]}
           >
-            <Col
-              span={24}
-              style={{
-                borderRadius: 2,
-                border: '1px solid #d9d9d9',
-                padding: 10,
-                display: 'flex',
-                flexDirection: 'column',
-                width: '100%'
-              }}
-            >
-              <div>
-                <Checkbox
-                  indeterminate={indeterminate}
-                  onChange={onCheckAllChange}
-                  checked={checkAll}
-                >
-                  全选
-                </Checkbox>
-              </div>
+            {renderSelectForm(
               {
-                terminalTypeOptions.length > 0 && (
-                  <CheckboxGroup
-                    options={terminalTypeOptions}
-                    value={checkedList}
-                    onChange={onChange}
-                    style={{ marginTop: 10 }}
-                  />
-                )
-              }
-            </Col>
+                placeholder: '终端厂商',
+                formName: 'id',
+                formType: FormItmeType.Select,
+                selectData:
+                  (terminalTypeList &&
+                    terminalTypeList.map((item) => {
+                      return {
+                        value: `${item.typeCode}`,
+                        title: `${item.typeName}`,
+                      };
+                    })) ||
+                  [],
+                value: terminalFirmValue,
+                onChange: (id: string) => {
+                  setTerminalTypeValue(`${id}`);
+                },
+                span: 24
+              } as any, false
+            )}
           </Item>
           <Item label="有效起始日期" name='validStartTime' rules={[
             {
@@ -671,7 +614,7 @@ function Page() {
                   清空
                   </Button>
               </Space>
-              <div
+              <select
                 style={{
                   width: '100%',
                   height: 200,
@@ -679,13 +622,18 @@ function Page() {
                   padding: 11,
                   overflow: 'auto'
                 }}
+                multiple={true}
+                value={seletedDeleteTerminals}
+                onChange={handleSelectChange}
               >
-                <CheckboxGroup
-                  options={selectedTerminalOptions}
-                  value={seletedDeleteTerminals}
-                  onChange={list => setSeletedDeleteTerminals(list as string[])}
-                />
-              </div>
+                {
+                  selectedTerminals.map(item => {
+                    return (
+                      <option value={item}>{item}</option>
+                    )
+                  })
+                }
+              </select>
             </Space>
           </Item>
           <Item {...buttonLayout} >
