@@ -36,9 +36,7 @@ export const merchantQueryBocoms = (
   return ApiRequest.get(`/merchant/query.bocoms${jsonToQueryString(params)}`);
 };
 
-export const terminalInfoList = (
-  tableProps: ITerminalListField
-) =>
+export const terminalInfoList = (tableProps: ITerminalListField) =>
   ApiRequest.get(
     `/cpay-admin/terminal/info/list${jsonToQueryString({ ...tableProps })}`
   );
@@ -52,7 +50,7 @@ export const terminalGroupListByDept = async (
   callback?: (params: ITerminalGroupByDeptId[]) => void
 ): Promise<any> => {
   const result = await ApiRequest.get(
-    `/cpay-admin/terminal/group/listByDept${jsonToQueryString({ deptId })}`
+    `/cpay-admin/terminal/group/listByDepts${jsonToQueryString({ deptId })}`
   );
   callback && result.code === RESPONSE_CODE.success && callback(result.data);
   return result;

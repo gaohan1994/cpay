@@ -19,3 +19,10 @@ export const terminalParamList = async (
     callback(result.data.rows);
   return result;
 };
+
+export const terminalParamRemove = async (id: string) => {
+  const result = await ApiRequest.post(`/cpay-admin/terminal/param/remove`, {
+    ids: id,
+  });
+  return result;
+};
