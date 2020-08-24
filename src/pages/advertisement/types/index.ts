@@ -8,6 +8,32 @@ export interface IAvertisementListField extends IListField {
   adFileType?: number; // 广告文件类型
 }
 
+export interface AdvertisementDetail {
+  adName: string;
+  adPath: string;
+  createTime: string;
+  deptName: string;
+  description: string;
+  endTime: string;
+  picPath: string;
+  reviewMsg: string;
+  reviewTime: string;
+  reviewUser: string;
+  startTime: string;
+  terminalTypes: string;
+  updateTime: string;
+  adFileType: number;
+  advertCopsSign: number;
+  deptId: number;
+  deviceType: number;
+  firmId: number;
+  groupId: number;
+  id: number;
+  isDisabled: number;
+  status: number;
+  type: number;
+}
+
 export declare module IAdvertReducerInterface {
   // common reducer 的类型定义
   interface IReducerState {}

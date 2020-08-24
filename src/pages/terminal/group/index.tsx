@@ -100,7 +100,6 @@ export default () => {
         ...values,
         ...(modalTitle === '修改' && editId ? { id: editId } : {}),
       };
-      console.log('payload:', payload);
       const fetchFunction =
         modalTitle === '修改' ? terminalGroupEdit : terminalGroupAdd;
       const result = await fetchFunction(payload);

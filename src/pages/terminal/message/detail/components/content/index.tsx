@@ -14,7 +14,7 @@ type Props = {
   terminalDetailInfo: ITerminalSystemDetailInfo;
 };
 
-function renderColumns(array: any[]) {
+export function renderColumns(array: any[]) {
   const mergeArray = merge([], array);
   const secondArr = mergeArray.splice(0, array.length / 2);
   return (

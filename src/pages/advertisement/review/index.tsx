@@ -67,7 +67,9 @@ function Page(props: Props) {
     {
       title: '审核状态',
       dataIndex: 'status',
-      dictType: 'advert_status',
+      // render: (item) => {
+      //   return <span>{item === 1 ? '通过' : '不通过'}</span>;
+      // },
     },
   ]);
 
@@ -98,7 +100,7 @@ function Page(props: Props) {
           reset,
         }}
       />
-      <Table columns={columns} {...tableProps} />
+      <Table rowKey="id" columns={columns} {...tableProps} />
     </div>
   );
 }
