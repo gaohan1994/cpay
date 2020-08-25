@@ -35,6 +35,7 @@ export type FormBaseProps = {
   formName: string;
   formType: FormItmeType;
   span?: number;
+  formProps?: any;
 };
 
 /**

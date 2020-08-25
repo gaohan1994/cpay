@@ -9,6 +9,7 @@ import { GlobalOutlined } from '@ant-design/icons';
 import Advertisementapple from '@/pages/advertisement/apply';
 import Advertisementreview from '@/pages/advertisement/review';
 import Advertisementreviewdetail from '@/pages/advertisement/review/detail';
+import AdvertisementApplyUpdate from '@/pages/advertisement/apply/update';
 
 export const AdvertisementMenu = {
   name: '广告管理',
@@ -34,6 +35,13 @@ const routerConfig: any[] = [
     path: '/advertisement/review-detail',
     name: '广告审核详情',
     component: Advertisementreviewdetail,
+    exact: true,
+    inMenu: false,
+  },
+  {
+    path: '/advertisement/apply-update',
+    name: '',
+    component: AdvertisementApplyUpdate,
     exact: true,
     inMenu: false,
   },

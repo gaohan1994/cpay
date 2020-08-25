@@ -25,6 +25,17 @@ const { Item } = Form;
 const { Option } = Select;
 const { TreeNode } = TreeSelect;
 
+export function ComponentContainer(props: any) {
+  const { span, formName, formProps } = props;
+  return (
+    <Col span={span || 6}>
+      <Item name={formName} {...formProps}>
+        {props.children}
+      </Item>
+    </Col>
+  );
+}
+
 /**
  * 渲染treeSelect
  */
@@ -103,12 +114,12 @@ export function renderTreeSelectForm(
   data: IComponentFormTreeSelectForm,
   isFrom?: boolean
 ) {
-  const { formName, span, treeSelectData, ...rest } = data;
+  const { formName, span, treeSelectData, formProps, ...rest } = data;
   if (isFrom !== false) {
     return (
-      <Col span={span || 6}>
-        <Item name={formName}>{renderTreeSelect(data)}</Item>
-      </Col>
+      <ComponentContainer {...data}>
+        {renderTreeSelect(data)}
+      </ComponentContainer>
     );
   } else {
     return renderTreeSelect(data);
@@ -122,11 +133,9 @@ export function renderTreeSelectForm(
 export function renderNormalForm(data: IComponentFormNormalForm) {
   const { formName, span, ...rest } = data;
   return (
-    <Col span={span || 4} key={formName}>
-      <Item name={formName}>
-        <Input {...rest} />
-      </Item>
-    </Col>
+    <ComponentContainer {...data}>
+      <Input {...rest} />
+    </ComponentContainer>
   );
 }
 
@@ -163,9 +172,7 @@ export function renderSelectForm(
   const { formName, span } = data;
   if (isForm !== false) {
     return (
-      <Col span={span || 4} key={formName}>
-        <Item name={formName}>{renderSelect(data)}</Item>
-      </Col>
+      <ComponentContainer {...data}>{renderSelect(data)}</ComponentContainer>
     );
   } else {
     return renderSelect(data);
@@ -245,9 +252,7 @@ export function renderCascaderForm(
   const { formName, span, ...rest } = data;
   if (isForm !== false) {
     return (
-      <Col span={span || 4} key={formName}>
-        <Item name={formName}>{renderCascader(data)}</Item>
-      </Col>
+      <ComponentContainer {...data}>{renderCascader(data)}</ComponentContainer>
     );
   } else {
     return renderCascader(data);
@@ -258,10 +263,8 @@ export function renderDatePickerForm(data: IComponentFormDatePicker) {
   const { formName, span, ...rest } = data;
 
   return (
-    <Col span={span || 4} key={formName}>
-      <Item name={formName}>
-        <DatePicker style={{ width: '100%' }} {...rest} />
-      </Item>
-    </Col>
+    <ComponentContainer {...data}>
+      <DatePicker style={{ width: '100%' }} {...rest} />
+    </ComponentContainer>
   );
 }

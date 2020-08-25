@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Table } from 'antd';
+import { useHistory } from 'react-router-dom';
 import { useAntdTable } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { advertInfoList } from '../constants/api';
@@ -11,6 +12,7 @@ import { useStore } from '@/pages/common/costom-hooks';
 
 export default () => {
   // 请求dept数据
+  const history = useHistory();
   useStore(['advert']);
   const [form] = Form.useForm();
 
@@ -27,7 +29,15 @@ export default () => {
   const columns = createTableColumns([
     {
       title: '操作',
-      render: () => <a>审核</a>,
+      render: (item: any) => (
+        <a
+          onClick={() =>
+            history.push(`/advertisement/apply-update?id=${item.id}`)
+          }
+        >
+          审核
+        </a>
+      ),
       fixed: 'left',
     },
     {
