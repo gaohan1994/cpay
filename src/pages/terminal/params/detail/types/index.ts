@@ -1,6 +1,5 @@
 import { TerminalGroupItem } from '@/pages/terminal/group/types';
 import { TerminalParamItem } from '@/pages/terminal/params/types';
-
 export interface ITerminalParams {
   sysUpRequiresNoOperTime: string;
   tmsDomainName: string;
@@ -24,6 +23,7 @@ export interface ITerminalParams {
   managePwd: string;
   broadcastTime: string;
   reHtIntvl: string;
+  infoList: string;
 }
 
 export interface ITerminalParam {

@@ -55,7 +55,7 @@ export default () => {
   useEffect(() => {
     terminalGroupListByDept(formTreeValue, (groupData) => {
       setTerminalGroup(groupData);
-      setGroupValue(`${groupData[0].id}`);
+      groupData[0] && setGroupValue(`${groupData[0].id}`);
     });
   }, [formTreeValue]);
 

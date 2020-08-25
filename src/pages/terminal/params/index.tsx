@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Form, Table, notification } from 'antd';
+import { Form, Table, notification, Modal } from 'antd';
 import { useAntdTable } from 'ahooks';
 import invariant from 'invariant';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { PlusOutlined, CopyOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd/lib/button';
-import { terminalParamList } from './constants';
+import { terminalParamList, terminalParamRemove } from './constants';
 import { formatListResult } from '@/common/request-util';
 import { createTableColumns } from '@/component/table';
 import { FormItem, FormItmeType } from '@/component/form/type';
@@ -13,6 +13,7 @@ import Forms from '@/component/form';
 import { useStore } from '@/pages/common/costom-hooks';
 import history from '@/common/history-util';
 import { DetailType } from './types';
+import { RESPONSE_CODE } from '@/common/config';
 
 export default () => {
   useStore([]);
@@ -51,6 +52,26 @@ export default () => {
     );
   };
 
+  const onDelete = async (item: any) => {
+    setSelectedRowKeys([item.id]);
+    Modal.confirm({
+      title: '提示',
+      content: `确认要删除当前机构的参数吗?`,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const result = await terminalParamRemove(item.id);
+          invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
+          notification.success({ message: '删除成功!' });
+          submit();
+        } catch (error) {
+          notification.warn({ message: error.message });
+        }
+      },
+    });
+  };
+
   const forms: FormItem[] = [
     {
       formName: 'deptId',
@@ -65,7 +86,7 @@ export default () => {
         <div>
           <a onClick={() => onEdit(item)}>修改</a>
           {` | `}
-          <a>删除</a>
+          <a onClick={() => onDelete(item)}>删除</a>
         </div>
       ),
       fixed: 'left',

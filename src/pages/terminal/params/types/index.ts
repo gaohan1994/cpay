@@ -1,3 +1,5 @@
+import { ITerminalParams } from '../detail/types';
+
 export interface FetchField {
   deptId: string;
   deptName: string;
@@ -13,7 +15,7 @@ export interface TerminalParamItem {
   id: number;
   deptId: number;
   groupId: number;
-  paramContent: string;
+  paramContent: ITerminalParams;
   paramVersion: string;
   createBy: string;
   updateBy: string;

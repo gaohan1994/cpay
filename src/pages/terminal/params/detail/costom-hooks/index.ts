@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useState } from 'react';
+import { merge } from 'lodash';
 import { terminalParamCopys, terminalParamEdit } from '../constants';
 import { DetailType } from '../../types';
 import { ITerminalParam } from '../types';
@@ -20,7 +21,17 @@ export function useDetail(id: string, type: DetailType) {
   const getParamsCallback = useCallback(
     (response: IResponseResult<ITerminalParam>) => {
       if (response.code === RESPONSE_CODE.success) {
-        setTerminalParams(response.data);
+        let responseData = merge({}, response.data);
+        if (
+          responseData.terminalParam &&
+          responseData.terminalParam.paramContent
+        ) {
+          const contentToJson = JSON.parse(
+            responseData.terminalParam.paramContent as any
+          );
+          responseData.terminalParam.paramContent = contentToJson;
+        }
+        setTerminalParams(responseData);
       }
     },
     []

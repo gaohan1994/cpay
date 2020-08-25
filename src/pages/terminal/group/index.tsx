@@ -1,19 +1,33 @@
-import React from 'react';
-import { Form, Table } from 'antd';
-import { useAntdTable } from 'ahooks';
+import React, { useState } from 'react';
+import { Form, Table, Input, Col, Button, notification, Modal } from 'antd';
+import { useAntdTable, useBoolean } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { PlusOutlined } from '@ant-design/icons';
-import { terminalGroupList } from './constants';
+import {
+  terminalGroupList,
+  terminalGroupAdd,
+  terminalGroupDelete,
+  terminalGroupEdit,
+} from './constants';
 import { formatListResult } from '@/common/request-util';
 import { createTableColumns } from '@/component/table';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import Forms from '@/component/form';
+import { renderCommonTreeSelectForm } from '@/component/form/render';
 import { useStore } from '@/pages/common/costom-hooks';
 import { formatPaginate } from '@/common/request-util';
+import { RESPONSE_CODE } from '@/common/config';
+import invariant from 'invariant';
 
+const { Item } = Form;
+const { TextArea } = Input;
 export default () => {
   useStore([]);
   const [form] = Form.useForm();
+  const [modalForm] = Form.useForm();
+  const [editId, setEditId] = useState('');
+  const [modalTitle, setModalTitle] = useState('新增');
+  const [modalVisible, { setFalse, setTrue }] = useBoolean(false);
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: PaginatedParams[0], tableProps: any) => {
       return terminalGroupList({
@@ -44,11 +58,11 @@ export default () => {
   const columns = createTableColumns([
     {
       title: '操作',
-      render: () => (
+      render: (item: any) => (
         <div>
-          <a>修改</a>
+          <a onClick={() => onEdit(item)}>修改</a>
           {` | `}
-          <a>删除</a>
+          <a onClick={() => onDelete(item.id)}>删除</a>
         </div>
       ),
       fixed: 'left',
@@ -60,10 +74,10 @@ export default () => {
     },
     {
       title: '组别名称',
-      dataIndex: 'groupName',
-      render: (key: any, item: any) => (
-        <span>{!!item['groupName'] || '--'}</span>
-      ),
+      dataIndex: 'name',
+      render: (item: any) => {
+        return <span>{item || '--'}</span>;
+      },
     },
     {
       title: '备注',
@@ -76,9 +90,55 @@ export default () => {
       title: '新增',
       type: 'primary',
       icon: <PlusOutlined />,
+      onClick: setTrue,
     },
   ];
 
+  const onAdd = async (values: any) => {
+    try {
+      const payload = {
+        ...values,
+        ...(modalTitle === '修改' && editId ? { id: editId } : {}),
+      };
+      console.log('payload:', payload);
+      const fetchFunction =
+        modalTitle === '修改' ? terminalGroupEdit : terminalGroupAdd;
+      const result = await fetchFunction(payload);
+      invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
+      setFalse();
+      notification.success({ message: `${modalTitle}分组成功!` });
+      submit();
+    } catch (error) {
+      notification.warn({ message: error.message });
+    }
+  };
+
+  const onDelete = async (id: string) => {
+    Modal.confirm({
+      title: '提示',
+      content: `确认要删除选中的组别么?`,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const payload: any = { ids: id };
+          const result = await terminalGroupDelete(payload);
+          invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
+          notification.success({ message: '删除分组成功!' });
+          submit();
+        } catch (error) {
+          notification.warn({ message: error.message });
+        }
+      },
+    });
+  };
+
+  const onEdit = async (item: any) => {
+    modalForm.setFieldsValue({ ...item });
+    setEditId(item.id);
+    setModalTitle('修改');
+    setTrue();
+  };
   return (
     <div>
       <Forms
@@ -90,7 +150,77 @@ export default () => {
           extraButtons,
         }}
       />
-      <Table columns={columns} {...tableProps} />
+      <Table rowKey="id" columns={columns} {...tableProps} />
+      <Modal
+        title={`终端组别${modalTitle}`}
+        cancelText="取消"
+        okText="确定"
+        visible={modalVisible}
+        maskClosable
+        footer={null}
+        // onOk={onAdd}
+        // confirmLoading={confirmLoading}
+        onCancel={() => {
+          setModalTitle('新增');
+          setFalse();
+        }}
+      >
+        <Form
+          form={modalForm}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 16 }}
+          onFinish={onAdd}
+        >
+          <Item
+            label="组别名称"
+            name="name"
+            rules={[
+              {
+                required: true,
+                message: '请输入组别名称',
+              },
+            ]}
+          >
+            <Input />
+          </Item>
+          <Item
+            label="所属机构"
+            name="deptId"
+            rules={[
+              {
+                required: true,
+                message: '请选择机构',
+              },
+            ]}
+          >
+            {renderCommonTreeSelectForm(
+              {
+                formName: 'deptId',
+                formType: FormItmeType.TreeSelectCommon,
+              },
+              false
+            )}
+          </Item>
+          <Item
+            label="备注"
+            name="remark"
+            rules={[
+              {
+                required: true,
+                message: '请填写备注',
+              },
+            ]}
+          >
+            <TextArea style={{ minHeight: 150 }} />
+          </Item>
+          <Item>
+            <Button>取消</Button>
+            <Button type="primary" htmlType="submit" style={{ marginLeft: 12 }}>
+              确定
+            </Button>
+          </Item>
+        </Form>
+      </Modal>
     </div>
   );
 };

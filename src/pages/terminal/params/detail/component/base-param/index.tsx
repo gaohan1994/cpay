@@ -1,31 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useBoolean } from 'ahooks';
-import { Input, Row, Col, Switch, Divider, Form } from 'antd';
+import { Input, Row, Col, Switch, Divider, Button } from 'antd';
 import { ITerminalParams, ComponentItem } from '../../types';
 import '../index.scss';
 import { DetailType } from '../../../types';
+import { FormInstance } from 'antd/lib/form';
 
+const { TextArea } = Input;
 const prefix = 'terminal-params-component-detail';
 
 type Props = {
   type: DetailType;
+  form: FormInstance;
   value?: ITerminalParams;
   onChange?: (params?: any) => void;
 };
 
 interface State {
   editServerSwitch: boolean;
+  infoList: string;
 }
 
 export default (props: Props) => {
   const initState: State = {
     editServerSwitch: false,
+    infoList: '',
   };
   const { value, onChange, type } = props;
+  const [infoList, setInfoList] = useState(initState.infoList);
   const [editServerSwitch, { setFalse, toggle }] = useBoolean(
     initState.editServerSwitch
   );
   useEffect(() => {
+    if (!!value?.infoList) {
+      setInfoList(value.infoList);
+    }
     if (type === DetailType.EDIT) {
       setFalse();
     }
@@ -42,6 +51,16 @@ export default (props: Props) => {
   };
 
   /**
+   * 格式化
+   * 1.遇到空格格式化
+   * 2.遇到换行符格式化
+   */
+  const formatInfoList = () => {
+    const formatList = infoList.split(/[\s\n]/).filter((t) => !!t);
+    onValueChange(formatList.join(`\n`), 'infoList');
+  };
+
+  /**
    * 修改参数
    * @param newValue
    * @param key
@@ -52,14 +71,10 @@ export default (props: Props) => {
     key: string
     // callback: (data: string) => void
   ) => {
-    // if (value && !(`${key}` in value)) {
-    //   // callback(newValue);
-    //   console.log('newValue:', newValue);
-    //   setCurrentState({
-    //     ...currentState,
-    //     [`${key}`]: newValue,
-    //   });
-    // }
+    if (key === 'infoList') {
+      console.log('newValue:', newValue);
+      setInfoList(newValue);
+    }
     triggerChange({ [`${key}`]: newValue });
   };
 
@@ -86,7 +101,7 @@ export default (props: Props) => {
     },
     {
       title: '信息上送间隔时间(分)*',
-      key: ' upInfoIntvl',
+      key: 'upInfoIntvl',
     },
     {
       title: '运维口令*',
@@ -94,7 +109,7 @@ export default (props: Props) => {
     },
     {
       title: '管理口令*',
-      key: ' managePwd',
+      key: 'managePwd',
     },
     {
       title: '文件下载间隔时间(秒)*',
@@ -227,7 +242,34 @@ export default (props: Props) => {
           </Row>
         </div>
       )}
-      {/* <Divider orientation="left">【应用信息上送】</Divider> */}
+      <Divider orientation="left">【应用信息上送】</Divider>
+      <Row>
+        <Col style={{ marginBottom: 12 }}>
+          <div className={`${prefix}-item`}>
+            <span>配置应用信息*</span>
+            <TextArea
+              required
+              style={{ width: 400 }}
+              value={infoList}
+              autoSize={{ minRows: 4 }}
+              onChange={(e) => {
+                console.log(e.target.value);
+                onValueChange(e.target.value, 'infoList');
+              }}
+            />
+            <Button
+              type="primary"
+              onClick={formatInfoList}
+              style={{ marginLeft: 12 }}
+            >
+              格式化
+            </Button>
+            <span style={{ marginLeft: 12 }}>
+              (格式化后一行文本代表一个应用包名)
+            </span>
+          </div>
+        </Col>
+      </Row>
     </div>
   );
 };
