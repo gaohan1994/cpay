@@ -81,7 +81,7 @@ export function UseCommonSelectData(
 }
 
 export function renderTreeSelect(data: IComponentFormTreeSelectForm) {
-  const { formName, span, treeSelectData, ...rest } = data;
+  const { formName, span, treeSelectData, formType, ...rest } = data;
   return (
     <TreeSelect
       treeDefaultExpandAll
@@ -135,7 +135,7 @@ export function renderNormalForm(data: IComponentFormNormalForm) {
  * @param data
  */
 export function renderSelect(data: IComponentFormSelectForm) {
-  const { formName, span, selectData, ...rest } = data;
+  const { formName, span, selectData, formType, ...rest } = data;
   return (
     <Select {...rest}>
       {Array.isArray(selectData) &&

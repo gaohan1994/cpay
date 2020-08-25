@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-18 14:56:36 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-20 10:18:30
+ * @Last Modified time: 2020-08-20 16:15:29
  * 
  * @todo 远程运维列表
  */
@@ -14,7 +14,7 @@ import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
-import { taskDownloadJobRemove, taskOperationJobList, taskOperationJobPublish } from '../constants/api';
+import { taskOperationJobList, taskOperationJobPublish } from '../constants/api';
 import { PlusOutlined, CopyOutlined, BarsOutlined, CaretRightOutlined, PauseOutlined } from '@ant-design/icons';
 import { useRedux } from '@/common/redux-util';
 import { RESPONSE_CODE } from '@/common/config';
@@ -25,6 +25,7 @@ import {
   terminalTypeListByFirm,
 } from '@/pages/terminal/constants';
 import { getTaskJobStatusColor } from '../common/util';
+import { taskDownloadJobRemove } from '../upload/constants/api';
 
 type Props = {};
 

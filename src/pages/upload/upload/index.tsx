@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-13 09:36:52 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-20 11:32:50
+ * @Last Modified time: 2020-08-20 16:38:29
  * 
  * @todo 软件更新任务列表
  */
@@ -15,10 +15,10 @@ import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
 import history from '@/common/history-util';
-import { taskDownloadJobList, taskDownloadJobRemove } from '../constants/api';
 import { PlusOutlined, CopyOutlined, BarsOutlined, CaretRightOutlined, PauseOutlined, ScheduleOutlined, SyncOutlined } from '@ant-design/icons';
 import { useRedux } from '@/common/redux-util';
 import { RESPONSE_CODE } from '@/common/config';
+import { taskDownloadJobList, taskDownloadJobRemove } from './constants/api';
 
 type Props = {};
 
@@ -53,7 +53,7 @@ function Page(props: Props) {
    * @param item 
    */
   const onEdit = (item: any) => {
-
+    history.push(`/upload/update-add?id=${item.id}`);
   }
 
   const onRemove = async (item: any) => {
@@ -134,17 +134,17 @@ function Page(props: Props) {
   ];
 
   const onAdd = () => {
-    // history.push('/upload/manage-add');
+    history.push('/upload/update-add');
   }
 
   const extraButtons = [
     { title: '新增', onClick: onAdd, icon: <PlusOutlined />, type: "primary" as any, },
-    { title: '复制', onClick: onAdd, icon: <CopyOutlined /> },
-    { title: '执行情况', onClick: onAdd, icon: <BarsOutlined /> },
-    { title: '启动', onClick: onAdd, icon: <CaretRightOutlined />, type: "primary" as any, },
-    { title: '暂停', onClick: onAdd, icon: <PauseOutlined />, type: "primary" as any, },
-    { title: '延时', onClick: onAdd, icon: <ScheduleOutlined /> },
-    { title: '增量同步', onClick: onAdd, icon: <SyncOutlined /> },
+    { title: '复制', onClick: () => {}, icon: <CopyOutlined /> },
+    { title: '执行情况', onClick: () => {}, icon: <BarsOutlined /> },
+    { title: '启动', onClick: () => {}, icon: <CaretRightOutlined />, type: "primary" as any, },
+    { title: '暂停', onClick: () => {}, icon: <PauseOutlined />, type: "primary" as any, },
+    { title: '延时', onClick: () => {}, icon: <ScheduleOutlined /> },
+    { title: '增量同步', onClick: () => {}, icon: <SyncOutlined /> },
   ]
 
   return (

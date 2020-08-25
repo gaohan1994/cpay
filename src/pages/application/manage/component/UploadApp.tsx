@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-11 17:48:19 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 09:11:36
+ * @Last Modified time: 2020-08-21 10:03:36
  * 
  * @todo 上传apk用到的组件
  */
@@ -180,4 +180,4 @@ function UploadApp(props: Props) {
   )
 }
 
-export default forwardRef(UploadApp);
+export default UploadApp;

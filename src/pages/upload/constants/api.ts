@@ -60,25 +60,18 @@ export const softVersionEdit = (params: any) =>
   ApiRequest.post(`/cpay-admin/task/softVersion/edits/${params.id}`, params);
 
 /**
+ * @todo 根据终端型号查询软件版本
+ * @param params 
+ */
+export const taskSoftVersionListByType = (params: any) =>
+  ApiRequest.get(`/cpay-admin/task/softVersion/listByTypet${jsonToQueryString(params)}`);
+
+/**
 * @todo 删除软件版本信息
 * @param params 
 */
 export const softVersionRemove = (params: { ids: string }) =>
   ApiRequest.post(`/cpay-admin/task/softVersion/remove`, params);
-
-/**
- * @todo 请求软件更新任务基本信息列表
- * @param params
- */
-export const taskDownloadJobList = (params: any) =>
-  ApiRequest.get(`/cpay-admin/task/downloadJob/list${jsonToQueryString(params)}`);
-
-/**
- * @todo 删除软件更新任务基本信息列表
- * @param params
- */
-export const taskDownloadJobRemove = (params: { ids: string }) =>
-  ApiRequest.post(`/cpay-admin/task/downloadJob/remove`, params);
 
 /**
  * @todo 查询终端上传任务列表(日志提取)

@@ -3,7 +3,7 @@
  * @Author: Ghan
  * @Date: 2020-07-20 17:28:31
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-19 14:32:07
+ * @Last Modified time: 2020-08-20 16:16:03
  */
 
 import { AppstoreAddOutlined } from '@ant-design/icons';
@@ -17,6 +17,7 @@ import UploadOperationAdd from '@/pages/upload/operation/add';
 import UploadOperationDetail from '@/pages/upload/operation/detail';
 import UploadOperationOperation from '@/pages/upload/operation/operation';
 import Uploadupload from '@/pages/upload/upload';
+import UploadUploadAdd from '@/pages/upload/upload/add';
 import Uploadlog from '@/pages/upload/log';
 import UploadLogDetail from '@/pages/upload/log/detail';
 import UploadLogAdd from '@/pages/upload/log/add';
@@ -68,6 +69,13 @@ const routerConfig: any[] = [
     name: '软件更新',
     component: Uploadupload,
     exact: true
+  },
+  {
+    path: '/upload/update-add',
+    name: '软件更新新增',
+    component: UploadUploadAdd,
+    exact: true,
+    inMenu: false,
   },
   {
     path: '/upload/operation',

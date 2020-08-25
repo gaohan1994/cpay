@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-20 11:40:15 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-20 14:02:58
+ * @Last Modified time: 2020-08-20 16:15:02
  * 
  * @todo 远程下载列表
  */
@@ -14,7 +14,7 @@ import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
-import { taskDownloadJobList } from '../constants/api';
+import { taskDownloadJobList } from '../upload/constants/api';
 
 type Props = {};
 

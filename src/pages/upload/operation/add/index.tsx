@@ -237,7 +237,7 @@ function Page() {
         addForm.setFieldsValue({ groupFilterType: detail.isGroupUpdate });
         setGroupFilterType(detail.isGroupUpdate);
       }
-      if (typeof detail.groupIds) {
+      if (typeof detail.groupIds === 'string') {
         const arr = detail.groupIds.split(',');
         const numArr: number[] = [];
         for (let i = 0; i < arr.length; i++) {
