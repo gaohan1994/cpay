@@ -36,7 +36,7 @@ export function getCustomSelectFromItemData(props: CustomSelctFromItenDataProps)
           []}
         value={value}
         onChange={(id: string) => {
-          onChange ? onChange() : setValue && setValue(id);
+          onChange ? onChange(id) : setValue && setValue(id);
         }}
       />
   }

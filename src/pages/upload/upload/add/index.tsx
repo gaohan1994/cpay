@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { useQueryParam } from '@/common/request-util';
-import { merge } from 'lodash';
-import { Form, Input, Col, Row, Divider, Button, Card, Switch, DatePicker, Spin } from 'antd';
+import { useQueryParam, jsonToQueryString } from '@/common/request-util';
+import { merge, forIn } from 'lodash';
+import { Form, Input, Col, Row, Divider, Button, Card, Switch, DatePicker, Spin, message } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { useFormSelectData } from './costom-hooks';
 import { getFormCommonRules } from '../../common/util';
-import { taskDownloadJobDetail } from '../constants/api';
+import { taskDownloadJobDetail, taskDownloadJobAdd } from '../constants/api';
 import { ITerminalFirmItem, ITerminalType } from '@/pages/terminal/types';
 import { CustomCheckGroup } from '@/component/checkbox-group';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -19,6 +19,9 @@ import { renderTreeSelect } from '@/component/form/render';
 import { FormItmeType } from '@/component/form/type';
 import { FormTusns } from '../../component/from-tusns';
 import { TableTusns } from '../../component/table.tusns';
+import numeral from 'numeral';
+
+const groupFilterTypeList = [{ value: 0, label: '无' }, { value: 1, label: '指定' }, { value: 2, label: '排除' }]
 
 const FormItemLayout = {
   labelCol: {
@@ -48,15 +51,17 @@ export default function Page() {
   const softFroms = [softFrom1, softFrom2, softFrom3, softFrom4, softFrom5];
   useStore(['terminal_type', 'unionpay_connection', 'buss_type',
     'is_support_dcc', 'driver_type', 'dcc_sup_flag',
-    'download_task_type', 'release_type']);
+    'download_task_type', 'release_type', 'activate_type']);
 
   const [softInfoFormsNum, setSoftInfoFormsNum] = useState(1);
   const [validDateShow, setValidDateShow] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [tusnsOptions, setTusnsOptions] = useState([]);
+  const [groupFilterTypeValue, setGroupFilterTypeValue] = useState(0);
 
   useEffect(() => {
-
-  }, [])
+    form.setFieldsValue({ 'tusns': tusnsOptions });
+  }, [tusnsOptions])
   /**
    * 第一步初始化数据
    * 第二步
@@ -77,13 +82,17 @@ export default function Page() {
     bussTypeList,
     driverTypeList,
     dccSupFlagList, setDccSupFlagList,
-    releseTypeList, setReleaseTypeList,
+    releaseTypeList, setReleaseTypeList,
     releaseTypeValue, setReleaseTypeValue,
     deptTreeData, setDeptTreeData,
     deptId, setDeptId,
-    terminalGroupList, setTerminalGroupList
+    terminalGroupList, setTerminalGroupList,
+    activateTypeList, setActivateTypeList
   } = useFormSelectData(form.getFieldsValue());
 
+  /**
+   * @todo 终端信息表单项
+   */
   const terminalInfoForms: CustomFromItem[] = [
     {
       label: '任务名称',
@@ -95,33 +104,40 @@ export default function Page() {
         label: '终端厂商',
         key: 'firmId',
         value: terminalFirmValue,
-        setValue: setTerminalFirmValue,
         list: terminalFirmList,
         valueKey: 'id',
         nameKey: 'firmName',
-        required: true
+        required: true,
+        onChange: (id: any) => {
+          setTerminalFirmValue(id);
+          form.setFieldsValue({ 'terminalTypes': [] });
+          for (let i = 0; i < softFroms.length; i++) {
+            softFroms[i].resetFields();
+            setSoftInfoFormsNum(1);
+          }
+        }
       })
     },
     {
       label: '终端型号',
-      key: 'termianlModels',
+      key: 'terminalTypes',
       requiredType: 'select',
       render: () =>
         <CustomCheckGroup
           list={terminalModelList}
           valueKey={'id'} nameKey={'typeName'}
-          setForm={(checkedList: any[]) => { form.setFieldsValue({ 'termianlModels': checkedList }) }}
+          setForm={(checkedList: any[]) => { form.setFieldsValue({ 'terminalTypes': checkedList }) }}
         />
     },
     {
       label: '终端类型',
-      key: 'termianlTypes',
+      key: 'activateTypes',
       requiredType: 'select',
       render: () =>
         <CustomCheckGroup
           list={terminalTypeList}
           valueKey={'dictValue'} nameKey={'dictLabel'}
-          setForm={(value: any[]) => { form.setFieldsValue({ 'termianlTypes': value }) }}
+          setForm={(value: any[]) => { form.setFieldsValue({ 'activateTypes': value }) }}
         />
     },
     {
@@ -156,11 +172,14 @@ export default function Page() {
     },
   ]
 
+  /**
+   * @todo 任务时间表单项
+   */
   const taskTimeForms: CustomFromItem[] = [
     {
       label: '任务时间修改开关',
       key: 'validDateShow',
-      render: () => <Switch checked={validDateShow} onChange={setValidDateShow} />,
+      render: () => <Switch defaultChecked={false} checked={validDateShow} onChange={setValidDateShow} />,
       labelCol: {
         span: 4
       },
@@ -195,6 +214,9 @@ export default function Page() {
     }
   ]
 
+  /**
+   * @todo 更新方式表单项
+   */
   const updateModeForms: CustomFromItem[] = [
     {
       label: '更新通知方式',
@@ -220,12 +242,15 @@ export default function Page() {
     },
   ]
 
+  /**
+   * @todo 发布类型表单项
+   */
   const releaseTypeForms: CustomFromItem[] = [
     {
       ...getCustomSelectFromItemData({
         label: '发布类型',
-        key: 'releseType',
-        list: releseTypeList,
+        key: 'releaseType',
+        list: releaseTypeList,
         valueKey: 'dictValue',
         nameKey: 'dictLabel',
         value: releaseTypeValue,
@@ -234,6 +259,9 @@ export default function Page() {
     },
   ]
 
+  /**
+   * @todo 获取发布类型表单按机构方式表单项
+   */
   const getReleaseTypeFormsByDept = (): CustomFromItem[] => {
     if (releaseTypeValue === '1') {
       return [
@@ -257,29 +285,31 @@ export default function Page() {
         },
         {
           label: '组别过滤方式',
-          key: 'groupFilterType',
+          key: 'isGroupUpdate',
           render: () =>
             <CustomRadioGroup
-              list={[{ value: 0, label: '无' }, { value: 1, label: '指定' }, { value: 2, label: '排除' }]}
+              list={groupFilterTypeList}
               valueKey={'value'} nameKey={'label'}
-              setForm={(value: any[]) => { form.setFieldsValue({ 'groupFilterType': value }) }}
+              setForm={(value: any) => { form.setFieldsValue({ 'isGroupUpdate': value }); setGroupFilterTypeValue(value) }}
             />
         },
         {
           label: '升级范围',
-          key: 'update',
+          key: 'activateType',
           requiredType: 'select',
           render: () =>
             <CustomRadioGroup
-              list={[{ value: 0, label: '存量 + 增量' }, { value: 1, label: '仅存量' }]}
-              valueKey={'value'} nameKey={'label'}
-              setForm={(value: any[]) => { form.setFieldsValue({ 'update': value }) }}
+              list={activateTypeList}
+              valueKey={'dictValue'}
+              nameKey={'dictLabel'}
+              setForm={(value: any[]) => { form.setFieldsValue({ 'activateType': value }) }}
             />
         },
         {
           label: '终端组别',
           key: 'groupIds',
           itemSingleCol: true,
+          show: groupFilterTypeValue !== 0,
           render: () =>
             <CustomCheckGroup
               list={terminalGroupList}
@@ -292,6 +322,26 @@ export default function Page() {
     return [];
   }
 
+  /**
+   * @todo 新增终端操作
+   */
+  const onAddTerminals = () => {
+    if (terminalFirmValue.length === 0) {
+      message.error('请选择终端厂商');
+      return;
+    }
+    const termianlModels = form.getFieldValue('terminalTypes');
+    if (termianlModels && termianlModels.length === 0) {
+      message.error('请选择终端型号');
+      return;
+    }
+
+    setModalVisible(true)
+  }
+
+  /**
+   * @todo 获取发布类型表单按条件查询方式表单项
+   */
   const getReleaseTypeFormsByCondition = (): CustomFromItem[] => {
     if (releaseTypeValue === '0') {
       return [
@@ -300,20 +350,28 @@ export default function Page() {
           key: 'tusns',
           itemSingleCol: true,
           requiredType: 'select',
-          render: () => <FormTusns options={[]} setOptions={() => { }} onAddTerminals={() => { }} />
+          render: () => <FormTusns options={tusnsOptions} setOptions={setTusnsOptions} onAddTerminals={onAddTerminals} />
         }
       ]
     }
     return [];
   }
 
-
+  /**
+   * @todo 新增软件表单项
+   */
   const onAddSoftInfoFormsItem = () => {
     if (softInfoFormsNum < 5) {
       setSoftInfoFormsNum(softInfoFormsNum + 1);
+    } else {
+      message.error('单个任务最大支持5个软件')
     }
   }
 
+  /**
+   * @todo 删除软件表单项
+   * @param index 
+   */
   const onDeleteSoftInfoFormsItem = (index: number) => {
     if (softInfoFormsNum > 1) {
       for (let i = index; i < softInfoFormsNum; i++) {
@@ -324,11 +382,34 @@ export default function Page() {
     setSoftInfoFormsNum(softInfoFormsNum - 1);
   }
 
+  /**
+   * @todo 提交
+   */
   const onSubmit = async () => {
     try {
-      console.log('test aaa', form.getFieldsValue());
       const values = await form.validateFields();
+      let arr: any[] = [];
+      for (let i = 0; i < softInfoFormsNum; i++) {
+        softFroms[i].validateFields();
+        arr.push({ ...softFroms[i].getFieldsValue(), isDependApp: false });
+      }
+      let param: any = {
+        ...form.getFieldsValue(),
+        validDateShow: validDateShow ? 1 : 0,
+        // downloadJobAppList: arr,
+      }
+      for (let i = 0; i < arr.length; i++) {
+        const item = arr[i];
+        for (const key in item) {
+          if (Object.prototype.hasOwnProperty.call(item, key)) {
+            const element = item[key];
+            param[`downloadJobAppList[${i}].${key}`] = element;
+          }
+        }
+      }
+      console.log('test param', param);
       console.log('Success:', values);
+      const res = await taskDownloadJobAdd(param);
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
     }
@@ -349,7 +430,7 @@ export default function Page() {
           softInfoFormsNum > 0 && new Array(softInfoFormsNum).fill({}).map((item: any, index: number) => {
             return (
               <Card key={`softInfo${index}`} title={`软件${index + 1}`} bordered={true} style={{ marginTop: 10 }} extra={<Button onClick={() => onDeleteSoftInfoFormsItem(index)}>删除</Button>}>
-                <SoftInfoItem form={softFroms[index]} firmId={undefined} />
+                <SoftInfoItem form={softFroms[index]} firmId={terminalFirmValue} />
               </Card>
             )
           })
@@ -366,7 +447,13 @@ export default function Page() {
         </Button>
         </Form.Item>
       </Form>
-      <TableTusns visible={modalVisible} hideModal={() => setModalVisible(false)} handleOk={() => { }} handleCancel={() => { }} fetchParam={{ firmId: 28 }} />
+      <TableTusns
+        visible={modalVisible}
+        hideModal={() => setModalVisible(false)}
+        fetchParam={{ firmId: terminalFirmValue, terminalTypeIds: form.getFieldValue('termianlModels') }}
+        setOptions={setTusnsOptions}
+        options={tusnsOptions}
+      />
     </Spin>
 
   )

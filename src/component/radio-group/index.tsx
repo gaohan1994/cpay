@@ -31,7 +31,7 @@ export const CustomRadioGroup = React.forwardRef((props: Props, ref) => {
   }, [value]);
 
   return (
-    <Radio.Group value={value}>
+    <Radio.Group value={value} onChange={(e) => setValue(e.target.value)}>
       {
         list.length > 0 && list.map(item => {
           return (

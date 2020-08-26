@@ -26,12 +26,13 @@ export function useFormSelectData(props: any) {
   const [dccSupFlagList, setDccSupFlagList] = useState([] as DictDetailItem[]);
   const [bussTypeList, setBussTypeList] = useState([] as DictDetailItem[]);
   const [driverTypeList, setDriverTypeList] = useState([] as DictDetailItem[]);
-  const [releseTypeList, setReleaseTypeList] = useState([] as DictDetailItem[]);
+  const [releaseTypeList, setReleaseTypeList] = useState([] as DictDetailItem[]);
   const [releaseTypeValue, setReleaseTypeValue] = useState('');
   const [deptTreeData, setDeptTreeData] = useState([] as any);
   const [deptId, setDeptId] = useState(-1);
   const { terminalGroupList, setTerminalGroupList } = useTerminalGroupList(deptId || -1);
-
+  const [activateTypeList, setActivateTypeList] = useState([] as DictDetailItem[]);
+  
   useEffect(() => {
     setTerminalTypeList(state.terminal_type && state.terminal_type.data || []);
     setUnionpayConnectionList(state.unionpay_connection && state.unionpay_connection.data || []);
@@ -39,7 +40,7 @@ export function useFormSelectData(props: any) {
     setDriverTypeList(state.driver_type && state.driver_type.data || []);
     setDccSupFlagList(state.dcc_sup_flag && state.dcc_sup_flag.data || []);
     setReleaseTypeList(state.release_type && state.release_type.data || []);
-
+    setActivateTypeList(state.activate_type && state.activate_type.data || []);
   }, [state]);
 
   useEffect(() => {
@@ -55,10 +56,11 @@ export function useFormSelectData(props: any) {
     bussTypeList, setBussTypeList,
     driverTypeList, setDriverTypeList,
     dccSupFlagList, setDccSupFlagList,
-    releseTypeList, setReleaseTypeList,
+    releaseTypeList, setReleaseTypeList,
     releaseTypeValue, setReleaseTypeValue,
     deptTreeData, setDeptTreeData,
     deptId, setDeptId,
-    terminalGroupList, setTerminalGroupList
+    terminalGroupList, setTerminalGroupList,
+    activateTypeList, setActivateTypeList
   };
 }

@@ -63,8 +63,16 @@ export const softVersionEdit = (params: any) =>
  * @todo 根据终端型号查询软件版本
  * @param params 
  */
-export const taskSoftVersionListByType = (params: any) =>
-  ApiRequest.get(`/cpay-admin/task/softVersion/listByTypet${jsonToQueryString(params)}`);
+export const taskSoftVersionListByType = async (
+  parma: any,
+  callback?: (params: any[]) => void
+): Promise<any> => {
+  const result = await ApiRequest.get(
+    `/cpay-admin/task/softVersion/listByType${jsonToQueryString(parma)}`
+  );
+  callback && result.code === RESPONSE_CODE.success && callback(result.data);
+  return result;
+};
 
 /**
 * @todo 删除软件版本信息

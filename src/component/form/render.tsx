@@ -63,16 +63,16 @@ export function UseCommonSelectData(
     .map((item, index) => {
       return !!item.dictType
         ? {
-            formName: formName[index] || item.dictType,
-            placeholder: item.dictName,
-            formType: FormItmeType.Select,
-            selectData: item.data.map((option) => {
-              return {
-                value: option.dictValue,
-                title: option.dictLabel,
-              };
-            }),
-          }
+          formName: formName[index] || item.dictType,
+          placeholder: item.dictName,
+          formType: FormItmeType.Select,
+          selectData: item.data.map((option) => {
+            return {
+              value: option.dictValue,
+              title: option.dictLabel,
+            };
+          }),
+        }
         : (undefined as any);
     })
     .filter((d) => !!d);
@@ -84,6 +84,7 @@ export function renderTreeSelect(data: IComponentFormTreeSelectForm) {
   const { formName, span, treeSelectData, formType, ...rest } = data;
   return (
     <TreeSelect
+      key={formName}
       treeDefaultExpandAll
       dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
       {...rest}
@@ -106,7 +107,7 @@ export function renderTreeSelectForm(
   const { formName, span, treeSelectData, ...rest } = data;
   if (isFrom !== false) {
     return (
-      <Col span={span || 6}>
+      <Col span={span || 6} key={formName}>
         <Item name={formName}>{renderTreeSelect(data)}</Item>
       </Col>
     );
@@ -120,7 +121,7 @@ export function renderTreeSelectForm(
  * @param data
  */
 export function renderNormalForm(data: IComponentFormNormalForm) {
-  const { formName, span, ...rest } = data;
+  const { formName, span, formType, ...rest } = data;
   return (
     <Col span={span || 4} key={formName}>
       <Item name={formName}>
@@ -137,7 +138,7 @@ export function renderNormalForm(data: IComponentFormNormalForm) {
 export function renderSelect(data: IComponentFormSelectForm) {
   const { formName, span, selectData, formType, ...rest } = data;
   return (
-    <Select {...rest}>
+    <Select {...rest} key={formName}>
       {Array.isArray(selectData) &&
         selectData.length > 0 &&
         selectData.map((option) => {
@@ -235,7 +236,7 @@ export function renderCommonTreeSelectForm(
 
 export function renderCascader(data: IComponentFormCascader) {
   const { formName, span, ...rest } = data;
-  return <Cascader {...rest} />;
+  return <Cascader {...rest} key={formName}/>;
 }
 
 export function renderCascaderForm(

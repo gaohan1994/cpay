@@ -18,7 +18,7 @@ export const taskDownloadJobDetail = async (
   id: number,
   callback?: (params: any) => void
 ): Promise<any> => {
-  const result = await ApiRequest.get(`/cpay-admin/task/downloadJob/detail/${id}`);
+  const result = await ApiRequest.get(`/cpay-admin/task/downloadJob/details/${id}`);
   callback && callback(result);
   return result;
 };
@@ -38,6 +38,13 @@ export const taskDownloadJobRemove = (params: { ids: string }) =>
   ApiRequest.post(`/cpay-admin/task/downloadJob/remove`, params);
 
 /**
+ * 
+ * @param id 发布软件更新的任务
+ */
+export const taskDownloadJobPublish = (id: number) =>
+  ApiRequest.post(`/cpay-admin/task/downloadJob/publish/${id}`, {});
+
+/**
  * @todo 根据软件类型获取软件名称
  * @param params 
  * @param callback 
@@ -54,3 +61,10 @@ export const taskSoftListByType = async (
     callback(result.data);
   return result;
 };
+
+/**
+ * @todo 请求软件更新任务执行情况列表
+ * @param params
+ */
+export const taskDownloadTaskList = (params: any) =>
+  ApiRequest.get(`/cpay-admin/task/downloadTask/list${jsonToQueryString(params)}`);

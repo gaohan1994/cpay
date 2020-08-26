@@ -11,7 +11,7 @@ interface Props {
 const CheckboxGroup = Checkbox.Group;
 export const CustomCheckGroup = React.forwardRef((props: Props, ref) => {
   const { list, valueKey, nameKey, setForm } = props;
-  const { indeterminate, checkAll, checkedList, setCheckedList, onChange, onCheckAllChange } = useCheckGroupData(list);
+  const { indeterminate, checkAll, checkedList, setCheckedList, onChange, onCheckAllChange } = useCheckGroupData(list, valueKey);
 
   useImperativeHandle(ref, () => ({
     // 这个函数会返回一个对

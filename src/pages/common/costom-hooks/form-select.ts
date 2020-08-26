@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-21 09:32:49 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-25 10:44:47
+ * @Last Modified time: 2020-08-25 17:05:10
  * 
  * @todo 用于表单选择的各种数据
  */
@@ -17,6 +17,7 @@ import { getAppTypeList } from '@/pages/application/constants/api';
 import { ITerminalGroupByDeptId } from '@/pages/terminal/message/types';
 import ApiRequest, { jsonToQueryString } from '@/common/request-util';
 import { RESPONSE_CODE } from '@/common/config';
+import { taskSoftVersionListByType } from '@/pages/upload/constants/api';
 
 export function useFormSelectedList(fetchFunc: Function, dependValue: any[], fetchFields: any) {
   const [list, setList] = useState([] as any[]);
@@ -73,14 +74,20 @@ export const terminalGroupListByDept = async (
 };
 
 export function useTerminalGroupList(deptId: number) {
-  console.log('test ccc', deptId);
   const { list, setList } = useFormSelectedList(terminalGroupListByDept, [deptId], { deptId });
   const terminalGroupList: any[] = list;
   const setTerminalGroupList = setList;
   return { terminalGroupList, setTerminalGroupList };
 }
 
-export function useCheckGroupData(list: any[],) {
+export function useSoftVersionList(firmId: number, appId: number) {
+  const { list, setList } = useFormSelectedList(taskSoftVersionListByType, [firmId, appId], { firmId, appId });
+  const softVersionList: any[] = list;
+  const setSoftVersionList = setList;
+  return { softVersionList, setSoftVersionList };
+}
+
+export function useCheckGroupData(list: any[], valueKey?: string) {
   const [indeterminate, setIndeterminate] = useState(false);
   const [checkAll, setCheckAll] = useState(false);
   const [checkedList, setCheckedList] = useState([] as any[]);
@@ -89,7 +96,7 @@ export function useCheckGroupData(list: any[],) {
     if (e.target.checked) {
       let arr: number[] = [];
       for (let i = 0; i < list.length; i++) {
-        arr.push(list[i].id);
+        arr.push(list[i][valueKey || 'id']);
       }
       setCheckedList(arr);
     } else {

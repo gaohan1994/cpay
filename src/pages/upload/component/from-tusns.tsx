@@ -1,21 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
 import { Space, Button } from "antd";
 import { PlusOutlined, CloseOutlined, UploadOutlined, ClearOutlined } from '@ant-design/icons';
 
 interface Props {
   onAddTerminals: () => void;
   options: any[];
-  setOptions: () => void;
+  setOptions: any;
 }
 
 export function FormTusns(props: Props) {
-  const { onAddTerminals, options } = props;
+  const { onAddTerminals, options, setOptions } = props;
+  const [selectedOptions, setSelectOptions] = useState([] as any[]);
+
   const onDeleTerminals = (type?: string) => {
+    if (type === 'ALL') {
+      setOptions([]);
+    } else if (selectedOptions.length > 0) {
+      const arr: string[] = [];
+      for (let i = 0; i < options.length; i++) {
+        let flag = false;
+        for (let j = 0; j < selectedOptions.length; j++) {
+          if (options[i] === selectedOptions[j]) {
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) {
+          arr.push(options[i]);
+        }
+      }
+      setOptions(arr);
+    }
+    setSelectOptions([]);
+  }
+
+  const onImportTerminals = () => {
 
   }
-  const onImportTerminals = () => {
-    
+
+  const handleSelectChange = (e: any) => {
+    const options = e.target.options;
+    let arr: string[] = [];
+    for (let i = 0; i < options.length; i++) {
+      if (options[i].selected) {
+        arr.push(options[i].value);
+      }
+    }
+    setSelectOptions(arr);
   }
+
   return (
     <Space direction="vertical" style={{ width: '100%' }}>
       <Space>
@@ -35,15 +68,15 @@ export function FormTusns(props: Props) {
 
       <select
         style={{
-          width: '100%',
+          width: '25vw',
           height: 200,
           border: '1px solid rgb(217, 217, 217)',
           padding: 11,
           overflow: 'auto'
         }}
         multiple={true}
-      // value={seletedDeleteTerminals}
-      // onChange={handleSelectChange}
+        value={selectedOptions}
+        onChange={handleSelectChange}
       >
         {
           options.map(item => {
