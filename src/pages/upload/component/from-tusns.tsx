@@ -81,7 +81,7 @@ export function FormTusns(props: Props) {
         {
           options.map(item => {
             return (
-              <option value={item}>{item}</option>
+              <option value={item} key={item}>{item}</option>
             )
           })
         }

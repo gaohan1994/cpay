@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useTerminalFirmList, useTerminalModelList, useTerminalGrouplList, useAppTypeList } from '@/pages/common/costom-hooks/form-select';
+import { useTerminalFirmList, useTerminalTypeList, useTerminalGrouplList, useAppTypeList } from '@/pages/common/costom-hooks/form-select';
 import { useSelectorHook } from '@/common/redux-util';
 import { IUploadAppInfo } from '../../../types/index';
 import { FormInstance } from 'antd/lib/form';
@@ -18,7 +18,7 @@ export function useFormSelectData(props: any, form: FormInstance) {
   const [appTypeValue, setAppTypeValue] = useState('');
   const { terminalFirmList, setTerminalFirmList } = useTerminalFirmList();
   const [terminalFirmValue, setTerminalFirmValue] = useState('');
-  const { terminalModelList, setTerminalModelList } = useTerminalModelList(firmId || -1);
+  const { terminalTypeList, setTerminalTypeList } = useTerminalTypeList(firmId || -1);
   const [appInfo, setAppInfo] = useState({} as IUploadAppInfo)
 
   useEffect(() => {
@@ -86,7 +86,7 @@ export function useFormSelectData(props: any, form: FormInstance) {
     appTypeValue, setAppTypeValue,
     terminalFirmList, setTerminalFirmList,
     terminalFirmValue, setTerminalFirmValue,
-    terminalModelList, setTerminalModelList,
+    terminalTypeList, setTerminalTypeList,
     appInfo, setAppInfo,
     terminalGroupValue, setTerminalGroupValue
   };

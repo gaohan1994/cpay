@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-21 09:32:49 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-25 17:05:10
+ * @Last Modified time: 2020-08-26 15:45:44
  * 
  * @todo 用于表单选择的各种数据
  */
@@ -44,11 +44,11 @@ export function useTerminalFirmList() {
   return { terminalFirmList, setTerminalFirmList };
 }
 
-export function useTerminalModelList(firmId: number) {
+export function useTerminalTypeList(firmId: number) {
   const { list, setList } = useFormSelectedList(terminalTypeListByFirm, [firmId], { firmId });
-  const terminalModelList: any[] = list;
-  const setTerminalModelList = setList;
-  return { terminalModelList, setTerminalModelList };
+  const terminalTypeList: any[] = list;
+  const setTerminalTypeList = setList;
+  return { terminalTypeList, setTerminalTypeList };
 }
 
 export function useAppTypeList() {

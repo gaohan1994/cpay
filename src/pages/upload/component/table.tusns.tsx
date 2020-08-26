@@ -129,6 +129,7 @@ export function TableTusns(props: Props) {
       onCancel={handleCancel}
       width={'60vw'}
       bodyStyle={{ padding: 0 }}
+      getContainer={false}
     >
       <div style={{ height: 400, overflow: 'auto', overflowX: 'hidden', padding: '24px 0px 24px 24px' }}>
         <Forms

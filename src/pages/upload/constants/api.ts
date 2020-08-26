@@ -178,6 +178,20 @@ export const taskOperationJobAdd = (params: any) =>
   ApiRequest.post(`/cpay-admin/task/operationJob/add`, params);
 
 /**
+* @todo 修改终端操作任务(远程运维修改)
+* @param params 
+*/
+export const taskOperationJobEdit = (params: any) =>
+  ApiRequest.post(`/cpay-admin/task/operationJob/edit`, params);
+
+/**
+* @todo 删除终端操作任务
+* @param params
+*/
+export const taskOperationJobRemove = (params: { ids: string }) =>
+  ApiRequest.post(`/cpay-admin/task/operationJob/remove`, params);
+
+/**
 * @todo 添加终端操作任务任务(远程运维新增)
 * @param params 
 */

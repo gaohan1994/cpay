@@ -6,7 +6,7 @@ import {
   terminalFirmList as getTerminalFirmList,
   terminalTypeListByFirm,
 } from '@/pages/terminal/constants';
-import { useTerminalFirmList, useTerminalModelList, useTerminalGroupList } from '@/pages/common/costom-hooks/form-select';
+import { useTerminalFirmList, useTerminalTypeList, useTerminalGroupList } from '@/pages/common/costom-hooks/form-select';
 import { useSelectorHook } from '@/common/redux-util';
 import { DictDetailItem, DictItem } from '@/pages/common/type';
 
@@ -20,8 +20,8 @@ export function useFormSelectData(props: any) {
   const { firmId } = props;
   const { terminalFirmList, setTerminalFirmList } = useTerminalFirmList();
   const [terminalFirmValue, setTerminalFirmValue] = useState('');
-  const { terminalModelList, setTerminalModelList } = useTerminalModelList(firmId || -1);
-  const [terminalTypeList, setTerminalTypeList] = useState([] as DictDetailItem[]);
+  const { terminalTypeList, setTerminalTypeList } = useTerminalTypeList(firmId || -1);
+  const [activateTypesList, setActivateTypesList] = useState([] as DictDetailItem[]);
   const [unionpayConnectionList, setUnionpayConnectionList] = useState([] as DictDetailItem[]);
   const [dccSupFlagList, setDccSupFlagList] = useState([] as DictDetailItem[]);
   const [bussTypeList, setBussTypeList] = useState([] as DictDetailItem[]);
@@ -34,7 +34,7 @@ export function useFormSelectData(props: any) {
   const [activateTypeList, setActivateTypeList] = useState([] as DictDetailItem[]);
   
   useEffect(() => {
-    setTerminalTypeList(state.terminal_type && state.terminal_type.data || []);
+    setActivateTypesList(state.terminal_type && state.terminal_type.data || []);
     setUnionpayConnectionList(state.unionpay_connection && state.unionpay_connection.data || []);
     setBussTypeList(state.buss_type && state.buss_type.data || []);
     setDriverTypeList(state.driver_type && state.driver_type.data || []);
@@ -50,8 +50,8 @@ export function useFormSelectData(props: any) {
   return {
     terminalFirmList, setTerminalFirmList,
     terminalFirmValue, setTerminalFirmValue,
-    terminalModelList, setTerminalModelList,
     terminalTypeList, setTerminalTypeList,
+    activateTypesList, setActivateTypesList,
     unionpayConnectionList, setUnionpayConnectionList,
     bussTypeList, setBussTypeList,
     driverTypeList, setDriverTypeList,

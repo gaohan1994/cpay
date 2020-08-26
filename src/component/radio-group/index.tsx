@@ -1,15 +1,17 @@
 import React, { useImperativeHandle, useEffect, useState } from 'react';
 import { Checkbox, Form, Col, Radio } from 'antd';
+import { listenerCount } from 'process';
 interface Props {
   list: any[];
   valueKey: string;
   nameKey: string;
   setForm?: any;
   // setCheckedList: any;
+  value?: any;
 }
 export const CustomRadioGroup = React.forwardRef((props: Props, ref) => {
-  const { list, valueKey, nameKey, setForm } = props;
-  const [value, setValue] = useState('');
+  const { list, valueKey, nameKey, setForm, value: valueProps } = props;
+  const [value, setValue] = useState(list);
 
   useImperativeHandle(ref, () => ({
     // 这个函数会返回一个对
@@ -25,7 +27,11 @@ export const CustomRadioGroup = React.forwardRef((props: Props, ref) => {
   }, [list]);
 
   useEffect(() => {
-    if (setForm) {
+    setValue(valueProps);
+  }, [valueProps])
+
+  useEffect(() => {
+    if (setForm && !Array.isArray(value)) {
       setForm(value);
     }
   }, [value]);

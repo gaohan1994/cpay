@@ -76,8 +76,8 @@ export default function Page() {
   const {
     terminalFirmList,
     terminalFirmValue, setTerminalFirmValue,
-    terminalModelList,
     terminalTypeList,
+    activateTypesList,
     unionpayConnectionList,
     bussTypeList,
     driverTypeList,
@@ -124,7 +124,7 @@ export default function Page() {
       requiredType: 'select',
       render: () =>
         <CustomCheckGroup
-          list={terminalModelList}
+          list={terminalTypeList}
           valueKey={'id'} nameKey={'typeName'}
           setForm={(checkedList: any[]) => { form.setFieldsValue({ 'terminalTypes': checkedList }) }}
         />
@@ -135,7 +135,7 @@ export default function Page() {
       requiredType: 'select',
       render: () =>
         <CustomCheckGroup
-          list={terminalTypeList}
+          list={activateTypesList}
           valueKey={'dictValue'} nameKey={'dictLabel'}
           setForm={(value: any[]) => { form.setFieldsValue({ 'activateTypes': value }) }}
         />
