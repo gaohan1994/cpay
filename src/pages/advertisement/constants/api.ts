@@ -12,12 +12,17 @@ export const advertInfoList = (params: IAvertisementListField) =>
 
 export const advertInfoDetail = async (
   id: string,
-  callback?: any
+  callback?: (params: IResponseResult<AdvertisementDetail>) => void
 ): Promise<IResponseResult<AdvertisementDetail>> => {
   const result = await ApiRequest.get(`/cpay-admin/advert/info/details/${id}`);
   console.log('result:', result);
+  callback && callback(result);
   return result;
 };
 
 export const advertInfoAudit = (params: any) =>
   ApiRequest.post(`/cpay-admin/advert/audit/audit`, params);
+
+export const advertInfoEdit = (params: any): Promise<any> => {
+  return ApiRequest.post(`/cpay-admin/advert/info/edit`, params);
+};
