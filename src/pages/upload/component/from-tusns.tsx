@@ -68,7 +68,7 @@ export function FormTusns(props: Props) {
 
       <select
         style={{
-          width: '25vw',
+          width: '100%',
           height: 200,
           border: '1px solid rgb(217, 217, 217)',
           padding: 11,

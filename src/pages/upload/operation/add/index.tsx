@@ -80,7 +80,7 @@ export default function Page() {
     if (detail.groupIds) {
       let arr: string[] = detail.groupIds.split(',');
       let numArr: number[] = [];
-      for (let i = 0; i < arr.length; i ++) {
+      for (let i = 0; i < arr.length; i++) {
         numArr.push(numeral(arr[i]).value());
       }
       if (groupRef && groupRef.current && groupRef.current.setCheckedList) {
@@ -222,7 +222,6 @@ export default function Page() {
         {
           label: '终端集合',
           key: 'tusns',
-          itemSingleCol: true,
           requiredType: 'select',
           render: () => <FormTusns options={tusnsOptions} setOptions={setTusnsOptions} onAddTerminals={onAddTerminals} />
         }
@@ -249,10 +248,10 @@ export default function Page() {
         const res = await taskOperationJobEdit(param);
         setLoading(false);
         if (res && res.code === RESPONSE_CODE.success) {
-          notification.success({ message: '修改应用信息成功' });
+          notification.success({ message: '修改终端操作任务成功' });
           history.goBack();
         } else {
-          notification.error({ message: res.msg || '修改应用信息失败，请重试' });
+          notification.error({ message: res.msg || '修改终端操作任务失败，请重试' });
         }
       } else {
         param = {
@@ -261,10 +260,10 @@ export default function Page() {
         const res = await taskOperationJobAdd(param);
         setLoading(false);
         if (res && res.code === RESPONSE_CODE.success) {
-          notification.success({ message: '添加应用信息成功' });
+          notification.success({ message: '添加终端操作任务成功' });
           history.goBack();
         } else {
-          notification.error({ message: res.msg || '添加应用信息失败，请重试' });
+          notification.error({ message: res.msg || '添加终端操作任务失败，请重试' });
         }
       }
     } catch (errorInfo) {
@@ -274,23 +273,27 @@ export default function Page() {
 
   return (
     <Spin spinning={loading}>
-      <Form
-        form={form}
-      >
-        <CustomFormItems items={forms.concat(getReleaseTypeFormsByDept()).concat(getReleaseTypeFormsByCondition())} singleCol={true} />
-        <Form.Item {...ButtonLayout} >
-          <Button type="primary" onClick={onSubmit}>
-            保存
+      <div style={{ paddingTop: 10 }}>
+        <Form
+          form={form}
+          className="ant-advanced-search-form"
+        >
+          <CustomFormItems items={forms.concat(getReleaseTypeFormsByDept()).concat(getReleaseTypeFormsByCondition())} singleCol={true} />
+          <Form.Item {...ButtonLayout} >
+            <Button type="primary" onClick={onSubmit}>
+              保存
         </Button>
-        </Form.Item>
-      </Form>
-      <TableTusns
-        visible={modalVisible}
-        hideModal={() => setModalVisible(false)}
-        fetchParam={{ firmId: terminalFirmValue, terminalTypeIds: form.getFieldValue('termianlModels') }}
-        setOptions={setTusnsOptions}
-        options={tusnsOptions}
-      />
+          </Form.Item>
+        </Form>
+        <TableTusns
+          visible={modalVisible}
+          hideModal={() => setModalVisible(false)}
+          fetchParam={{ firmId: terminalFirmValue, terminalTypeIds: form.getFieldValue('termianlModels') }}
+          setOptions={setTusnsOptions}
+          options={tusnsOptions}
+        />
+      </div>
+
     </Spin>
   )
 }
