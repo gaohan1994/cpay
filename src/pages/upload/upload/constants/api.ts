@@ -31,6 +31,13 @@ export const taskDownloadJobAdd = (params: any) =>
   ApiRequest.post(`/cpay-admin/task/downloadJob/add`, params);
 
 /**
+* @todo 修改软件更新任务信息
+* @param params
+*/
+export const taskDownloadJobEdit = (params: any) =>
+  ApiRequest.post(`/cpay-admin/task/downloadJob/edit`, params);
+
+/**
  * @todo 删除软件更新任务基本信息
  * @param params
  */

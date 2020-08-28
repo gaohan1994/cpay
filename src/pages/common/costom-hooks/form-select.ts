@@ -21,7 +21,6 @@ import { taskSoftVersionListByType } from '@/pages/upload/constants/api';
 
 export function useFormSelectedList(fetchFunc: Function, dependValue: any[], fetchFields: any) {
   const [list, setList] = useState([] as any[]);
-
   useEffect(() => {
     fetchFunc(fetchFields, (data: any[]) => {
       setList(data);

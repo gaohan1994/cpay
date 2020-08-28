@@ -1,8 +1,9 @@
+import store from '../../../modules/redux-store/index';
 /*
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-20 10:00:01 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-21 16:24:40
+ * @Last Modified time: 2020-08-27 15:13:11
  * 
  * @todo 远程运维模块的工具
  */
@@ -48,4 +49,18 @@ export const getFormCommonRules = (label: string, type: 'select' | 'input', text
         }
       ];
   }
+}
+
+export const getDictText = (data: string, dictType: string,) => {
+  const state = store.getState();
+  const dictList = state.common.dictList;
+  const targetDict = dictList[dictType];
+
+  const targetDictItem: any =
+    targetDict &&
+    targetDict.data &&
+    targetDict.data.find((dictItem) => dictItem.dictValue === String(data));
+  
+  console.log('test rrr', data, dictType, targetDictItem, dictList, targetDict);
+  return targetDictItem && targetDictItem.dictLabel || '--';
 }

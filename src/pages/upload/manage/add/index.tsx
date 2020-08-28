@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'antd/lib/form/Form';
-import { Form, Button, Input, Row, Col, Upload, notification, Spin, Modal } from 'antd';
+import { Form, Button, Input, Row, Col, notification, Spin } from 'antd';
 import { CustomFormItems, ButtonLayout, getCustomSelectFromItemData } from '@/component/custom-form';
 import { useStore } from '@/pages/common/costom-hooks';
 import { CustomCheckGroup } from '@/component/checkbox-group';
-import { getUserDept } from '@/common/api';
 import { useRedux, useSelectorHook } from '@/common/redux-util';
 import { useFormSelectData } from './costom-hooks';
 import { BASIC_CONFIG, RESPONSE_CODE } from '@/common/config';

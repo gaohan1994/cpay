@@ -139,6 +139,7 @@ export default function Page() {
         nameKey: 'dictLabel',
         value: releaseTypeValue,
         setValue: setReleaseTypeValue,
+        required: true
       })
     },
   ]
@@ -288,7 +289,7 @@ export default function Page() {
         <TableTusns
           visible={modalVisible}
           hideModal={() => setModalVisible(false)}
-          fetchParam={{ firmId: terminalFirmValue, terminalTypeIds: form.getFieldValue('termianlModels') }}
+          fetchParam={{ firmId: terminalFirmValue, terminalTypeIds: form.getFieldValue('terminalTypeId') }}
           setOptions={setTusnsOptions}
           options={tusnsOptions}
         />

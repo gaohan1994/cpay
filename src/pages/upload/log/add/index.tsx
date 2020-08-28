@@ -127,7 +127,7 @@ export default function Page() {
         label: '终端型号',
         key: 'terminalType',
         list: terminalTypeList,
-        valueKey: 'id',
+        valueKey: 'typeCode',
         nameKey: 'typeName',
         required: true,
       })
@@ -267,7 +267,7 @@ export default function Page() {
         <TableTusns
           visible={modalVisible}
           hideModal={() => setModalVisible(false)}
-          fetchParam={{ firmId: terminalFirmValue, terminalTypeIds: form.getFieldValue('termianlModels') }}
+          fetchParam={{ firmId: terminalFirmValue, terminalTypeCodes: form.getFieldValue('terminalType') }}
           setOptions={setTusnsOptions}
           options={tusnsOptions}
         />

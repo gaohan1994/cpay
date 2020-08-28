@@ -100,9 +100,32 @@ function Page(props: Props) {
       width: 150,
     },
     {
+      title: '成功',
+      dataIndex: 'status',
+      render: (item: any) => (<div style={{ color: '#468847' }}>{item}</div>)
+    },
+    {
+      title: '失败',
+      dataIndex: 'status',
+      render: (item: any) => (<div style={{ color: '#ce3739' }}>{item}</div>)
+    },
+    {
+      title: '待执行',
+      dataIndex: 'status',
+      render: (item: any) => (<div style={{ color: '#8FBC8F' }}>{item}</div>)
+    },
+    {
+      title: '执行中',
+      dataIndex: 'status',
+      render: (item: any) => (<div style={{ color: '#32CD32' }}>{item}</div>)
+    },
+    {
       title: '任务状态',
       dataIndex: 'status',
-      dictType: 'task_job_status'
+      dictType: 'task_job_status',
+      render: (item: any) => {
+        return <Tag color={item === '初始' ? '#f8ac59' : item === '结束' ? '#57b5e3' : '#3D7DE9'}>{item}</Tag>
+      }
     },
     {
       title: '任务名称',
@@ -119,6 +142,10 @@ function Page(props: Props) {
     {
       title: '创建日期',
       dataIndex: 'createTime',
+    },
+    {
+      title: '创建机构',
+      dataIndex: 'deptName',
     }
   ]);
 
@@ -140,6 +167,18 @@ function Page(props: Props) {
 
   const onAdd = () => {
     history.push('/upload/update-add');
+  }
+
+  const onCopy = () => {
+    if (selectedRowKeys.length === 0) {
+      notification.error({ message: "请选择任务" });
+      return;
+    }
+    if (selectedRowKeys.length > 1) {
+      notification.error({ message: "请选择一条任务" });
+      return;
+    }
+    history.push(`/upload/update-add?id=${selectedRowKeys[0]}&type=0`);
   }
 
   const onOperationDetail = () => {
@@ -178,7 +217,7 @@ function Page(props: Props) {
 
   const extraButtons = [
     { title: '新增', onClick: onAdd, icon: <PlusOutlined />, type: "primary" as any, },
-    { title: '复制', onClick: () => { }, icon: <CopyOutlined /> },
+    { title: '复制', onClick: onCopy, icon: <CopyOutlined /> },
     { title: '执行情况', onClick: onOperationDetail, icon: <BarsOutlined /> },
     { title: '启动', onClick: onStart, icon: <CaretRightOutlined />, type: "primary" as any, },
     { title: '暂停', onClick: () => { }, icon: <PauseOutlined />, type: "primary" as any, },

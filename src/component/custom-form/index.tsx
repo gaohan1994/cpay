@@ -14,14 +14,16 @@ interface CustomSelctFromItenDataProps {
   list: any[];
   valueKey: string;
   nameKey: string;
-  required?: boolean
+  required?: boolean;
+  show?: boolean;
 }
 export function getCustomSelectFromItemData(props: CustomSelctFromItenDataProps) {
-  const { label, key, value, onChange, setValue, list, valueKey, nameKey, required } = props;
+  const { label, key, value, onChange, setValue, list, valueKey, nameKey, required, show } = props;
   return {
     label: label,
     key: key,
     requiredType: required && 'select' as any,
+    show,
     render: () =>
       <CustomSelectFormItem
         label={label}

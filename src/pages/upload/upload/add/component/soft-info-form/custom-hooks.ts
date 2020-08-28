@@ -5,11 +5,11 @@ import { useFormSelectedList, useSoftVersionList } from '@/pages/common/costom-h
 import { taskSoftListByType } from '../../../constants/api';
 
 export function useSoftInfoFromData(props: any) {
-  const { firmId } = props;
+  const { firmId, cupConnMode, dccSupFlag } = props;
   const state = useSelectorHook((state) => state.common.dictList);
   const [driverTypeList, setDriverTypeList] = useState([] as DictDetailItem[]);
   const [driverTypeValue, setDriverTypeValue] = useState('');
-  const { softInfoList, setSoftInfoList } = useSoftInfo(driverTypeValue || -1);
+  const { softInfoList, setSoftInfoList } = useSoftInfo(firmId, cupConnMode, dccSupFlag, driverTypeValue);
   const [softInfoValue, setSoftInfoValue] = useState({} as any);
   const [downloadTaskTypeList, setDownloadTaskTypeList] = useState([] as DictDetailItem[]);
   const { softVersionList, setSoftVersionList } = useSoftVersionList(firmId || -1, softInfoValue.id || -1,);
@@ -31,8 +31,8 @@ export function useSoftInfoFromData(props: any) {
   }
 }
 
-export function useSoftInfo(type: any) {
-  const { list, setList } = useFormSelectedList(taskSoftListByType, [type], { type });
+export function useSoftInfo(firmId: any, cupConnMode: any, dccSupFlag: any, type: any) {
+  const { list, setList } = useFormSelectedList(taskSoftListByType, [firmId, cupConnMode, dccSupFlag, type], { firmId, cupConnMode, dccSupFlag, type });
   const softInfoList: any[] = list;
   const setSoftInfoList = setList;
   return { softInfoList, setSoftInfoList };

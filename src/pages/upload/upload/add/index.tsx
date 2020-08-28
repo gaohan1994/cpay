@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useQueryParam, jsonToQueryString } from '@/common/request-util';
 import { merge, forIn } from 'lodash';
-import { Form, Input, Col, Row, Divider, Button, Card, Switch, DatePicker, Spin, message } from 'antd';
+import { Form, Input, Col, Row, Divider, Button, Card, Switch, DatePicker, Spin, message, notification } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { useFormSelectData } from './costom-hooks';
 import { getFormCommonRules } from '../../common/util';
-import { taskDownloadJobDetail, taskDownloadJobAdd } from '../constants/api';
+import { taskDownloadJobDetail, taskDownloadJobAdd, taskDownloadJobEdit } from '../constants/api';
 import { ITerminalFirmItem, ITerminalType } from '@/pages/terminal/types';
 import { CustomCheckGroup } from '@/component/checkbox-group';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -20,8 +20,8 @@ import { FormItmeType } from '@/component/form/type';
 import { FormTusns } from '../../component/from-tusns';
 import { TableTusns } from '../../component/table.tusns';
 import numeral from 'numeral';
-
-const groupFilterTypeList = [{ value: 0, label: '无' }, { value: 1, label: '指定' }, { value: 2, label: '排除' }]
+import { RESPONSE_CODE } from '@/common/config';
+import { useHistory } from 'react-router-dom';
 
 const FormItemLayout = {
   labelCol: {
@@ -43,6 +43,7 @@ export default function Page() {
   const id = useQueryParam('id');
   const type = useQueryParam('type');
   const [form] = useForm();
+  const history = useHistory();
   const [softFrom1] = useForm();
   const [softFrom2] = useForm();
   const [softFrom3] = useForm();
@@ -50,18 +51,19 @@ export default function Page() {
   const [softFrom5] = useForm();
   const softFroms = [softFrom1, softFrom2, softFrom3, softFrom4, softFrom5];
   useStore(['terminal_type', 'unionpay_connection', 'buss_type',
-    'is_support_dcc', 'driver_type', 'dcc_sup_flag',
-    'download_task_type', 'release_type', 'activate_type']);
+    'dcc_sup_flag', 'zz_flag', 'download_task_type', 'driver_type',
+    'release_type', 'activate_type', 'is_group_update',]);
 
   const [softInfoFormsNum, setSoftInfoFormsNum] = useState(1);
   const [validDateShow, setValidDateShow] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [tusnsOptions, setTusnsOptions] = useState([]);
   const [groupFilterTypeValue, setGroupFilterTypeValue] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const terminalTypesRef: any = useRef();
+  const activateTypesRef: any = useRef();
+  const [terminalTypes, setTerminalTypes] = useState([] as any[]);
 
-  useEffect(() => {
-    form.setFieldsValue({ 'tusns': tusnsOptions });
-  }, [tusnsOptions])
   /**
    * 第一步初始化数据
    * 第二步
@@ -69,26 +71,74 @@ export default function Page() {
    */
   const { detail } = useDetail(id, taskDownloadJobDetail);
 
-  const initialValues = merge(
-    {},
-    (detail && detail) || {}
-  );
   const {
     terminalFirmList,
     terminalFirmValue, setTerminalFirmValue,
     terminalTypeList,
     activateTypesList,
     unionpayConnectionList,
+    cupConnModeValue, setCupConnModeValue,
     bussTypeList,
-    driverTypeList,
     dccSupFlagList, setDccSupFlagList,
+    dccSupFlagValue, setDccSupFlagValue,
     releaseTypeList, setReleaseTypeList,
     releaseTypeValue, setReleaseTypeValue,
     deptTreeData, setDeptTreeData,
     deptId, setDeptId,
     terminalGroupList, setTerminalGroupList,
-    activateTypeList, setActivateTypeList
+    activateTypeList, setActivateTypeList,
+    isGroupUpdateList,
+    zzFlagList
   } = useFormSelectData(form.getFieldsValue());
+
+  useEffect(() => {
+    form.setFieldsValue({ 'tusns': tusnsOptions });
+  }, [tusnsOptions])
+
+  useEffect(() => {
+    if (detail.downloadJobOutput) {
+      const downloadJobOutput = detail.downloadJobOutput;
+      form.setFieldsValue({
+        ...downloadJobOutput,
+        cupConnMode: `${downloadJobOutput.cupConnMode}`,
+        releaseType: `${downloadJobOutput.releaseType}`
+      });
+      setReleaseTypeValue(`${downloadJobOutput.releaseType}`);
+      setTerminalFirmValue(downloadJobOutput.firmId);
+      setDeptId(downloadJobOutput.deptId);
+      if (terminalTypesRef && terminalTypesRef.current && terminalTypesRef.current.setCheckedList && downloadJobOutput.terminalTypes) {
+        terminalTypesRef.current.setCheckedList(downloadJobOutput.terminalTypes.split(','))
+      }
+      if (activateTypesRef && activateTypesRef.current && activateTypesRef.current.setCheckedList && downloadJobOutput.activateTypes) {
+        activateTypesRef.current.setCheckedList(downloadJobOutput.activateTypes.split(','))
+      }
+
+      if (downloadJobOutput.downloadJobAppList) {
+        const downloadJobAppList = downloadJobOutput.downloadJobAppList;
+        if (Array.isArray(downloadJobAppList) && downloadJobAppList.length > 0) {
+          for (let i = 0; i < downloadJobAppList.length; i++) {
+            softFroms[i].setFieldsValue(downloadJobAppList[i]);
+            softFroms[i].setFieldsValue({
+              appType: `${downloadJobAppList[i].appType}`,
+              actionType: `${downloadJobAppList[i].actionType}`,
+              appCode: downloadJobAppList[i].appCode
+            });
+          }
+        } else {
+          setSoftInfoFormsNum(0);
+        }
+      } else {
+        setSoftInfoFormsNum(0);
+      }
+    }
+  }, [detail]);
+
+  const resetSoftInfo = () => {
+    for (let i = 0; i < softFroms.length; i++) {
+      softFroms[i].resetFields();
+      setSoftInfoFormsNum(1);
+    }
+  }
 
   /**
    * @todo 终端信息表单项
@@ -110,11 +160,8 @@ export default function Page() {
         required: true,
         onChange: (id: any) => {
           setTerminalFirmValue(id);
-          form.setFieldsValue({ 'terminalTypes': [] });
-          for (let i = 0; i < softFroms.length; i++) {
-            softFroms[i].resetFields();
-            setSoftInfoFormsNum(1);
-          }
+          form.setFieldsValue({ 'terminalTypes': undefined });
+          resetSoftInfo();
         }
       })
     },
@@ -124,9 +171,14 @@ export default function Page() {
       requiredType: 'select',
       render: () =>
         <CustomCheckGroup
+          ref={terminalTypesRef}
           list={terminalTypeList}
-          valueKey={'id'} nameKey={'typeName'}
-          setForm={(checkedList: any[]) => { form.setFieldsValue({ 'terminalTypes': checkedList }) }}
+          valueKey={'typeCode'} nameKey={'typeName'}
+          setForm={(checkedList: any[]) => {
+            form.setFieldsValue({ 'terminalTypes': checkedList });
+            setTerminalTypes(checkedList);
+            // resetSoftInfo();
+          }}
         />
     },
     {
@@ -135,6 +187,7 @@ export default function Page() {
       requiredType: 'select',
       render: () =>
         <CustomCheckGroup
+          ref={activateTypesRef}
           list={activateTypesList}
           valueKey={'dictValue'} nameKey={'dictLabel'}
           setForm={(value: any[]) => { form.setFieldsValue({ 'activateTypes': value }) }}
@@ -147,6 +200,11 @@ export default function Page() {
         list: unionpayConnectionList,
         valueKey: 'dictValue',
         nameKey: 'dictLabel',
+        value: setCupConnModeValue,
+        onChange: (id: any) => {
+          setCupConnModeValue(id);
+          // resetSoftInfo();
+        }
       })
     },
     {
@@ -162,13 +220,26 @@ export default function Page() {
       label: 'DCC交易',
       key: 'dccSupFlag',
       requiredType: 'select',
-      itemSingleCol: true,
       render: () =>
         <CustomRadioGroup
           list={dccSupFlagList}
           valueKey={'dictValue'} nameKey={'dictLabel'}
-          setForm={(value: any[]) => { form.setFieldsValue({ 'dccSupFlag': value }) }}
+          setForm={(value: any) => {
+            form.setFieldsValue({ 'dccSupFlag': value });
+            setDccSupFlagValue(value);
+            // resetSoftInfo();
+          }}
         />
+    },
+    {
+      ...getCustomSelectFromItemData({
+        label: '终端分类',
+        key: 'zzFlag',
+        list: zzFlagList,
+        valueKey: 'dictValue',
+        nameKey: 'dictLabel',
+        required: true
+      })
     },
   ]
 
@@ -255,6 +326,7 @@ export default function Page() {
         nameKey: 'dictLabel',
         value: releaseTypeValue,
         setValue: setReleaseTypeValue,
+        required: true,
       })
     },
   ]
@@ -288,9 +360,10 @@ export default function Page() {
           key: 'isGroupUpdate',
           render: () =>
             <CustomRadioGroup
-              list={groupFilterTypeList}
-              valueKey={'value'} nameKey={'label'}
-              setForm={(value: any) => { form.setFieldsValue({ 'isGroupUpdate': value }); setGroupFilterTypeValue(value) }}
+              list={isGroupUpdateList}
+              valueKey={'dictValue'}
+              nameKey={'dictLabel'}
+              setForm={(value: any) => { form.setFieldsValue({ 'isGroupUpdate': value }); setGroupFilterTypeValue(numeral(value).value()) }}
             />
         },
         {
@@ -387,7 +460,8 @@ export default function Page() {
    */
   const onSubmit = async () => {
     try {
-      const values = await form.validateFields();
+      form.validateFields();
+      const fields = form.getFieldsValue();
       let arr: any[] = [];
       for (let i = 0; i < softInfoFormsNum; i++) {
         softFroms[i].validateFields();
@@ -395,8 +469,9 @@ export default function Page() {
       }
       let param: any = {
         ...form.getFieldsValue(),
+        validStartTime: fields.validStartTime.format('YYYY-MM-DD HH:mm:ss'),
+        validEndTime: fields.validEndTime.format('YYYY-MM-DD HH:mm:ss'),
         validDateShow: validDateShow ? 1 : 0,
-        // downloadJobAppList: arr,
       }
       for (let i = 0; i < arr.length; i++) {
         const item = arr[i];
@@ -408,8 +483,31 @@ export default function Page() {
         }
       }
       console.log('test param', param);
-      console.log('Success:', values);
-      const res = await taskDownloadJobAdd(param);
+      setLoading(true);
+      if (id && type === '1') {
+        param = {
+          ...param,
+          id
+        }
+        const res = await taskDownloadJobEdit(param);
+        setLoading(false);
+        if (res && res.code === RESPONSE_CODE.success) {
+          notification.success({ message: '修改软件更新任务成功' });
+          history.goBack();
+        } else {
+          notification.error({ message: res.msg || '修改软件更新任务失败，请重试' });
+        }
+      } else {
+        const res = await taskDownloadJobAdd(param);
+        setLoading(false);
+        if (res && res.code === RESPONSE_CODE.success) {
+          notification.success({ message: '添加软件更新任务成功' });
+          history.goBack();
+        } else {
+          notification.error({ message: res.msg || '添加软件更新任务失败，请重试' });
+        }
+      }
+
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
     }
@@ -419,8 +517,6 @@ export default function Page() {
     <Spin spinning={false}>
       <Form
         form={form}
-        name="terminal_params"
-        initialValues={initialValues}
       >
         <Divider orientation="left">【终端信息】</Divider>
         <CustomFormItems items={terminalInfoForms} />
@@ -430,7 +526,13 @@ export default function Page() {
           softInfoFormsNum > 0 && new Array(softInfoFormsNum).fill({}).map((item: any, index: number) => {
             return (
               <Card key={`softInfo${index}`} title={`软件${index + 1}`} bordered={true} style={{ marginTop: 10 }} extra={<Button onClick={() => onDeleteSoftInfoFormsItem(index)}>删除</Button>}>
-                <SoftInfoItem form={softFroms[index]} firmId={terminalFirmValue} />
+                <SoftInfoItem
+                  form={softFroms[index]}
+                  commonValue={{ ...form.getFieldsValue() }}
+                  detail={detail}
+                  initValue={detail && detail.downloadJobOutput && Array.isArray(detail.downloadJobOutput.downloadJobAppList) &&
+                    detail.downloadJobOutput.downloadJobAppList.length > index ? detail.downloadJobOutput.downloadJobAppList[index] : {}}
+                />
               </Card>
             )
           })
@@ -450,7 +552,10 @@ export default function Page() {
       <TableTusns
         visible={modalVisible}
         hideModal={() => setModalVisible(false)}
-        fetchParam={{ firmId: terminalFirmValue, terminalTypeIds: form.getFieldValue('termianlModels') }}
+        fetchParam={{
+          firmId: terminalFirmValue,
+          terminalTypeIds: form.getFieldValue('termianlModels'),
+        }}
         setOptions={setTusnsOptions}
         options={tusnsOptions}
       />
