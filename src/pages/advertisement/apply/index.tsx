@@ -1,14 +1,16 @@
 import React from 'react';
-import { Form, Table } from 'antd';
+import { Form, Table, notification, Modal } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { useAntdTable } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
-import { advertInfoList } from '../constants/api';
+import { advertInfoList, advertInfoRemove } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
 import Forms from '@/component/form';
 import { FormItmeType, FormItem } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
 import { useStore } from '@/pages/common/costom-hooks';
+import { RESPONSE_CODE } from '@/common/config';
+import invariant from 'invariant';
 
 export default () => {
   // 请求dept数据
@@ -24,19 +26,42 @@ export default () => {
       formatResult: formatListResult,
     }
   );
-
   const { submit, reset } = search;
+
+  const onDelete = async (id: number) => {
+    Modal.confirm({
+      title: '提示',
+      content: `确认删除选中的广告吗？`,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const result = await advertInfoRemove(id);
+          invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
+          notification.success({ message: '删除成功' });
+          submit();
+        } catch (error) {
+          notification.warn({ message: error.message });
+        }
+      },
+    });
+  };
+
   const columns = createTableColumns([
     {
       title: '操作',
       render: (item: any) => (
-        <a
-          onClick={() =>
-            history.push(`/advertisement/apply-update?id=${item.id}`)
-          }
-        >
-          审核
-        </a>
+        <div>
+          <a
+            onClick={() =>
+              history.push(`/advertisement/apply-update?id=${item.id}`)
+            }
+          >
+            审核
+          </a>
+          {` | `}
+          <a onClick={() => onDelete(item.id)}>删除</a>
+        </div>
       ),
       fixed: 'left',
     },
