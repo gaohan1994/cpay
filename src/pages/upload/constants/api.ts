@@ -63,8 +63,16 @@ export const softVersionEdit = (params: any) =>
  * @todo 根据终端型号查询软件版本
  * @param params 
  */
-export const taskSoftVersionListByType = (params: any) =>
-  ApiRequest.get(`/cpay-admin/task/softVersion/listByTypet${jsonToQueryString(params)}`);
+export const taskSoftVersionListByType = async (
+  parma: any,
+  callback?: (params: any[]) => void
+): Promise<any> => {
+  const result = await ApiRequest.get(
+    `/cpay-admin/task/softVersion/listByType${jsonToQueryString(parma)}`
+  );
+  callback && result.code === RESPONSE_CODE.success && callback(result.data);
+  return result;
+};
 
 /**
 * @todo 删除软件版本信息
@@ -168,6 +176,20 @@ export const taskOperationJobDetail = async (
  */
 export const taskOperationJobAdd = (params: any) =>
   ApiRequest.post(`/cpay-admin/task/operationJob/add`, params);
+
+/**
+* @todo 修改终端操作任务(远程运维修改)
+* @param params 
+*/
+export const taskOperationJobEdit = (params: any) =>
+  ApiRequest.post(`/cpay-admin/task/operationJob/edit`, params);
+
+/**
+* @todo 删除终端操作任务
+* @param params
+*/
+export const taskOperationJobRemove = (params: { ids: string }) =>
+  ApiRequest.post(`/cpay-admin/task/operationJob/remove`, params);
 
 /**
 * @todo 添加终端操作任务任务(远程运维新增)

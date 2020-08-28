@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Modal, Form, Table } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Modal, Form, Table, message } from 'antd';
 import Forms from '@/component/form';
 import { useAntdTable } from 'ahooks';
 import { terminalInfoList } from '@/pages/terminal/message/constants/api';
@@ -10,13 +10,13 @@ import { createTableColumns } from '@/component/table';
 interface Props {
   visible: boolean;
   hideModal: () => void;
-  handleOk: () => void;
-  handleCancel: () => void;
   fetchParam: any;
+  setOptions: any;
+  options: any[];
 }
 
 export function TableTusns(props: Props) {
-  const { visible, hideModal, handleOk, handleCancel, fetchParam } = props;
+  const { visible, hideModal, fetchParam, options, setOptions } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);
   const [form] = Form.useForm();    // 查询终端的表单
   const { tableProps, search }: any = useAntdTable(
@@ -28,6 +28,11 @@ export function TableTusns(props: Props) {
     }
   );
   const { submit, reset } = search;
+
+  useEffect(() => {
+    setSelectedRowKeys([]);
+    reset();
+  }, [visible]);
 
   /**
    * @todo table查询表单
@@ -52,9 +57,9 @@ export function TableTusns(props: Props) {
     },
   ];
 
-   /**
-   * @todo 创建table的列
-   */
+  /**
+  * @todo 创建table的列
+  */
   const columns = createTableColumns([
     {
       title: '终端序列号',
@@ -83,6 +88,37 @@ export function TableTusns(props: Props) {
     onChange: setSelectedRowKeys,
   };
 
+  const handleOk = () => {
+    if (selectedRowKeys.length === 0) {
+      message.error('请选择终端');
+      return;
+    }
+    if (options.length === 0) {
+      setOptions(selectedRowKeys);
+    } else {
+      const arr = [...options];
+      for (let i = 0; i < selectedRowKeys.length; i++) {
+        let item = selectedRowKeys[i];
+        let flag = false;
+        for (let j = 0; j < options.length; j++) {
+          if (item === options[j]) {
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) {
+          arr.push(item);
+        }
+      }
+      setOptions(arr);
+    }
+    hideModal();
+  }
+
+  const handleCancel = () => {
+    hideModal();
+  }
+
   return (
     <Modal
       title={"终端选择"}
@@ -93,6 +129,7 @@ export function TableTusns(props: Props) {
       onCancel={handleCancel}
       width={'60vw'}
       bodyStyle={{ padding: 0 }}
+      getContainer={false}
     >
       <div style={{ height: 400, overflow: 'auto', overflowX: 'hidden', padding: '24px 0px 24px 24px' }}>
         <Forms

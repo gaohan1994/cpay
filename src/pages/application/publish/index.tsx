@@ -47,7 +47,9 @@ function Page(props: Props) {
   useEffect(() => {
     terminalGroupListByDept(formTreeValue, (groupData) => {
       setTerminalGroup(groupData);
-      setGroupValue(`${groupData[0].id}`);
+      if (groupData.length > 0) {
+        setGroupValue(`${groupData[0].id}`);
+      }
     });
   }, [formTreeValue]);
 

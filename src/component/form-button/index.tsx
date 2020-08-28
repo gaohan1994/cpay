@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Button } from 'antd';
+import { Row, Button, Radio } from 'antd';
 import { ButtonProps } from 'antd/lib/button';
 import { SearchOutlined } from '@ant-design/icons';
 
@@ -12,6 +12,8 @@ export type FormButtonProps = {
   submitTitle?: string;
   submitIcon?: any;
   extraButtons?: ButtonProps[];
+  renderExtra?: any;
+  resetExtra?: any;
 };
 
 const FormButton = React.memo((props: FormButtonProps) => {
@@ -24,15 +26,17 @@ const FormButton = React.memo((props: FormButtonProps) => {
     submitTitle = '查询',
     submitIcon,
     extraButtons,
+    renderExtra,
+    resetExtra
   } = props;
 
   const buttonCss = { marginRight: 12 };
 
   return (
-    <Row style={{ marginBottom: 12 }}>
+    <div style={{ marginBottom: 12, width: '100%' }}>
       {reset && (
         <Button
-          onClick={reset}
+          onClick={() => { reset(); resetExtra && resetExtra(); }}
           style={buttonCss}
           {...resetButtonType}
           {...resetIcon}
@@ -54,14 +58,17 @@ const FormButton = React.memo((props: FormButtonProps) => {
         <>
           {extraButtons.map((button) => {
             return (
-              <Button {...button} style={buttonCss}>
+              <Button {...button} style={buttonCss} key={button.title}>
                 {button.title}
               </Button>
             );
           })}
         </>
       )}
-    </Row>
+      {
+        renderExtra && renderExtra()
+      }
+    </div>
   );
 });
 export default FormButton;

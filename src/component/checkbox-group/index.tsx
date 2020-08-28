@@ -11,13 +11,14 @@ interface Props {
 const CheckboxGroup = Checkbox.Group;
 export const CustomCheckGroup = React.forwardRef((props: Props, ref) => {
   const { list, valueKey, nameKey, setForm } = props;
-  const { indeterminate, checkAll, checkedList, setCheckedList, onChange, onCheckAllChange } = useCheckGroupData(list);
+  const { indeterminate, checkAll, checkedList, setCheckedList, onChange, onCheckAllChange } = useCheckGroupData(list, valueKey);
 
   useImperativeHandle(ref, () => ({
     // 这个函数会返回一个对
     // 该对象会作为父组件 current 属性的值
     // 通过这种方式，父组件可以使用操作子组件中的多个 ref
-    setCheckedList: (list: any[]) => { setCheckedList(list) }
+    setCheckedList: (list: any[]) => { setCheckedList(list) },
+    checkedList
   }), []);
 
   useEffect(() => {

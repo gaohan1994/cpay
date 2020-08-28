@@ -1,61 +1,27 @@
 import { useEffect, useState } from 'react';
 import { useTerminalFirmList, useTerminalTypeList, useTerminalGrouplList, useAppTypeList } from '@/pages/common/costom-hooks/form-select';
 import { useSelectorHook } from '@/common/redux-util';
-import { IUploadAppInfo } from '../../../types/index';
 import { FormInstance } from 'antd/lib/form';
 import numeral from 'numeral';
+import { IUploadAppInfo } from '@/pages/application/types';
+import { DictDetailItem } from '@/pages/common/type';
 
 interface Props {
   firmId: number
 }
 export function useFormSelectData(props: any, form: FormInstance) {
   const app = useSelectorHook((state) => state.app);
-
-  const { firmId, deptId } = props;
-  const { terminalGroupList, setTerminalGroupList } = useTerminalGrouplList(deptId);
-  const [terminalGroupValue, setTerminalGroupValue] = useState('');
-  const { appTypeList, setAppTypeList } = useAppTypeList();
-  const [appTypeValue, setAppTypeValue] = useState('');
+  const state = useSelectorHook((state) => state.common.dictList);
+  const { firmId } = props;
+  const [deiverTypeList, setDriverTypeList] = useState([] as DictDetailItem[])
   const { terminalFirmList, setTerminalFirmList } = useTerminalFirmList();
   const [terminalFirmValue, setTerminalFirmValue] = useState('');
   const { terminalTypeList, setTerminalTypeList } = useTerminalTypeList(firmId || -1);
   const [appInfo, setAppInfo] = useState({} as IUploadAppInfo)
 
   useEffect(() => {
-
-  }, []);
-
-  useEffect(() => {
-    if (appTypeList.length > 0 && appTypeValue !== '') {
-      let flag = false;
-      for (let i = 0; i < appTypeList.length; i++) {
-        if (appTypeList[i].id === numeral(appTypeValue).value()) {
-          flag = true;
-          break;
-        }
-      }
-      if (!flag) {
-        setAppTypeValue('');
-        form.setFieldsValue({ typeId: undefined });
-      }
-    }
-  }, [appTypeList, appTypeValue]);
-
-  useEffect(() => {
-    if (terminalGroupList.length > 0 && terminalGroupValue !== '') {
-      let flag = false;
-      for (let i = 0; i < terminalGroupList.length; i++) {
-        if (terminalGroupList[i].id === numeral(terminalGroupValue).value()) {
-          flag = true;
-          break;
-        }
-      }
-      if (!flag) {
-        setTerminalGroupValue('');
-        form.setFieldsValue({ groupId: undefined });
-      }
-    }
-  }, [terminalGroupList, terminalGroupValue]);
+    setDriverTypeList(state.driver_type && state.driver_type.data || []);
+  }, [state]);
 
   useEffect(() => {
     if (terminalFirmList.length > 0 && terminalFirmValue !== '') {
@@ -81,13 +47,10 @@ export function useFormSelectData(props: any, form: FormInstance) {
   }, [app.appInfo]);
 
   return {
-    terminalGroupList, setTerminalGroupList,
-    appTypeList, setAppTypeList,
-    appTypeValue, setAppTypeValue,
+    deiverTypeList, setDriverTypeList,
     terminalFirmList, setTerminalFirmList,
     terminalFirmValue, setTerminalFirmValue,
     terminalTypeList, setTerminalTypeList,
     appInfo, setAppInfo,
-    terminalGroupValue, setTerminalGroupValue
   };
 }

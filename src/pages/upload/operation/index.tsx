@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-18 14:56:36 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-20 16:15:29
+ * @Last Modified time: 2020-08-26 17:47:22
  * 
  * @todo 远程运维列表
  */
@@ -14,7 +14,7 @@ import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
-import { taskOperationJobList, taskOperationJobPublish } from '../constants/api';
+import { taskOperationJobList, taskOperationJobPublish, taskOperationJobRemove } from '../constants/api';
 import { PlusOutlined, CopyOutlined, BarsOutlined, CaretRightOutlined, PauseOutlined } from '@ant-design/icons';
 import { useRedux } from '@/common/redux-util';
 import { RESPONSE_CODE } from '@/common/config';
@@ -104,7 +104,7 @@ function Page(props: Props) {
     const param = {
       ids: item.id
     }
-    const res = await taskDownloadJobRemove(param);
+    const res = await taskOperationJobRemove(param);
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '删除软件信息成功' });
       submit();

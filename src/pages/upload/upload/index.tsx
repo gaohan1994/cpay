@@ -2,12 +2,12 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-13 09:36:52 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-20 16:38:29
+ * @Last Modified time: 2020-08-26 15:14:59
  * 
  * @todo 软件更新任务列表
  */
 import React, { useState, useEffect } from 'react';
-import { Form, Table, Tag, Divider, Popconfirm, notification } from 'antd';
+import { Form, Table, Tag, Divider, Popconfirm, notification, Radio } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -18,7 +18,8 @@ import history from '@/common/history-util';
 import { PlusOutlined, CopyOutlined, BarsOutlined, CaretRightOutlined, PauseOutlined, ScheduleOutlined, SyncOutlined } from '@ant-design/icons';
 import { useRedux } from '@/common/redux-util';
 import { RESPONSE_CODE } from '@/common/config';
-import { taskDownloadJobList, taskDownloadJobRemove } from './constants/api';
+import { taskDownloadJobList, taskDownloadJobRemove, taskDownloadJobPublish } from './constants/api';
+import { time } from 'console';
 
 type Props = {};
 
@@ -27,25 +28,29 @@ function Page(props: Props) {
   useStore(['task_job_status']);
   const [useSelector, dispatch] = useRedux();
 
-  const [form] = Form.useForm();
+  const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);  // 选中的列的key值列表
+  const [selectedRows, setSelectedRows] = useState([] as any[]);
+  const [timeType, setTimeType] = useState(0);
 
+  const [form] = Form.useForm();
 
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) =>
-      taskDownloadJobList({ jobCopsSign: 0, pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
+      taskDownloadJobList({ timeType, jobCopsSign: 0, pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
     {
       form,
       formatResult: formatListResult,
     }
   );
   const { submit, reset } = search;
+  
 
   /**
    * @todo 跳转到应用审核页面
    * @param item 
    */
   const onDetail = (item: any) => {
-
+    history.push(`/upload/update-detail?id=${item.id}`);
   }
 
   /**
@@ -95,9 +100,32 @@ function Page(props: Props) {
       width: 150,
     },
     {
+      title: '成功',
+      dataIndex: 'status',
+      render: (item: any) => (<div style={{ color: '#468847' }}>{item}</div>)
+    },
+    {
+      title: '失败',
+      dataIndex: 'status',
+      render: (item: any) => (<div style={{ color: '#ce3739' }}>{item}</div>)
+    },
+    {
+      title: '待执行',
+      dataIndex: 'status',
+      render: (item: any) => (<div style={{ color: '#8FBC8F' }}>{item}</div>)
+    },
+    {
+      title: '执行中',
+      dataIndex: 'status',
+      render: (item: any) => (<div style={{ color: '#32CD32' }}>{item}</div>)
+    },
+    {
       title: '任务状态',
       dataIndex: 'status',
-      dictType: 'task_job_status'
+      dictType: 'task_job_status',
+      render: (item: any) => {
+        return <Tag color={item === '初始' ? '#f8ac59' : item === '结束' ? '#57b5e3' : '#3D7DE9'}>{item}</Tag>
+      }
     },
     {
       title: '任务名称',
@@ -114,6 +142,10 @@ function Page(props: Props) {
     {
       title: '创建日期',
       dataIndex: 'createTime',
+    },
+    {
+      title: '创建机构',
+      dataIndex: 'deptName',
     }
   ]);
 
@@ -137,15 +169,86 @@ function Page(props: Props) {
     history.push('/upload/update-add');
   }
 
+  const onCopy = () => {
+    if (selectedRowKeys.length === 0) {
+      notification.error({ message: "请选择任务" });
+      return;
+    }
+    if (selectedRowKeys.length > 1) {
+      notification.error({ message: "请选择一条任务" });
+      return;
+    }
+    history.push(`/upload/update-add?id=${selectedRowKeys[0]}&type=0`);
+  }
+
+  const onOperationDetail = () => {
+    if (selectedRowKeys.length === 0) {
+      notification.error({ message: "请选择任务" });
+      return;
+    }
+    if (selectedRowKeys.length > 1) {
+      notification.error({ message: "请选择一条任务" });
+      return;
+    }
+    history.push(`/upload/update-operation?id=${selectedRowKeys[0]}&jobName=${selectedRows[0].jobName}`);
+  }
+
+  /**
+   * @todo 启动任务
+   */
+  const onStart = async () => {
+    if (selectedRowKeys.length === 0) {
+      notification.error({ message: "请选择任务" });
+      return;
+    }
+    if (selectedRowKeys.length > 1) {
+      notification.error({ message: "请选择一条任务" });
+      return;
+    }
+    const res = await taskDownloadJobPublish(selectedRowKeys[0]);
+    if (res && res.code === RESPONSE_CODE.success) {
+      notification.success({ message: '启动任务成功' });
+      setSelectedRowKeys([]);
+      submit();
+    } else {
+      notification.error({ message: res && res.msg || '执行任务失败，请重试' });
+    }
+  }
+
   const extraButtons = [
     { title: '新增', onClick: onAdd, icon: <PlusOutlined />, type: "primary" as any, },
-    { title: '复制', onClick: () => {}, icon: <CopyOutlined /> },
-    { title: '执行情况', onClick: () => {}, icon: <BarsOutlined /> },
-    { title: '启动', onClick: () => {}, icon: <CaretRightOutlined />, type: "primary" as any, },
-    { title: '暂停', onClick: () => {}, icon: <PauseOutlined />, type: "primary" as any, },
-    { title: '延时', onClick: () => {}, icon: <ScheduleOutlined /> },
-    { title: '增量同步', onClick: () => {}, icon: <SyncOutlined /> },
+    { title: '复制', onClick: onCopy, icon: <CopyOutlined /> },
+    { title: '执行情况', onClick: onOperationDetail, icon: <BarsOutlined /> },
+    { title: '启动', onClick: onStart, icon: <CaretRightOutlined />, type: "primary" as any, },
+    { title: '暂停', onClick: () => { }, icon: <PauseOutlined />, type: "primary" as any, },
+    { title: '延时', onClick: () => { }, icon: <ScheduleOutlined /> },
+    { title: '增量同步', onClick: () => { }, icon: <SyncOutlined /> },
   ]
+
+  const onChangeSelectedRows = (selectedRowKeys: any[], selectedRows: any[]) => {
+    setSelectedRowKeys(selectedRowKeys);
+    setSelectedRows(selectedRows);
+  }
+
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onChangeSelectedRows,
+  };
+
+  const renderExtra = () => {
+    return (
+      <Radio.Group buttonStyle="solid" style={{ float: 'right' }} value={timeType} onChange={e => { setTimeType(e.target.value); submit(); }}>
+        <Radio.Button value="1" >当日</Radio.Button>
+        <Radio.Button value="7" >近7天</Radio.Button>
+        <Radio.Button value="30" >近30天</Radio.Button>
+      </Radio.Group>
+    )
+  }
+
+  const resetExtraParam = () => {
+    setTimeType(0);
+  }
 
   return (
     <div>
@@ -155,10 +258,12 @@ function Page(props: Props) {
         formButtonProps={{
           submit,
           reset,
-          extraButtons
+          extraButtons,
+          renderExtra,
+          resetExtra: resetExtraParam
         }}
       />
-      <Table rowKey="id" columns={columns}  {...tableProps} />
+      <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} />
     </div>
   );
 }

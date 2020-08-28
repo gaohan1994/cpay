@@ -48,14 +48,14 @@ export default function Page() {
   const [previewTitle, setPreviewTitle] = useState('');
 
   const {
-    terminalGroupList, setTerminalGroupList,
-    terminalGroupValue, setTerminalGroupValue,
-    appTypeList, setAppTypeList,
-    appTypeValue, setAppTypeValue,
+    terminalGroupList,
+    setTerminalGroupValue,
+    appTypeList,
+    setAppTypeValue,
     terminalFirmList,
     terminalFirmValue, setTerminalFirmValue,
-    terminalModelList,
-    appInfo, setAppInfo
+    terminalTypeList,
+    appInfo
   } = useFormSelectData({ ...form.getFieldsValue(), deptId: deptId }, form);
 
   const { detail } = useDetail(id, appInfoDetail, setLoading);
@@ -322,7 +322,12 @@ export default function Page() {
         label: '终端厂商',
         key: 'firmId',
         value: terminalFirmValue,
-        setValue: setTerminalFirmValue,
+        onChange: (value: any) => {
+          setTerminalFirmValue(value);
+          if (typesRef && typesRef.current && typesRef.current.setCheckedList) {
+            typesRef.current.setCheckedList([]);
+          }
+        },
         list: terminalFirmList,
         valueKey: 'id',
         nameKey: 'firmName',
@@ -335,7 +340,7 @@ export default function Page() {
       requiredType: 'select',
       render: () =>
         <CustomCheckGroup
-          list={terminalModelList}
+          list={terminalTypeList}
           valueKey={'typeCode'} nameKey={'typeName'}
           ref={typesRef}
           setForm={(checkedList: any[]) => { form.setFieldsValue({ 'terminalTypes': checkedList }) }}
@@ -446,25 +451,27 @@ export default function Page() {
 
   return (
     <Spin spinning={loading}>
-      <Form
-        form={form}
-        name="terminal_params"
-      >
-        <CustomFormItems items={forms} singleCol={true} />
-        <Form.Item {...ButtonLayout} >
-          <Button type="primary" onClick={onSubmit}>
-            保存
+      <div style={{ paddingTop: 10 }}>
+        <Form
+          form={form}
+          className="ant-advanced-search-form"
+        >
+          <CustomFormItems items={forms} singleCol={true} />
+          <Form.Item {...ButtonLayout} >
+            <Button type="primary" onClick={onSubmit}>
+              保存
         </Button>
-        </Form.Item>
-      </Form>
-      <Modal
-        visible={previewVisible}
-        title={previewTitle}
-        footer={null}
-        onCancel={() => setPreviewVisible(false)}
-      >
-        <img alt="example" style={{ width: '100%' }} src={previewImage} />
-      </Modal>
+          </Form.Item>
+        </Form>
+        <Modal
+          visible={previewVisible}
+          title={previewTitle}
+          footer={null}
+          onCancel={() => setPreviewVisible(false)}
+        >
+          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+        </Modal>
+      </div>
     </Spin>
 
   )
