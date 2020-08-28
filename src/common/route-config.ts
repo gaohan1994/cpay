@@ -13,6 +13,7 @@ import ApplicationRoute from '@/pages/application/route';
 import UploadRoute from '@/pages/upload/route';
 import advertisement from '@/pages/advertisement/route';
 import Login from '@/pages/sign/login';
+import MotionRoute from '@/pages/motion/route';
 
 export const routerConfig: RouteProps[] = [
   {
@@ -34,4 +35,5 @@ export const routerConfig: RouteProps[] = [
   ...TerminalRoute,
   ...ApplicationRoute,
   ...UploadRoute,
+  ...MotionRoute,
 ];

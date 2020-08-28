@@ -11,24 +11,25 @@ import { merge } from 'lodash';
 import TerminalRoute, { TerminalMenu } from '@/pages/terminal/route';
 import ApplicationRoute, { ApplicationMenu } from '@/pages/application/route';
 import UploadRoute, { UploadMenu } from '@/pages/upload/route';
+import MotionRoute, { MotionMenu } from '@/pages/motion/route';
 import AdvertisementRoute, {
-  AdvertisementMenu
+  AdvertisementMenu,
 } from '@/pages/advertisement/route';
 import { HomeOutlined, FundViewOutlined } from '@ant-design/icons';
 
 function formartRouteToMenu(routeConfig: any[]): any[] {
   const newConfig: any[] = merge([], routeConfig);
   return newConfig
-    .map(route => {
+    .map((route) => {
       if (route.inMenu !== false) {
         return {
           name: route.name,
           value: route.path && route.path.substring(1, route.path.length),
-          path: route.path && route.path.substring(1, route.path.length)
+          path: route.path && route.path.substring(1, route.path.length),
         };
       }
     })
-    .filter(item => !!item);
+    .filter((item) => !!item);
 }
 
 const menuConfig: ILayoutSiderMenu[] = [
@@ -36,30 +37,29 @@ const menuConfig: ILayoutSiderMenu[] = [
     name: '主页',
     icon: HomeOutlined,
     path: 'home',
-    value: 'home'
+    value: 'home',
   },
   {
     ...AdvertisementMenu,
-    subMenus: formartRouteToMenu(AdvertisementRoute)
+    subMenus: formartRouteToMenu(AdvertisementRoute),
   },
   {
     ...TerminalMenu,
-    subMenus: formartRouteToMenu(TerminalRoute)
+    subMenus: formartRouteToMenu(TerminalRoute),
   },
   {
     ...ApplicationMenu,
-    subMenus: formartRouteToMenu(ApplicationRoute)
+    subMenus: formartRouteToMenu(ApplicationRoute),
   },
   {
     ...UploadMenu,
-    subMenus: formartRouteToMenu(UploadRoute)
+    subMenus: formartRouteToMenu(UploadRoute),
   },
   {
-    name: '移机监控',
+    ...MotionMenu,
+    subMenus: formartRouteToMenu(MotionRoute),
     icon: FundViewOutlined,
-    path: '1',
-    value: '1'
-  }
+  },
 ];
 
 export { menuConfig };
