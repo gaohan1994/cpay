@@ -2,12 +2,12 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-18 14:56:36 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-26 17:47:22
+ * @Last Modified time: 2020-09-01 14:29:05
  * 
  * @todo 远程运维列表
  */
 import React, { useState, useEffect } from 'react';
-import { Form, Table, Tag, Divider, Popconfirm, notification } from 'antd';
+import { Form, Table, Tag, Divider, notification, Modal } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -16,7 +16,6 @@ import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
 import { taskOperationJobList, taskOperationJobPublish, taskOperationJobRemove } from '../constants/api';
 import { PlusOutlined, CopyOutlined, BarsOutlined, CaretRightOutlined, PauseOutlined } from '@ant-design/icons';
-import { useRedux } from '@/common/redux-util';
 import { RESPONSE_CODE } from '@/common/config';
 import history from '@/common/history-util';
 import { ITerminalFirmItem, ITerminalType } from '@/pages/terminal/types';
@@ -25,7 +24,7 @@ import {
   terminalTypeListByFirm,
 } from '@/pages/terminal/constants';
 import { getTaskJobStatusColor } from '../common/util';
-import { taskDownloadJobRemove } from '../upload/constants/api';
+import invariant from 'invariant';
 
 type Props = {};
 
@@ -101,16 +100,25 @@ function Page(props: Props) {
   }
 
   const onRemove = async (item: any) => {
-    const param = {
-      ids: item.id
-    }
-    const res = await taskOperationJobRemove(param);
-    if (res && res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '删除软件信息成功' });
-      submit();
-    } else {
-      notification.error({ message: res && res.msg || '删除软件信息失败，请重试' });
-    }
+    Modal.confirm({
+      title: '提示',
+      content: `确认要删除当前任务?`,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const param = {
+            ids: item.id
+          }
+          const result = await taskOperationJobRemove(param);
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除任务失败，请重试');
+          notification.success({ message: '删除任务成功!' });
+          submit();
+        } catch (error) {
+          notification.warn({ message: error.message });
+        }
+      },
+    });
   }
 
   /**
@@ -125,17 +133,11 @@ function Page(props: Props) {
           <Divider type="vertical" />
           <a onClick={() => onEdit(item)}>修改</a>
           <Divider type="vertical" />
-          <Popconfirm
-            title="是否确认删除？"
-            onConfirm={() => onRemove(item)}
-            okText="是"
-            cancelText="否"
-          >
-            <a>删除</a>
-          </Popconfirm>
+          <a onClick={() => onRemove(item)}>删除</a>
         </div>
       ),
       fixed: 'left',
+      align: 'center',
       width: 150,
     },
     {
@@ -275,7 +277,6 @@ function Page(props: Props) {
     selectedRowKeys,
     onChange: setSelectedRowKeys,
   };
-
 
   return (
     <div>

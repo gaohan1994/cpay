@@ -1,3 +1,11 @@
+/*
+ * @Author: centerm.gaozhiying 
+ * @Date: 2020-09-01 11:47:28 
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-09-01 13:34:12
+ * 
+ * @todo 终端选择modal
+ */
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Table, message } from 'antd';
 import Forms from '@/component/form';
@@ -8,11 +16,11 @@ import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
 
 interface Props {
-  visible: boolean;
-  hideModal: () => void;
-  fetchParam: any;
-  setOptions: any;
-  options: any[];
+  visible: boolean;       // modal是否展示
+  hideModal: () => void;  // 关闭modal
+  fetchParam: any;        // 获取参数
+  setOptions: any;        // 设置选中列表
+  options: any[];         // 选中列表
 }
 
 export function TableTusns(props: Props) {
@@ -88,6 +96,9 @@ export function TableTusns(props: Props) {
     onChange: setSelectedRowKeys,
   };
 
+  /**
+   * @todo 点击确定，把选中终端放入选中列表中
+   */
   const handleOk = () => {
     if (selectedRowKeys.length === 0) {
       message.error('请选择终端');
@@ -115,6 +126,9 @@ export function TableTusns(props: Props) {
     hideModal();
   }
 
+  /**
+   * @todo 点击取消调用：关闭modal
+   */
   const handleCancel = () => {
     hideModal();
   }

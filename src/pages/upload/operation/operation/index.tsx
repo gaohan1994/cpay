@@ -2,23 +2,22 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-19 14:29:27 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-20 13:46:26
+ * @Last Modified time: 2020-09-01 14:27:49
  * 
  * @todo 执行情况查询
  */
-import React, { useState, useEffect } from 'react';
-import { Form, Table, Tag, Divider, Popconfirm, notification } from 'antd';
+import React, { useState } from 'react';
+import { Form, Table, notification } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { formatListResult, formatSearch } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
-import history from '@/common/history-util';
-import { DownloadOutlined, SyncOutlined, PauseOutlined, CaretRightOutlined, LogoutOutlined } from '@ant-design/icons';
+import { SyncOutlined, PauseOutlined, CaretRightOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useRedux } from '@/common/redux-util';
 import { RESPONSE_CODE, BASIC_CONFIG } from '@/common/config';
-import { taskUploadTaskList, taskUploadTaskReset, taskUploadTaskCancel, taskOperationTaskList, taskOperationTaskExport, taskOperationTaskReset, taskOperationTaskPause } from '../../constants/api';
+import { taskOperationTaskList, taskOperationTaskExport, taskOperationTaskReset, taskOperationTaskPause } from '../../constants/api';
 import { useHistory } from 'react-router-dom';
 
 type Props = {};
@@ -54,9 +53,18 @@ function Page(props: Props) {
       dataIndex: 'tusn',
     },
     {
-      title: '状态',
+      title: '任务状态',
       dataIndex: 'status',
       dictType: 'task_job_status',
+    },
+    {
+      title: '操作指令',
+      dataIndex: 'operatorCommand',
+      dictType: 'terminal_operator_command'
+    },
+    {
+      title: '所属机构',
+      dataIndex: 'firmName',
     },
     {
       title: '终端厂商',
@@ -65,11 +73,6 @@ function Page(props: Props) {
     {
       title: '终端型号',
       dataIndex: 'typeName'
-    },
-    {
-      title: '操作指令',
-      dataIndex: 'operatorCommand',
-      dictType: 'terminal_operator_command'
     },
     {
       title: '创建时间',
@@ -139,8 +142,6 @@ function Page(props: Props) {
     }
     const res = await taskOperationTaskExport(param);
     if (res && res.code === RESPONSE_CODE.success) {
-      // notification.success({ message: '取消任务成功' });
-      // submit();
       if (res.data) {
         window.location.href = `${BASIC_CONFIG.SOURCE_URL}/${res.data}`;
       }
@@ -165,7 +166,6 @@ function Page(props: Props) {
     selectedRowKeys,
     onChange: onChangeSelectedRows,
   };
-
 
   return (
     <div>

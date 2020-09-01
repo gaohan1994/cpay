@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ACTION_TYPES_COMMON } from '@/pages/common/reducer';
 import {
   getDeptTreeData,
@@ -43,12 +43,15 @@ export function useStore(dictType: string[]): CommonHooksState {
 
     const promises = dictList.map((dict) => getDictData(dict.dictType));
     Promise.all(promises)
-      .then((responses) =>
-        responses.filter((res) => res.code === RESPONSE_CODE.success)
-      )
+      // .then((responses) =>
+      //   responses.filter((res) => res.code === RESPONSE_CODE.success)
+      // )
       .then((responses) => {
         responses.forEach((response, index) => {
-          const { data } = response;
+          let data: any = { rows: [] };
+          if (response.code === RESPONSE_CODE.success && response.data) {
+            data = response.data;
+          }
           const { rows } = data;
           /**
            * @params {dictTypeItem} 找到分类父亲
@@ -84,11 +87,24 @@ export function useStore(dictType: string[]): CommonHooksState {
     const promises =
       dictType.length > 0 &&
       dictType.map((type) => getDictList(type, getDictListCallback));
+
   }, []);
+
+  const isLoading = () => {
+    let flag = false;
+    for (let i = 0; i < dictType.length; i++) {
+      if (!(dictType[i] && state.dictList && state.dictList[dictType[i]])) {
+        flag = true;
+        break;
+      }
+    }
+    return flag;
+  }
 
   return {
     deptList: state.deptData,
     deptTreeList: state.deptTreeData,
     dictList: state.dictList || ({} as any),
+    loading: isLoading()
   };
 }

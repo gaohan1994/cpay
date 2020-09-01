@@ -2,12 +2,12 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-13 10:49:40 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-17 16:28:24
+ * @Last Modified time: 2020-09-01 13:51:43
  * 
  * @todo 日志提取列表
  */
-import React, { useState, useEffect } from 'react';
-import { Form, Table, Tag, Divider, Popconfirm, notification } from 'antd';
+import React, { useState } from 'react';
+import { Form, Table, Divider, notification, Modal } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -15,17 +15,16 @@ import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
 import history from '@/common/history-util';
-import { softInfoRemove, taskUploadJobList, taskUploadJobRemove, taskUploadJobPublish } from '../constants/api';
+import { taskUploadJobList, taskUploadJobRemove, taskUploadJobPublish } from '../constants/api';
 import { PlusOutlined, CloseOutlined, BarsOutlined, CheckOutlined } from '@ant-design/icons';
-import { useRedux } from '@/common/redux-util';
 import { RESPONSE_CODE } from '@/common/config';
+import invariant from 'invariant';
 
 type Props = {};
 
 function Page(props: Props) {
   // 请求dept数据
   useStore(['task_job_status']);
-  const [useSelector, dispatch] = useRedux();
 
   const [form] = Form.useForm();
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);  // 选中的列的key值列表
@@ -62,16 +61,25 @@ function Page(props: Props) {
    * @param item 
    */
   const onRemoveItem = async (item: any) => {
-    const param = {
-      ids: item.id
-    }
-    const res = await taskUploadJobRemove(param);
-    if (res && res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '删除任务成功' });
-      submit();
-    } else {
-      notification.error({ message: res && res.msg || '删除任务失败，请重试' });
-    }
+    Modal.confirm({
+      title: '提示',
+      content: `确认要删除当前任务吗?`,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const param = {
+            ids: item.id
+          }
+          const result = await taskUploadJobRemove(param);
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除任务失败，请重试');
+          notification.success({ message: '删除任务成功!' });
+          submit();
+        } catch (error) {
+          notification.warn({ message: error.message });
+        }
+      },
+    });
   }
 
   /**
@@ -82,16 +90,25 @@ function Page(props: Props) {
       notification.error({ message: "请选择任务" });
       return;
     }
-    const param = {
-      ids: selectedRowKeys.join(',')
-    }
-    const res = await taskUploadJobRemove(param);
-    if (res && res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '删除任务成功' });
-      submit();
-    } else {
-      notification.error({ message: res && res.msg || '删除任务失败，请重试' });
-    }
+    Modal.confirm({
+      title: '提示',
+      content: `确认要删除选中任务吗?`,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const param = {
+            ids: selectedRowKeys.join(',')
+          }
+          const result = await taskUploadJobRemove(param);
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除任务失败，请重试');
+          notification.success({ message: '删除任务成功!' });
+          submit();
+        } catch (error) {
+          notification.warn({ message: error.message });
+        }
+      },
+    });
   }
 
   /**
@@ -148,20 +165,14 @@ function Page(props: Props) {
             item.status === 0 && (
               <>
                 <Divider type="vertical" />
-                <Popconfirm
-                  title="是否确认删除？"
-                  onConfirm={() => onRemoveItem(item)}
-                  okText="是"
-                  cancelText="否"
-                >
-                  <a>删除</a>
-                </Popconfirm>
+                <a onClick={() => onRemoveItem(item)}>删除</a>
               </>
             )
           }
         </div>
       ),
       fixed: 'left',
+      align: 'center',
       width: 150,
     },
     {
@@ -172,9 +183,6 @@ function Page(props: Props) {
       title: '发布状态',
       dataIndex: 'status',
       dictType: 'task_job_status',
-      render: (item: any) => {
-        return <Tag color={item === '待发布' ? '#f8ac59' : '#3D7DE9'}>{item}</Tag>
-      }
     },
     {
       title: '有效起始日期',

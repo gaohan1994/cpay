@@ -1,3 +1,11 @@
+/*
+ * @Author: centerm.gaozhiying 
+ * @Date: 2020-09-01 13:37:29 
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-09-01 13:42:33
+ * 
+ * @todo 提取日志新增页面
+ */
 import React, { useState, useEffect } from 'react';
 import { Spin, Form, Button, DatePicker, message, notification } from 'antd';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -25,13 +33,16 @@ export default function Page() {
   const [tusnsOptions, setTusnsOptions] = useState([]);
 
   const {
-    terminalFirmList, setTerminalFirmList,
+    terminalFirmList,
     terminalFirmValue, setTerminalFirmValue,
-    terminalTypeList, setTerminalTypeList,
-    logUploadTypeList, setLogUploadTypeList,
+    terminalTypeList,
+    logUploadTypeList,
     logUploadTypeValue, setLogUploadTypeValue
   } = useFormSelectData({ ...form.getFieldsValue() }, form);
 
+  /**
+   * @todo 获取详情数据
+   */
   const { detail } = useDetail(id, taskUploadJobDetail, setLoading);
 
   const initialValues = merge(
@@ -39,10 +50,16 @@ export default function Page() {
     (detail && detail) || {}
   );
 
+  /**
+   * @todo 监听终端集合的改变，设置表单值
+   */
   useEffect(() => {
     form.setFieldsValue({ 'tusns': tusnsOptions.join(';') });
   }, [tusnsOptions]);
 
+  /**
+   * @todo 监听详情，设置相应表单数据
+   */
   useEffect(() => {
     form.setFieldsValue(initialValues);
     if (typeof detail.type === 'number') {
@@ -84,6 +101,9 @@ export default function Page() {
     setModalVisible(true)
   }
 
+  /**
+   * @todo 表单数据
+   */
   const forms: CustomFromItem[] = [
     {
       label: '任务名称',
@@ -175,8 +195,6 @@ export default function Page() {
         <DatePicker
           format="YYYY-MM-DD HH:mm:ss"
           style={{ width: '100%' }}
-          // disabledDate={current => disabledDate(current, 'VALID_END')}
-          // disabledTime={current => disabledDateTime(current, 'VALID_END')}
           showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
           placeholder={text}
         />
@@ -186,8 +204,6 @@ export default function Page() {
         <DatePicker
           format="YYYY-MM-DD"
           style={{ width: '100%' }}
-          // disabledDate={current => disabledDate(current, 'VALID_START')}
-          // disabledTime={current => disabledDateTime(current, 'VALID_START')}
           placeholder={text}
         />
       )
@@ -227,10 +243,10 @@ export default function Page() {
         const res = await taskUploadJobEdit(param);
         setLoading(false);
         if (res && res.code === RESPONSE_CODE.success) {
-          notification.success({ message: '修改终端提取日志成功' });
+          notification.success({ message: '终端提取日志修改成功' });
           history.goBack();
         } else {
-          notification.error({ message: res.msg || '修改终端提取日志失败，请重试' });
+          notification.error({ message: res.msg || '终端提取日志修改失败，请重试' });
         }
       } else {
         param = {
@@ -239,10 +255,10 @@ export default function Page() {
         const res = await taskUploadJobAdd(param);
         setLoading(false);
         if (res && res.code === RESPONSE_CODE.success) {
-          notification.success({ message: '新增终端提取日志成功' });
+          notification.success({ message: '终端提取日志新增成功' });
           history.goBack();
         } else {
-          notification.error({ message: res.msg || '新增终端提取日志失败，请重试' });
+          notification.error({ message: res.msg || '终端提取日志新增失败，请重试' });
         }
       }
     } catch (errorInfo) {

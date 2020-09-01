@@ -1,13 +1,18 @@
+/*
+ * @Author: centerm.gaozhiying 
+ * @Date: 2020-09-01 13:35:18 
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-09-01 13:37:20
+ * 
+ * @todo 提取日志新增获取表单选择数据列表
+ */
 import { useEffect, useState } from 'react';
-import { useTerminalFirmList, useTerminalTypeList, useTerminalGrouplList, useAppTypeList, useTerminalGroupList } from '@/pages/common/costom-hooks/form-select';
+import { useTerminalFirmList, useTerminalTypeList } from '@/pages/common/costom-hooks/form-select';
 import { useSelectorHook } from '@/common/redux-util';
 import { FormInstance } from 'antd/lib/form';
 import numeral from 'numeral';
 import { DictDetailItem } from '@/pages/common/type';
 
-interface Props {
-  firmId: number
-}
 export function useFormSelectData(props: any, form: FormInstance) {
   const { firmId } = props;
   const state = useSelectorHook((state) => state.common.dictList);

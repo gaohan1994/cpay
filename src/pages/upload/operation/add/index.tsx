@@ -1,3 +1,11 @@
+/*
+ * @Author: centerm.gaozhiying 
+ * @Date: 2020-09-01 14:13:46 
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-09-01 14:23:02
+ * 
+ * @todo 远程运维新增页面
+ */
 import React, { useState, useEffect, useRef } from 'react';
 import { Spin, Form, Button, message, notification } from 'antd';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -11,7 +19,7 @@ import { CustomRadioGroup } from '@/component/radio-group';
 import { CustomCheckGroup } from '@/component/checkbox-group';
 import { FormTusns } from '../../component/from-tusns';
 import { TableTusns } from '../../component/table.tusns';
-import { taskOperationJobAdd, taskUploadJobEdit, taskOperationJobDetail, taskOperationJobEdit } from '../../constants/api';
+import { taskOperationJobAdd, taskOperationJobDetail, taskOperationJobEdit } from '../../constants/api';
 import { useQueryParam } from '@/common/request-util';
 import { RESPONSE_CODE } from '@/common/config';
 import { useHistory } from 'react-router-dom';
@@ -19,31 +27,30 @@ import { useDetail } from '@/pages/common/costom-hooks/use-detail';
 import { merge } from 'lodash';
 import numeral from 'numeral';
 
-const groupFilterTypeList = [{ value: 0, label: '无' }, { value: 1, label: '指定' }, { value: 2, label: '排除' }]
-
 export default function Page() {
   const id = useQueryParam('id');
   const type = useQueryParam('type');
   const groupRef: any = useRef();
   const [form] = useForm();
   const history = useHistory();
-  useStore(['terminal_operator_command', 'release_type']);
+  const res = useStore(['terminal_operator_command', 'release_type', 'is_group_update']);
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [tusnsOptions, setTusnsOptions] = useState([]);
-  const [groupFilterTypeValue, setGroupFilterTypeValue] = useState(0);
+  const [groupFilterTypeValue, setGroupFilterTypeValue] = useState('0');
 
   const {
-    operatorCommandList, setOperatorCommandList,
-    terminalFirmList, setTerminalFirmList,
+    operatorCommandList,
+    terminalFirmList,
     terminalFirmValue, setTerminalFirmValue,
-    terminalTypeList, setTerminalTypeList,
-    releaseTypeList, setReleaseTypeList,
+    terminalTypeList,
+    releaseTypeList,
     releaseTypeValue, setReleaseTypeValue,
-    deptTreeData, setDeptTreeData,
+    deptTreeData,
     deptId, setDeptId,
     terminalGroupList,
-    terminalGroupValue, setTerminalGroupValue
+    setTerminalGroupValue,
+    isGroupUpdateList,
   } = useFormSelectData({ ...form.getFieldsValue() }, form);
 
   const { detail } = useDetail(id, taskOperationJobDetail, setLoading);
@@ -58,23 +65,26 @@ export default function Page() {
   }, [tusnsOptions]);
 
   useEffect(() => {
-    form.setFieldsValue(initialValues);
-    if (typeof detail.deptId === 'number') {
-      setDeptId(detail.deptId);
-    }
-    if (typeof detail.releaseType === 'number') {
-      setReleaseTypeValue(`${detail.releaseType}`);
-      form.setFieldsValue({ releaseType: `${detail.releaseType}` });
-    }
-    if (detail.tusns) {
-      setTusnsOptions(detail.tusns.split(';'))
-    }
-    setGroupFilterTypeValue(detail.isGroupUpdate);
+    if (!res.loading) {
+      form.setFieldsValue(initialValues);
+      if (typeof detail.deptId === 'number') {
+        setDeptId(detail.deptId);
+      }
+      if (typeof detail.releaseType === 'number') {
+        setReleaseTypeValue(`${detail.releaseType}`);
+        form.setFieldsValue({ releaseType: `${detail.releaseType}` });
+      }
+      if (detail.tusns) {
+        setTusnsOptions(detail.tusns.split(';'))
+      }
+      form.setFieldsValue({ isGroupUpdate: `${detail.isGroupUpdate}` });
+      setGroupFilterTypeValue(`${detail.isGroupUpdate}`);
 
-    if (detail.groupIds) {
-      setTerminalGroupValue(detail.groupIds);
+      if (detail.groupIds) {
+        setTerminalGroupValue(detail.groupIds);
+      }
     }
-  }, [detail]);
+  }, [detail, res.loading]);
 
   useEffect(() => {
     if (detail.groupIds) {
@@ -173,17 +183,20 @@ export default function Page() {
           key: 'isGroupUpdate',
           render: () =>
             <CustomRadioGroup
-              list={groupFilterTypeList}
-              valueKey={'value'} nameKey={'label'}
-              setForm={(value: any) => { form.setFieldsValue({ 'isGroupUpdate': value }); setGroupFilterTypeValue(value) }}
-              value={groupFilterTypeValue}
+              list={isGroupUpdateList}
+              valueKey={'dictValue'}
+              nameKey={'dictLabel'}
+              setForm={(value: any) => {
+                form.setFieldsValue({ 'isGroupUpdate': value });
+                setGroupFilterTypeValue(value);
+              }}
             />
         },
         {
           label: '终端组别',
           key: 'groupIds',
           itemSingleCol: true,
-          show: groupFilterTypeValue !== 0,
+          show: groupFilterTypeValue !== '0',
           render: () =>
             <CustomCheckGroup
               ref={groupRef}
@@ -273,7 +286,7 @@ export default function Page() {
   }
 
   return (
-    <Spin spinning={loading}>
+    <Spin spinning={res.loading || loading}>
       <div style={{ paddingTop: 10 }}>
         <Form
           form={form}

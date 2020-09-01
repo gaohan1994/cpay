@@ -1,3 +1,11 @@
+/*
+ * @Author: centerm.gaozhiying 
+ * @Date: 2020-09-01 11:44:53 
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-09-01 11:47:25
+ * 
+ * @todo 封装的终端集合选择表单
+ */
 import React, { useState } from "react";
 import { Space, Button } from "antd";
 import { PlusOutlined, CloseOutlined, UploadOutlined, ClearOutlined } from '@ant-design/icons';
@@ -12,6 +20,10 @@ export function FormTusns(props: Props) {
   const { onAddTerminals, options, setOptions } = props;
   const [selectedOptions, setSelectOptions] = useState([] as any[]);
 
+  /**
+   * @todo 删除选中的终端
+   * @param type 'ALL'表示清空
+   */
   const onDeleTerminals = (type?: string) => {
     if (type === 'ALL') {
       setOptions([]);
@@ -34,10 +46,17 @@ export function FormTusns(props: Props) {
     setSelectOptions([]);
   }
 
+  /**
+   * @todo excel导入终端
+   */
   const onImportTerminals = () => {
 
   }
 
+  /**
+   * @todo 改变选中值
+   * @param e 
+   */
   const handleSelectChange = (e: any) => {
     const options = e.target.options;
     let arr: string[] = [];

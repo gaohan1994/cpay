@@ -2,12 +2,12 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-13 09:36:52 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-26 15:14:59
+ * @Last Modified time: 2020-09-01 14:56:48
  * 
  * @todo 软件更新任务列表
  */
-import React, { useState, useEffect } from 'react';
-import { Form, Table, Tag, Divider, Popconfirm, notification, Radio } from 'antd';
+import React, { useState } from 'react';
+import { Form, Table, Tag, Divider, notification, Radio, Modal } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -16,17 +16,15 @@ import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
 import history from '@/common/history-util';
 import { PlusOutlined, CopyOutlined, BarsOutlined, CaretRightOutlined, PauseOutlined, ScheduleOutlined, SyncOutlined } from '@ant-design/icons';
-import { useRedux } from '@/common/redux-util';
 import { RESPONSE_CODE } from '@/common/config';
 import { taskDownloadJobList, taskDownloadJobRemove, taskDownloadJobPublish } from './constants/api';
-import { time } from 'console';
+import invariant from 'invariant';
 
 type Props = {};
 
 function Page(props: Props) {
   // 请求dept数据
   useStore(['task_job_status']);
-  const [useSelector, dispatch] = useRedux();
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);  // 选中的列的key值列表
   const [selectedRows, setSelectedRows] = useState([] as any[]);
@@ -43,7 +41,7 @@ function Page(props: Props) {
     }
   );
   const { submit, reset } = search;
-  
+
 
   /**
    * @todo 跳转到应用审核页面
@@ -58,20 +56,33 @@ function Page(props: Props) {
    * @param item 
    */
   const onEdit = (item: any) => {
-    history.push(`/upload/update-add?id=${item.id}`);
+    history.push(`/upload/update-add?id=${item.id}&type=1`);
   }
 
+  /**
+   * @todo 删除软件更新任务
+   * @param item 
+   */
   const onRemove = async (item: any) => {
-    const param = {
-      ids: item.id
-    }
-    const res = await taskDownloadJobRemove(param);
-    if (res && res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '删除软件信息成功' });
-      submit();
-    } else {
-      notification.error({ message: res && res.msg || '删除软件信息失败，请重试' });
-    }
+    Modal.confirm({
+      title: '提示',
+      content: `确认要删除当前软件更新任务吗?`,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const param = {
+            ids: item.id
+          }
+          const result = await taskDownloadJobRemove(param);
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除软件更新任务失败，请重试');
+          notification.success({ message: '删除软件更新任务成功!' });
+          submit();
+        } catch (error) {
+          notification.warn({ message: error.message });
+        }
+      },
+    });
   }
 
   /**
@@ -80,20 +91,14 @@ function Page(props: Props) {
   const columns = createTableColumns([
     {
       title: '操作',
+      align: 'center',
       render: (key, item) => (
         <div>
           <a onClick={() => onDetail(item)}>详情</a>
           <Divider type="vertical" />
           <a onClick={() => onEdit(item)}>修改</a>
           <Divider type="vertical" />
-          <Popconfirm
-            title="是否确认删除？"
-            onConfirm={() => onRemove(item)}
-            okText="是"
-            cancelText="否"
-          >
-            <a>删除</a>
-          </Popconfirm>
+          <a onClick={() => onRemove(item)}>删除</a>
         </div>
       ),
       fixed: 'left',
@@ -181,6 +186,9 @@ function Page(props: Props) {
     history.push(`/upload/update-add?id=${selectedRowKeys[0]}&type=0`);
   }
 
+  /**
+   * @todo 执行软件更新任务
+   */
   const onOperationDetail = () => {
     if (selectedRowKeys.length === 0) {
       notification.error({ message: "请选择任务" });

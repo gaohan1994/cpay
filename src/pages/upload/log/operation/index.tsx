@@ -2,19 +2,18 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-17 16:20:07 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-17 17:50:31
+ * @Last Modified time: 2020-09-01 13:50:23
  * 
  * @todo 执行情况详情
  */
-import React, { useState, useEffect } from 'react';
-import { Form, Table, Tag, Divider, Popconfirm, notification } from 'antd';
+import React, { useState } from 'react';
+import { Form, Table, notification } from 'antd';
 import { useAntdTable } from 'ahooks';
-import { formatListResult, formatSearch } from '@/common/request-util';
+import { formatListResult, formatSearch, useQueryParam } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
-import history from '@/common/history-util';
 import { CheckOutlined, CloseOutlined, DownloadOutlined, SyncOutlined } from '@ant-design/icons';
 import { useRedux } from '@/common/redux-util';
 import { RESPONSE_CODE } from '@/common/config';
@@ -26,10 +25,8 @@ type Props = {};
 function Page(props: Props) {
   // 请求dept数据
   useStore(['log_upload_status']);
-  const [useSelector, dispatch] = useRedux();
   const history = useHistory();
-  const { search: historySearch } = history.location;
-  const field = formatSearch(historySearch);
+  const id = useQueryParam('id');
 
   const [form] = Form.useForm();
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);  // 选中的列的key值列表
@@ -37,7 +34,7 @@ function Page(props: Props) {
 
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) =>
-      taskUploadTaskList({ jobId: field.id, pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
+      taskUploadTaskList({ jobId: id, pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
     {
       form,
       formatResult: formatListResult,
@@ -132,6 +129,9 @@ function Page(props: Props) {
     }
   }
 
+  /**
+   * @todo 日志下载
+   */
   const onLogDownload = () => {
     if (selectedRowKeys.length === 0) {
       notification.error({ message: "请选择任务" });

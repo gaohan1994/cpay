@@ -57,7 +57,7 @@ export const taskSoftVersionList = (params: any) =>
 * @param params 
 */
 export const softVersionEdit = (params: any) =>
-  ApiRequest.post(`/cpay-admin/task/softVersion/edits/${params.id}`, params);
+  ApiRequest.post(`/cpay-admin/task/softVersion/edit`, params);
 
 /**
  * @todo 根据终端型号查询软件版本

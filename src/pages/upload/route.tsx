@@ -33,12 +33,12 @@ export const UploadMenu = {
 };
 
 const routerConfig: any[] = [
-  {
-    path: '/upload/download',
-    name: '远程下载',
-    component: Uploaddownload,
-    exact: true
-  },
+  // {
+  //   path: '/upload/download',
+  //   name: '远程下载',
+  //   component: Uploaddownload,
+  //   exact: true
+  // },
   {
     path: '/upload/manage',
     name: '软件管理',

@@ -1,15 +1,26 @@
+/*
+ * @Author: centerm.gaozhiying 
+ * @Date: 2020-09-01 14:44:18 
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-09-01 14:49:42
+ * 
+ * @todo 软件更新任务详情
+ */
 import React, { useEffect, useState } from 'react';
 import { useQueryParam } from '@/common/request-util';
-import { Spin, notification, Divider, Descriptions, Table } from 'antd';
-import { RESPONSE_CODE } from '@/common/config';
+import { Spin, Descriptions, Table } from 'antd';
 import { taskDownloadJobDetail } from '../constants/api';
 import { useDetail } from '@/pages/common/costom-hooks/use-detail';
 import { createTableColumns } from '@/component/table';
 import { useStore } from '@/pages/common/costom-hooks';
-import { UseDictRenderHelper } from '@/component/table/render';
-import { getDictText } from '../../common/util';
+import { getDictText } from '@/pages/common/util';
 import { useSelectorHook } from '@/common/redux-util';
 
+/**
+ * @todo 根据keys的值，获取对象中对应的数据
+ * @param obj 
+ * @param keys 
+ */
 const getObjectValue = (obj: any, keys: string[]) => {
   let value: any = {};
   for (let i = 0; i < keys.length; i++) {
@@ -31,7 +42,7 @@ const getObjectValue = (obj: any, keys: string[]) => {
 
 export default function Page() {
   const id = useQueryParam('id');
-  useStore(['driver_type', 'download_task_type', 'release_type',
+  const res = useStore(['driver_type', 'download_task_type', 'release_type',
     'buss_type', 'unionpay_connection', 'dcc_sup_flag',
     'terminal_type', 'activate_type', 'is_group_update', 'zz_flag'
   ]);
@@ -83,18 +94,20 @@ export default function Page() {
     }
     arr.push({ key: '发布类型', value: releaseTypeInfo });
     setDetailArr(arr);
-  }, [detail, dictList]);
+  }, [detail, res.loading]);
 
+  /**
+   * @todo 获取操作类型名称集合
+   * @param activateTypes 
+   */
   const getActivateTypeNames = (activateTypes: string) => {
     const arr = activateTypes.split(',');
     const strArr: string[] = [];
-    console.log('test ttt', arr);
     for (let i = 0; i < arr.length; i++) {
       strArr.push(getDictText(arr[i], 'terminal_type'));
     }
     return strArr.join(',')
   }
-
 
   const columns: any[] = createTableColumns([
     {

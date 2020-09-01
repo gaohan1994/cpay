@@ -2,22 +2,21 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-26 11:27:53 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-26 14:57:37
+ * @Last Modified time: 2020-09-01 15:02:25
  * 
- * @todo 执行情况查询
+ * @todo 软件更新执行情况查询
  */
-import React, { useState, useEffect } from 'react';
-import { Form, Table, Tag, Divider, Popconfirm, notification } from 'antd';
+import React, { useState } from 'react';
+import { Form, Table, notification } from 'antd';
 import { useAntdTable } from 'ahooks';
-import { formatListResult, formatSearch, useQueryParam } from '@/common/request-util';
+import { formatListResult, useQueryParam } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
 import { SyncOutlined, PauseOutlined, CaretRightOutlined, LogoutOutlined } from '@ant-design/icons';
 import { RESPONSE_CODE, BASIC_CONFIG } from '@/common/config';
-import { taskOperationTaskExport, taskOperationTaskReset, taskOperationTaskPause } from '../../constants/api';
-import { useHistory } from 'react-router-dom';
+import { taskOperationTaskExport } from '../../constants/api';
 import { taskDownloadTaskList } from '../constants/api';
 
 type Props = {};
@@ -25,7 +24,6 @@ type Props = {};
 function Page(props: Props) {
   // 请求dept数据
   useStore(['task_job_status', 'terminal_operator_command', 'download_task_type']);
-  const history = useHistory();
   const id = useQueryParam('id');
   const jobName = useQueryParam('jobName');
 
@@ -149,6 +147,9 @@ function Page(props: Props) {
     // }
   }
 
+  /**
+   * @todo 导出
+   */
   const onLogOut = async () => {
     const param = {
       id: id
@@ -192,6 +193,7 @@ function Page(props: Props) {
           extraButtons
         }}
       />
+      <div style={{ marginBottom: 10 }}>任务名称：{decodeURIComponent(jobName)}</div>
       <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} />
     </div>
   );

@@ -2,64 +2,52 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-13 11:15:48 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-20 14:55:40
+ * @Last Modified time: 2020-09-01 13:43:59
  * 
  * @todo 日志提取任务详情页
  */
 import React, { useState, useEffect } from 'react';
 import { Spin, Descriptions, notification } from 'antd';
-import { useHistory } from 'react-router-dom';
-import { formatSearch } from '@/common/request-util';
+import { useQueryParam } from '@/common/request-util';
 import { taskUploadJobDetail } from '../../constants/api';
 import { RESPONSE_CODE } from '@/common/config';
 import { TaskUploadJobDetail } from '../../types';
 import { useStore } from '@/pages/common/costom-hooks';
-import { useSelectorHook } from '@/common/redux-util';
+import { getDictText } from '@/pages/common/util';
+
+const initDetailArr = [
+  { label: "任务名称", value: '' },
+  { label: "日志提取方式", value: '' },
+  { label: "文件路径", value: '' },
+  { label: "终端厂商", value: '' },
+  { label: "终端型号", value: '' },
+  { label: "有效期起始日期", value: '' },
+  { label: "有效期截止日期", value: '' },
+  { label: "提取开始日期", value: '' },
+  { label: "提取结束日期", value: '' },
+  { label: "终端集合", value: '' },
+]
 
 function Page() {
-  useStore(['log_upload_type']);
-  const common = useSelectorHook((state) => state.common);
+  const res = useStore(['log_upload_type']);
 
   const [loading, setLoading] = useState(false);
-  const [detailArr, setDetailArr] = useState([] as any[]);
-  const history = useHistory();
-
-  useEffect(() => {
-    const { search } = history.location;
-    const field = formatSearch(search);
-    // setLoading(true);
-    if (field.id) {
-      taskUploadJobDetail(field.id, getDetailCallback);
-    }
-  }, [history.location.search]);
+  const [detailArr, setDetailArr] = useState(initDetailArr as any[]);
+  const id = useQueryParam('id');
 
   /**
-   * @todo 监听应用状态对应的字典列表的改变，获取相应状态对应的 文字
+   * @todo 获取完相应字典数据，设置详情值
    */
   useEffect(() => {
-    for (let i = 0; i < detailArr.length; i++) {
-      if (detailArr[i].label === "日志提取方式") {
-        let newDetailArr = [...detailArr];
-        newDetailArr[i] = { label: "日志提取方式", value: getTypeText(detailArr[i].value) }
-        setDetailArr(newDetailArr);
+    setLoading(true);
+    if (!res.loading) {
+      if (id) {
+        taskUploadJobDetail(id, getDetailCallback);
+      } else {
+        setLoading(false);
       }
     }
-  }, [common.dictList]);
-
-  /**
-   * @todo 获取应用状态对应的文字
-   * @param status 应用状态
-   */
-  const getTypeText = (type: string) => {
-    let data: any = common.dictList && common.dictList.log_upload_type && common.dictList.log_upload_type.data
-      ? common.dictList.log_upload_type.data : [];
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].dictValue) {
-        return data[i].dictLabel || type;
-      }
-    }
-    return type;
-  }
+  }, [id, res.loading]);
 
   /**
   * @todo 从接口拿到应用详情后的回调方法
@@ -71,7 +59,7 @@ function Page() {
       let detail: TaskUploadJobDetail = result.data;
       let arr: any[] = [];
       arr.push({ label: "任务名称", value: detail.jobName });
-      arr.push({ label: "日志提取方式", value: getTypeText(detail.type) });
+      arr.push({ label: "日志提取方式", value: getDictText(detail.type, 'log_upload_type') });
       arr.push({ label: "终端厂商", value: detail.firmName });
       arr.push({ label: "终端型号", value: detail.terminalType });
       arr.push({ label: "有效期起始日期", value: detail.validStartTime });

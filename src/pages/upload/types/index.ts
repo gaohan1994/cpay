@@ -55,6 +55,8 @@ export interface ISoftInfo {
   versionCode: string;
   versionName: string;
   description: string;
+  dccSupFlag: number;
+  cupConnMode: number;
 }
 
 /**

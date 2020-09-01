@@ -1,4 +1,4 @@
-import store from '../../../modules/redux-store/index';
+
 /*
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-20 10:00:01 
@@ -19,48 +19,9 @@ export const getTaskJobStatusColor = (status: string) => {
       return '#f8ac59';
     case '启动':
       return '#3cc051';
+    case '结束':
+      return '#57b5e3';
     default:
       return '#3D7DE9';
   }
-}
-
-export const getFormCommonRules = (label: string, type: 'select' | 'input', text?: string) => {
-  if (text) {
-    return [
-      {
-        required: true,
-        message: text,
-      }
-    ];
-  }
-  switch (type) {
-    case 'select':
-      return [
-        {
-          required: true,
-          message: `请选择${label}`,
-        }
-      ];
-    default:
-      return [
-        {
-          required: true,
-          message: `请输入${label}`,
-        }
-      ];
-  }
-}
-
-export const getDictText = (data: string, dictType: string,) => {
-  const state = store.getState();
-  const dictList = state.common.dictList;
-  const targetDict = dictList[dictType];
-
-  const targetDictItem: any =
-    targetDict &&
-    targetDict.data &&
-    targetDict.data.find((dictItem) => dictItem.dictValue === String(data));
-  
-  console.log('test rrr', data, dictType, targetDictItem, dictList, targetDict);
-  return targetDictItem && targetDictItem.dictLabel || '--';
 }

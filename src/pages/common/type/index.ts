@@ -43,6 +43,7 @@ export interface CommonHooksState {
   dictList: {
     [key: string]: DictItem;
   };
+  loading: boolean
 }
 
 export declare module CommonReducerInterface {

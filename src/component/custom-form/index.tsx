@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col, Form, Input } from 'antd';
-import { getFormCommonRules } from '@/pages/upload/common/util';
+import { getFormCommonRules } from '@/pages/common/util';
 import { renderSelectForm } from '@/component/form/render';
 import { FormItmeType } from '@/component/form/type';
 import { CustomFromItem } from '@/common/type';
@@ -105,9 +105,10 @@ const ItemSingleFormItemLayout = {
 export interface CustomFormItemsProps {
   items: CustomFromItem[],
   singleCol?: boolean;
+  customFormLayout?: any;
 }
 export function CustomFormItems(props: CustomFormItemsProps) {
-  const { items, singleCol } = props;
+  const { items, singleCol, customFormLayout } = props;
 
   return (
     <Row gutter={24}>
@@ -118,7 +119,7 @@ export function CustomFormItems(props: CustomFormItemsProps) {
             return <div key={key} />;
           }
           let rules = (requiredType || requiredText) ? getFormCommonRules(label, requiredType || 'input', requiredText) : [];
-          let formLayout = singleCol ? SingleFormItemLayout : FormItemLayout;
+          let formLayout = customFormLayout ? customFormLayout : singleCol ? SingleFormItemLayout : FormItemLayout;
           formLayout = itemSingleCol ? ItemSingleFormItemLayout : formLayout;
           return (
             <Col span={(singleCol || itemSingleCol) ? 24 : 12} key={key}>

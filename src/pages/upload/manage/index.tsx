@@ -1,13 +1,13 @@
 /*
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-13 09:32:54 
- * @Last Modified by:   centerm.gaozhiying 
- * @Last Modified time: 2020-08-13 09:32:54 
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-09-01 14:12:42
  * 
  * @todo 软件管理列表
  */
-import React, { useState, useEffect } from 'react';
-import { Form, Table, Tag, Divider, Popconfirm, notification } from 'antd';
+import React from 'react';
+import { Form, Table, Divider, notification, Modal } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -17,20 +17,16 @@ import { createTableColumns } from '@/component/table';
 import history from '@/common/history-util';
 import { taskSoftList, softInfoRemove } from '../constants/api';
 import { PlusOutlined } from '@ant-design/icons';
-import { useRedux } from '@/common/redux-util';
-import { ACTION_TYPES_UPLOAD } from '../reducers';
 import { RESPONSE_CODE } from '@/common/config';
+import invariant from 'invariant';
 
 type Props = {};
 
 function Page(props: Props) {
   // 请求dept数据
-  useStore(['driver_type']);
-  const [useSelector, dispatch] = useRedux();
+  useStore(['driver_type', 'unionpay_connection', 'is_dcc_sup']);
 
   const [form] = Form.useForm();
-
-
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) =>
       taskSoftList({ pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
@@ -57,17 +53,30 @@ function Page(props: Props) {
     history.push(`/upload/manage-edit?id=${item.id}`);
   }
 
+  /**
+   * @todo 删除软件信息
+   * @param item 
+   */
   const onRemove = async (item: any) => {
-    const param = {
-      ids: item.id
-    }
-    const res = await softInfoRemove(param);
-    if (res && res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '删除软件信息成功' });
-      submit();
-    } else {
-      notification.error({ message: res && res.msg || '删除软件信息失败，请重试' });
-    }
+    Modal.confirm({
+      title: '提示',
+      content: `确认要删除当前软件吗?`,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const param = {
+            ids: item.id
+          }
+          const result = await softInfoRemove(param);
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除软件信息失败，请重试');
+          notification.success({ message: '删除软件信息成功!' });
+          submit();
+        } catch (error) {
+          notification.warn({ message: error.message });
+        }
+      },
+    });
   }
 
   /**
@@ -82,23 +91,16 @@ function Page(props: Props) {
           <Divider type="vertical" />
           <a onClick={() => onEdit(item)}>修改</a>
           <Divider type="vertical" />
-          <Popconfirm
-            title="是否确认删除？"
-            onConfirm={() => onRemove(item)}
-            okText="是"
-            cancelText="否"
-          >
-            <a>删除</a>
-          </Popconfirm>
+          <a onClick={() => onRemove(item)}>删除</a>
         </div>
       ),
       fixed: 'left',
+      align: 'center',
       width: 150,
     },
     {
       title: '软件名称',
       align: 'center',
-      // dataIndex: 'apkName',
       render: (key, item: any) => {
         return (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -125,6 +127,16 @@ function Page(props: Props) {
       dataIndex: 'type',
       dictType: 'driver_type'
     },
+    {
+      title: '是否支持DCC',
+      dataIndex: 'dccSupFlag',
+      dictType: 'is_dcc_sup'
+    },
+    {
+      title: '银联间直联',
+      dataIndex: 'cupConnMode',
+      dictType: 'unionpay_connection'
+    },
   ]);
 
   /**
@@ -142,12 +154,15 @@ function Page(props: Props) {
       formType: FormItmeType.Normal,
     },
     {
-      formName: ['type'],
+      formName: ['type', 'dccSupFlag', 'cupConnMode'],
       formType: FormItmeType.SelectCommon,
-      dictList: ['driver_type'],
+      dictList: ['driver_type', 'is_dcc_sup', 'unionpay_connection'],
     },
   ];
 
+  /**
+   * @todo 跳转到新增页面
+   */
   const onAdd = () => {
     history.push('/upload/manage-add');
   }

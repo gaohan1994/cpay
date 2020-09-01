@@ -1,10 +1,17 @@
+/*
+ * @Author: centerm.gaozhiying 
+ * @Date: 2020-09-01 13:52:44 
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-09-01 14:02:56
+ * 
+ * @todo 软件新页面
+ */
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'antd/lib/form/Form';
-import { Form, Button, Input, Row, Col, notification, Spin } from 'antd';
+import { Form, Button, Input, Row, Col, notification, Spin, Switch, message } from 'antd';
 import { CustomFormItems, ButtonLayout, getCustomSelectFromItemData } from '@/component/custom-form';
 import { useStore } from '@/pages/common/costom-hooks';
 import { CustomCheckGroup } from '@/component/checkbox-group';
-import { useRedux, useSelectorHook } from '@/common/redux-util';
 import { useFormSelectData } from './costom-hooks';
 import { BASIC_CONFIG, RESPONSE_CODE } from '@/common/config';
 import { useQueryParam } from '@/common/request-util';
@@ -26,25 +33,28 @@ const customFormLayout = {
 
 export default function Page() {
   const id = useQueryParam('id');
-  useStore(['driver_type']);
+  useStore(['driver_type', 'unionpay_connection', 'is_dcc_sup']);
   const history = useHistory();
   const [form] = useForm();
   const uploadRef: any = useRef();
   const typesRef: any = useRef();
-  const [useSelector, dispatch] = useRedux();
-  const common = useSelectorHook((state) => state.common);
   const [loading, setLoading] = useState(false);
   const [appIcon, setAppIcon] = useState('');
   const [apkFile, setApkFile] = useState({} as any);
 
   const {
     deiverTypeList,
+    driverTypeValue, setDriverTypeValue,
     terminalFirmList,
     terminalFirmValue, setTerminalFirmValue,
     terminalTypeList,
-    appInfo
+    appInfo,
+    unionpayConnectionList
   } = useFormSelectData({ ...form.getFieldsValue() }, form);
 
+  /**
+   * @todo 监听应用信息（上传应用以后获取到的应用信息）的改变
+   */
   useEffect(() => {
     form.setFieldsValue({
       code: appInfo.appCode,
@@ -61,6 +71,9 @@ export default function Page() {
     }
   }, [appInfo]);
 
+  /**
+   * @todo 渲染上传应用组件
+   */
   const renderUpload = () => {
     return (
       <Row>
@@ -68,20 +81,36 @@ export default function Page() {
           <Input disabled={true} value={apkFile.name || ''} />
         </Col>
         <Col span={12}>
-          <UploadApp
-            uploadRef={uploadRef}
-            maxSize='100M'
-            renderButton={() =>
-              <Button style={{ width: 120 }}>
-                <UploadOutlined /> 上传应用包
-              </Button>
-            }
-          />
+          {
+            driverTypeValue && driverTypeValue.length > 0 ? (
+              <UploadApp
+                uploadRef={uploadRef}
+                maxSize='100M'
+                fileType={
+                  driverTypeValue === '2' || driverTypeValue === '3'
+                    ? { type: 'application/zip', message: '请上传zip类型文件' }
+                    : {} as any
+                }
+                renderButton={() =>
+                  <Button style={{ width: 120 }}>
+                    <UploadOutlined /> 上传应用包
+                  </Button>
+                }
+              />
+            ) : (
+                <Button style={{ width: 120 }} onClick={() => { message.error('请先选择软件类型') }}>
+                  <UploadOutlined /> 上传应用包
+                </Button>
+              )
+          }
         </Col>
       </Row>
     )
   }
 
+  /**
+   * @todo 渲染应用icon
+   */
   const renderIcon = () => {
     if (typeof appIcon === 'string' && appIcon.length > 0) {
       return (
@@ -97,6 +126,9 @@ export default function Page() {
     }
   }
 
+  /**
+   * @todo 表单数据
+   */
   const forms = [
     {
       ...getCustomSelectFromItemData({
@@ -106,6 +138,10 @@ export default function Page() {
         valueKey: 'dictValue',
         nameKey: 'dictLabel',
         required: true,
+        value: driverTypeValue,
+        onChange: (id: string) => {
+          setDriverTypeValue(`${id}`);
+        },
       })
     },
     {
@@ -144,6 +180,21 @@ export default function Page() {
       key: 'iconPath',
       requiredText: '应用图标不能为空',
       render: renderIcon
+    },
+    {
+      label: '是否支持DCC',
+      key: 'dccSupFlag',
+      requiredType: 'select',
+      render: () => <Switch checkedChildren="是" unCheckedChildren="否" />
+    },
+    {
+      ...getCustomSelectFromItemData({
+        label: '银联间直连',
+        key: 'cupConnMode',
+        list: unionpayConnectionList,
+        valueKey: 'dictValue',
+        nameKey: 'dictLabel',
+      })
     },
     {
       ...getCustomSelectFromItemData({
@@ -195,6 +246,12 @@ export default function Page() {
           : appIcon.replace(`${BASIC_CONFIG.SOURCE_URL}/`, ''),
       }
       setLoading(true);
+      if (typeof fields.dccSupFlag === 'boolean') {
+        param = {
+          ...param,
+          dccSupFlag: fields.dccSupFlag ? 0 : 1
+        }
+      }
       if (id) {
         param = {
           ...param,
@@ -203,10 +260,10 @@ export default function Page() {
         const res = await softInfoEdit(param);
         setLoading(false);
         if (res && res.code === RESPONSE_CODE.success) {
-          notification.success({ message: '修改应用信息成功' });
+          notification.success({ message: '软件信息修改成功' });
           history.goBack();
         } else {
-          notification.error({ message: res.msg || '修改应用信息失败，请重试' });
+          notification.error({ message: res.msg || '软件信息修改失败，请重试' });
         }
       } else {
         param = {
@@ -218,10 +275,10 @@ export default function Page() {
         const res = await softInfoAdd(param);
         setLoading(false);
         if (res && res.code === RESPONSE_CODE.success) {
-          notification.success({ message: '添加应用信息成功' });
+          notification.success({ message: '软件信息新增成功' });
           history.goBack();
         } else {
-          notification.error({ message: res.msg || '添加应用信息失败，请重试' });
+          notification.error({ message: res.msg || '软件信息新增失败，请重试' });
         }
       }
     } catch (errorInfo) {
@@ -234,16 +291,16 @@ export default function Page() {
         <Form
           form={form}
           className="ant-advanced-search-form"
+          style={{ backgroundColor: 'white' }}
         >
           <CustomFormItems items={forms} singleCol={true} />
           <Form.Item {...ButtonLayout} >
             <Button type="primary" onClick={onSubmit}>
               保存
-        </Button>
+             </Button>
           </Form.Item>
         </Form>
       </div>
     </Spin>
-
   )
 }

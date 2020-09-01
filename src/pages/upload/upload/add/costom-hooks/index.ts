@@ -1,11 +1,16 @@
+/*
+ * @Author: centerm.gaozhiying 
+ * @Date: 2020-09-01 14:37:18 
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-09-01 14:37:45
+ * 
+ * @todo 软件更新新增获取表单选择数据列表
+ */
 import { useEffect, useState } from 'react';
 import { useTerminalFirmList, useTerminalTypeList, useTerminalGroupList } from '@/pages/common/costom-hooks/form-select';
 import { useSelectorHook } from '@/common/redux-util';
-import { DictDetailItem, DictItem } from '@/pages/common/type';
+import { DictDetailItem } from '@/pages/common/type';
 
-interface Props {
-  firmId: number
-}
 export function useFormSelectData(props: any) {
   const state = useSelectorHook((state) => state.common.dictList);
   const common = useSelectorHook((state) => state.common);

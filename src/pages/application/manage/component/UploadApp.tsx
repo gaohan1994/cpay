@@ -7,7 +7,7 @@
  * @todo 上传apk用到的组件
  */
 import React, { useState, useImperativeHandle, forwardRef, useEffect } from 'react';
-import { Upload, Button, Progress, notification } from 'antd';
+import { Upload, Button, Progress, notification, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import numeral from 'numeral';
 import { BASIC_CONFIG } from '@/common/config';
@@ -21,6 +21,7 @@ type Props = {
   maxSize?: string;
   renderRequire?: () => any;
   renderButton?: () => any;
+  fileType?: { type: string, message: string }; // 不传默认为apk形式的文件
 }
 
 type State = {
@@ -65,11 +66,19 @@ function UploadApp(props: Props) {
    * @param file 
    */
   const beforeUpload = (file: File) => {
-    const { maxSize } = props;
-    if (file.type !== 'application/vnd.android.package-archive') {
-      notification.error({ message: '请上传apk类型文件' });
-      return false;
+    const { maxSize, fileType } = props;
+    if (fileType && fileType.type) {
+      if (file.type !== fileType.type) {
+        notification.error({ message: fileType.message || '上传文件形式不对，请重新上传' });
+        return false;
+      }
+    } else {
+      if (file.type !== 'application/vnd.android.package-archive') {
+        notification.error({ message: '请上传apk类型文件' });
+        return false;
+      }
     }
+
     if (maxSize) {
       let size;
       let isLtSize = true;
@@ -126,14 +135,14 @@ function UploadApp(props: Props) {
         setFile(info.file);
         const response = info.file.response;
         if (response && response.code === RESPONSE_CODE.success) {
-          notification.success({ message: "上传apk成功" });
+          notification.success({ message: "上传成功" });
           setAppInfo(response.data);
         } else {
-          notification.error({ message: response.msg || '获取apk信息失败' });
+          notification.error({ message: response.msg || '获取软件信息失败' });
         }
       } else if (info.file.status === 'error') {
         setFile(info.file);
-        notification.error({ message: "上传apk失败，请重试" });
+        notification.error({ message: "上传失败，请重试" });
         setShowProgress(false);
         setProgress(0);
       } else if (info.file.status === 'uploading') {

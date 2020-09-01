@@ -1,16 +1,21 @@
+/*
+ * @Author: centerm.gaozhiying 
+ * @Date: 2020-09-01 14:37:54 
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-09-01 14:44:06
+ * 
+ * @todo 软件更新新增页面
+ */
 import React, { useRef, useEffect, useState } from 'react';
-import { useQueryParam, jsonToQueryString } from '@/common/request-util';
-import { merge, forIn } from 'lodash';
-import { Form, Input, Col, Row, Divider, Button, Card, Switch, DatePicker, Spin, message, notification } from 'antd';
+import { useQueryParam } from '@/common/request-util';
+import { Form, Divider, Button, Card, Switch, DatePicker, Spin, message, notification } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { useFormSelectData } from './costom-hooks';
-import { getFormCommonRules } from '../../common/util';
 import { taskDownloadJobDetail, taskDownloadJobAdd, taskDownloadJobEdit } from '../constants/api';
-import { ITerminalFirmItem, ITerminalType } from '@/pages/terminal/types';
 import { CustomCheckGroup } from '@/component/checkbox-group';
 import { useStore } from '@/pages/common/costom-hooks';
 import { CustomFromItem } from '@/common/type';
-import { getCustomSelectFromItemData, CustomFormItems } from '@/component/custom-form';
+import { getCustomSelectFromItemData, CustomFormItems, ButtonLayout } from '@/component/custom-form';
 import { SoftInfoItem } from './component/soft-info-form';
 import { useDetail } from '@/pages/common/costom-hooks/use-detail';
 import { CustomRadioGroup } from '@/component/radio-group';
@@ -23,22 +28,6 @@ import numeral from 'numeral';
 import { RESPONSE_CODE } from '@/common/config';
 import { useHistory } from 'react-router-dom';
 
-const FormItemLayout = {
-  labelCol: {
-    span: 6
-  },
-  wrapperCol: {
-    span: 14
-  }
-}
-
-const ButtonLayout = {
-  wrapperCol: {
-    offset: 3,
-    span: 16,
-  }
-}
-
 export default function Page() {
   const id = useQueryParam('id');
   const type = useQueryParam('type');
@@ -50,7 +39,8 @@ export default function Page() {
   const [softFrom4] = useForm();
   const [softFrom5] = useForm();
   const softFroms = [softFrom1, softFrom2, softFrom3, softFrom4, softFrom5];
-  useStore(['terminal_type', 'unionpay_connection', 'buss_type',
+  /** 获取字典数据 */
+  const dictRes = useStore(['terminal_type', 'unionpay_connection', 'buss_type',
     'dcc_sup_flag', 'zz_flag', 'download_task_type', 'driver_type',
     'release_type', 'activate_type', 'is_group_update',]);
 
@@ -60,16 +50,19 @@ export default function Page() {
   const [tusnsOptions, setTusnsOptions] = useState([]);
   const [groupFilterTypeValue, setGroupFilterTypeValue] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [dictLoading, setDictLoading] = useState(true);
   const terminalTypesRef: any = useRef();
   const activateTypesRef: any = useRef();
+  const groupIdsRef: any = useRef();
   const [terminalTypes, setTerminalTypes] = useState([] as any[]);
+  const [groupIdsInit, setGroupIdsInit] = useState(false);
 
   /**
    * 第一步初始化数据
    * 第二步
    * 1、新增则
    */
-  const { detail } = useDetail(id, taskDownloadJobDetail);
+  const { detail } = useDetail(id, taskDownloadJobDetail, setLoading);
 
   const {
     terminalFirmList,
@@ -79,60 +72,104 @@ export default function Page() {
     unionpayConnectionList,
     cupConnModeValue, setCupConnModeValue,
     bussTypeList,
-    dccSupFlagList, setDccSupFlagList,
+    dccSupFlagList,
     dccSupFlagValue, setDccSupFlagValue,
-    releaseTypeList, setReleaseTypeList,
+    releaseTypeList,
     releaseTypeValue, setReleaseTypeValue,
-    deptTreeData, setDeptTreeData,
+    deptTreeData,
     deptId, setDeptId,
-    terminalGroupList, setTerminalGroupList,
-    activateTypeList, setActivateTypeList,
+    terminalGroupList,
+    activateTypeList,
     isGroupUpdateList,
     zzFlagList
   } = useFormSelectData(form.getFieldsValue());
 
   useEffect(() => {
+    setDictLoading(dictRes.loading);
+  }, [dictRes.loading]);
+
+  useEffect(() => {
     form.setFieldsValue({ 'tusns': tusnsOptions });
   }, [tusnsOptions])
 
+  /**
+   * @todo 组别过滤方式改变后，设置相应的组别表单选中值
+   */
   useEffect(() => {
+    if (!groupIdsInit) {
+      const downloadJobOutput = detail.downloadJobOutput || {};
+      if (groupIdsRef && groupIdsRef.current && groupIdsRef.current.setCheckedList && downloadJobOutput.groupIds) {
+        setGroupIdsInit(true);
+        const arr: string[] = downloadJobOutput.groupIds.split(',');
+        const numArr: number[] = [];
+        for (let i = 0; i < arr.length; i++) {
+          numArr.push(numeral(arr[i]).value());
+        }
+        groupIdsRef.current.setCheckedList(numArr);
+      }
+    }
+  }, [groupFilterTypeValue]);
+
+  /**
+   * @todo 当字典数据获取完，且获取到详情数据，设置相应的表单数据
+   */
+  useEffect(() => {
+    if (dictLoading) {
+      return;
+    }
     if (detail.downloadJobOutput) {
       const downloadJobOutput = detail.downloadJobOutput;
       form.setFieldsValue({
         ...downloadJobOutput,
         cupConnMode: `${downloadJobOutput.cupConnMode}`,
-        releaseType: `${downloadJobOutput.releaseType}`
+        releaseType: `${downloadJobOutput.releaseType}`,
+        dccSupFlag: `${downloadJobOutput.dccSupFlag}`,
+        isGroupUpdate: `${downloadJobOutput.isGroupUpdate}`,
+        activateType: `${downloadJobOutput.activateType}`,
       });
       setReleaseTypeValue(`${downloadJobOutput.releaseType}`);
       setTerminalFirmValue(downloadJobOutput.firmId);
       setDeptId(downloadJobOutput.deptId);
       if (terminalTypesRef && terminalTypesRef.current && terminalTypesRef.current.setCheckedList && downloadJobOutput.terminalTypes) {
-        terminalTypesRef.current.setCheckedList(downloadJobOutput.terminalTypes.split(','))
+        terminalTypesRef.current.setCheckedList(downloadJobOutput.terminalTypes.split(','));
       }
       if (activateTypesRef && activateTypesRef.current && activateTypesRef.current.setCheckedList && downloadJobOutput.activateTypes) {
         activateTypesRef.current.setCheckedList(downloadJobOutput.activateTypes.split(','))
       }
-
-      if (downloadJobOutput.downloadJobAppList) {
-        const downloadJobAppList = downloadJobOutput.downloadJobAppList;
-        if (Array.isArray(downloadJobAppList) && downloadJobAppList.length > 0) {
-          for (let i = 0; i < downloadJobAppList.length; i++) {
-            softFroms[i].setFieldsValue(downloadJobAppList[i]);
-            softFroms[i].setFieldsValue({
-              appType: `${downloadJobAppList[i].appType}`,
-              actionType: `${downloadJobAppList[i].actionType}`,
-              appCode: downloadJobAppList[i].appCode
-            });
+      setValidDateShow(downloadJobOutput.validDateShow === 1 ? true : false);
+      if (downloadJobOutput.validDateShow === 1) {
+        form.setFieldsValue({
+          validStartTime: moment(downloadJobOutput.validStartTime || 0),
+          validEndTime: moment(downloadJobOutput.validEndTime || 0)
+        });
+      }
+      setTimeout(() => {
+        if (downloadJobOutput.downloadJobAppList) {
+          const downloadJobAppList = downloadJobOutput.downloadJobAppList;
+          if (Array.isArray(downloadJobAppList) && downloadJobAppList.length > 0) {
+            for (let i = 0; i < downloadJobAppList.length; i++) {
+              softFroms[i].setFieldsValue(downloadJobAppList[i]);
+              softFroms[i].setFieldsValue({
+                appType: `${downloadJobAppList[i].appType}`,
+                actionType: `${downloadJobAppList[i].actionType}`,
+                appCode: downloadJobAppList[i].appCode,
+                appId: downloadJobAppList[i].appId
+              });
+            }
+          } else {
+            setSoftInfoFormsNum(0);
           }
         } else {
           setSoftInfoFormsNum(0);
         }
-      } else {
-        setSoftInfoFormsNum(0);
-      }
-    }
-  }, [detail]);
+      }, 100);
 
+    }
+  }, [detail, dictLoading]);
+
+  /**
+   * @todo 重置软件信息表单
+   */
   const resetSoftInfo = () => {
     for (let i = 0; i < softFroms.length; i++) {
       softFroms[i].resetFields();
@@ -177,7 +214,7 @@ export default function Page() {
           setForm={(checkedList: any[]) => {
             form.setFieldsValue({ 'terminalTypes': checkedList });
             setTerminalTypes(checkedList);
-            // resetSoftInfo();
+            resetSoftInfo();
           }}
         />
     },
@@ -203,7 +240,7 @@ export default function Page() {
         value: setCupConnModeValue,
         onChange: (id: any) => {
           setCupConnModeValue(id);
-          // resetSoftInfo();
+          resetSoftInfo();
         }
       })
     },
@@ -227,7 +264,7 @@ export default function Page() {
           setForm={(value: any) => {
             form.setFieldsValue({ 'dccSupFlag': value });
             setDccSupFlagValue(value);
-            // resetSoftInfo();
+            resetSoftInfo();
           }}
         />
     },
@@ -363,7 +400,10 @@ export default function Page() {
               list={isGroupUpdateList}
               valueKey={'dictValue'}
               nameKey={'dictLabel'}
-              setForm={(value: any) => { form.setFieldsValue({ 'isGroupUpdate': value }); setGroupFilterTypeValue(numeral(value).value()) }}
+              setForm={(value: any) => {
+                form.setFieldsValue({ 'isGroupUpdate': value });
+                setGroupFilterTypeValue(numeral(value).value());
+              }}
             />
         },
         {
@@ -385,6 +425,7 @@ export default function Page() {
           show: groupFilterTypeValue !== 0,
           render: () =>
             <CustomCheckGroup
+              ref={groupIdsRef}
               list={terminalGroupList}
               valueKey={'id'} nameKey={'name'}
               setForm={(value: any[]) => { form.setFieldsValue({ 'groupIds': value }) }}
@@ -460,18 +501,27 @@ export default function Page() {
    */
   const onSubmit = async () => {
     try {
-      form.validateFields();
+      await form.validateFields();
       const fields = form.getFieldsValue();
       let arr: any[] = [];
       for (let i = 0; i < softInfoFormsNum; i++) {
-        softFroms[i].validateFields();
+        await softFroms[i].validateFields();
         arr.push({ ...softFroms[i].getFieldsValue(), isDependApp: false });
       }
       let param: any = {
         ...form.getFieldsValue(),
-        validStartTime: fields.validStartTime.format('YYYY-MM-DD HH:mm:ss'),
-        validEndTime: fields.validEndTime.format('YYYY-MM-DD HH:mm:ss'),
         validDateShow: validDateShow ? 1 : 0,
+      }
+      // 组别过滤方式为0（无）时，没有组别集合
+      if (groupFilterTypeValue === 0 && param.groupIds) {
+        delete param.groupIds;
+      }
+      if (validDateShow) {
+        param = {
+          ...param,
+          validStartTime: fields.validStartTime.format('YYYY-MM-DD HH:mm:ss'),
+          validEndTime: fields.validEndTime.format('YYYY-MM-DD HH:mm:ss'),
+        }
       }
       for (let i = 0; i < arr.length; i++) {
         const item = arr[i];
@@ -482,7 +532,6 @@ export default function Page() {
           }
         }
       }
-      console.log('test param', param);
       setLoading(true);
       if (id && type === '1') {
         param = {
@@ -513,8 +562,19 @@ export default function Page() {
     }
   }
 
+  /**
+   * @todo 获取软件信息选中的软件的appid以及依赖的软件的appid的集合（用以控制不重复选择软件以及依赖软件可选列表）
+   */
+  const getSoftAppIds = () => {
+    let appIds: any[] = [];
+    for (let i = 0; i < softFroms.length; i++) {
+      appIds.push({ appId: softFroms[i].getFieldValue('appId'), dependAppIds: softFroms[i].getFieldValue('dependAppIds') });
+    }
+    return appIds;
+  }
+
   return (
-    <Spin spinning={false}>
+    <Spin spinning={loading || dictLoading}>
       <Form
         form={form}
       >
@@ -529,9 +589,7 @@ export default function Page() {
                 <SoftInfoItem
                   form={softFroms[index]}
                   commonValue={{ ...form.getFieldsValue() }}
-                  detail={detail}
-                  initValue={detail && detail.downloadJobOutput && Array.isArray(detail.downloadJobOutput.downloadJobAppList) &&
-                    detail.downloadJobOutput.downloadJobAppList.length > index ? detail.downloadJobOutput.downloadJobAppList[index] : {}}
+                  appIds={getSoftAppIds()}
                 />
               </Card>
             )
