@@ -2,9 +2,9 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 13:52:44 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 14:02:56
+ * @Last Modified time: 2020-09-01 18:01:57
  * 
- * @todo 软件新页面
+ * @todo 软件新增页面
  */
 import React, { useState, useEffect, useRef } from 'react';
 import { useForm } from 'antd/lib/form/Form';
@@ -70,6 +70,10 @@ export default function Page() {
       setApkFile(uploadRef.current.file);
     }
   }, [appInfo]);
+
+  useEffect(() => {
+    form.setFieldsValue({ dccSupFlag: false });
+  }, []);
 
   /**
    * @todo 渲染上传应用组件
@@ -227,7 +231,7 @@ export default function Page() {
     },
     {
       label: '版本更新说明',
-      key: 'versionDescription',
+      key: 'remark',
       requiredType: 'input' as any,
       render: () => <TextArea />
     },
@@ -271,6 +275,7 @@ export default function Page() {
           appPath: appInfo.apkPath,
           appSize: appInfo.appSize,
           fileMd5: appInfo.signMd5,
+          uploadFileName: apkFile.name
         }
         const res = await softInfoAdd(param);
         setLoading(false);
@@ -285,6 +290,7 @@ export default function Page() {
       console.log('Failed:', errorInfo);
     }
   }
+
   return (
     <Spin spinning={loading}>
       <div style={{ paddingTop: 10 }}>
@@ -297,7 +303,7 @@ export default function Page() {
           <Form.Item {...ButtonLayout} >
             <Button type="primary" onClick={onSubmit}>
               保存
-             </Button>
+            </Button>
           </Form.Item>
         </Form>
       </div>

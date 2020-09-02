@@ -3,7 +3,7 @@
  * @Author: Ghan
  * @Date: 2020-07-20 17:28:31
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-26 14:56:02
+ * @Last Modified time: 2020-09-01 15:12:03
  */
 
 import { AppstoreAddOutlined } from '@ant-design/icons';
@@ -24,6 +24,7 @@ import Uploadlog from '@/pages/upload/log';
 import UploadLogDetail from '@/pages/upload/log/detail';
 import UploadLogAdd from '@/pages/upload/log/add';
 import UploadLogOperation from '@/pages/upload/log/operation';
+import UploadCount from '@/pages/upload/count';
 
 export const UploadMenu = {
   name: '远程更新',
@@ -146,6 +147,12 @@ const routerConfig: any[] = [
     component: UploadLogOperation,
     exact: true,
     inMenu: false,
+  },
+  {
+    path: '/upload/count',
+    name: '更新试点',
+    component: UploadCount,
+    exact: true
   },
 ];
 

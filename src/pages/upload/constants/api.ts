@@ -225,3 +225,24 @@ export const taskOperationTaskReset = (params: any) =>
 */
 export const taskOperationTaskPause = (params: any) =>
   ApiRequest.post(`/cpay-admin/task/operationTask/pause`, params);
+
+/**
+* @todo 查询任务执行限制情况列表
+* @param params
+*/
+export const taskCountList = (params: any) =>
+  ApiRequest.get(`/cpay-admin/task/count/list${jsonToQueryString(params)}`);
+
+/**
+* @todo 删除任务执行限制情况
+* @param params
+*/
+export const taskCountRemove = (params: { ids: string }) =>
+  ApiRequest.post(`/cpay-admin/task/count/remove`, params);
+
+/**
+* @todo 查询任务执行限制情况列表
+* @param params
+*/
+export const taskLogSetList = (params: any) =>
+  ApiRequest.get(`/cpay-admin/task/logSet/list${jsonToQueryString(params)}`);

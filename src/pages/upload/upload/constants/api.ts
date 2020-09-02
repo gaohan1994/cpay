@@ -61,7 +61,7 @@ export const taskSoftListByType = async (
   callback?: (data: any[]) => void
 ): Promise<any> => {
   const result = await ApiRequest.get(
-    `/cpay-admin/task/soft/listByType${jsonToQueryString(params)}`
+    `/cpay-admin/task/soft/getSoftListByType${jsonToQueryString(params)}`
   );
   callback &&
     result.code === RESPONSE_CODE.success &&
@@ -75,3 +75,10 @@ export const taskSoftListByType = async (
  */
 export const taskDownloadTaskList = (params: any) =>
   ApiRequest.get(`/cpay-admin/task/downloadTask/list${jsonToQueryString(params)}`);
+
+/**
+* @todo 请求软件更新任务执行情况列表
+* @param params
+*/
+export const taskDownloadTaskExport = (params: any) =>
+  ApiRequest.post(`/cpay-admin/task/downloadTask/export`, params);

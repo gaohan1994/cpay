@@ -60,13 +60,18 @@ function Page() {
       let arr: any[] = [];
       arr.push({ label: "任务名称", value: detail.jobName });
       arr.push({ label: "日志提取方式", value: getDictText(detail.type, 'log_upload_type') });
+      if (detail.type === '0') {
+        arr.push({ label: "应用包名", value: detail.appCode });
+      } else if (detail.type === '1') {
+        arr.push({ label: "文件路径", value: detail.appCode });
+      }
       arr.push({ label: "终端厂商", value: detail.firmName });
       arr.push({ label: "终端型号", value: detail.terminalType });
       arr.push({ label: "有效期起始日期", value: detail.validStartTime });
       arr.push({ label: "有效期截止日期", value: detail.validEndTime });
       arr.push({ label: "提取开始日期", value: detail.logBeginTime });
       arr.push({ label: "提取结束日期", value: detail.logEndTime });
-      arr.push({ label: "终端集合", value: detail.tusns });
+      arr.push({ label: "终端集合", value: detail.tusns.split(',').join(' ') });
       setDetailArr(arr);
     } else {
       notification.warn(result.msg || '获取详情失败，请刷新页面重试');

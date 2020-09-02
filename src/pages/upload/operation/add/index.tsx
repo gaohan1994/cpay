@@ -219,7 +219,7 @@ export default function Page() {
       return;
     }
     const terminalTypeId = form.getFieldValue('terminalTypeId');
-    if (terminalTypeId && terminalTypeId.length === 0) {
+    if (!terminalTypeId || terminalTypeId && terminalTypeId.length === 0) {
       message.error('请选择终端型号');
       return;
     }

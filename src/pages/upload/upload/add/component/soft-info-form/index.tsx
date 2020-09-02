@@ -34,6 +34,20 @@ export function SoftInfoItem(props: Props) {
   const initValue = form.getFieldsValue();
 
   useEffect(() => {
+    if (initValue.appType === undefined) {
+      setDriverTypeValue('');
+    } else {
+      setDriverTypeValue(initValue.appType);
+    }
+  }, [initValue]);
+
+  useEffect(() => {
+    if (!driverTypeValue || driverTypeValue.length === 0) {
+      setSoftInfoValue({});
+    }
+  }, [driverTypeValue]);
+
+  useEffect(() => {
     for (let i = 0; i < softInfoList.length; i++) {
       if (softInfoList[i].id === initValue.appId) {
         setSoftInfoValue(softInfoList[i]);
@@ -45,7 +59,11 @@ export function SoftInfoItem(props: Props) {
   useEffect(() => {
     form.setFieldsValue({
       appCode: softInfoValue.code
-    })
+    });
+    if (!softInfoValue.id && !initValue.appId) {
+      setSoftVersionList([]);
+      setSoftVersionValue({});
+    }
   }, [softInfoValue]);
 
   useEffect(() => {

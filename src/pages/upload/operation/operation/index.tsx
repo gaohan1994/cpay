@@ -16,7 +16,7 @@ import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
 import { SyncOutlined, PauseOutlined, CaretRightOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useRedux } from '@/common/redux-util';
-import { RESPONSE_CODE, BASIC_CONFIG } from '@/common/config';
+import { RESPONSE_CODE, BASIC_CONFIG, getDownloadPath } from '@/common/config';
 import { taskOperationTaskList, taskOperationTaskExport, taskOperationTaskReset, taskOperationTaskPause } from '../../constants/api';
 import { useHistory } from 'react-router-dom';
 
@@ -138,12 +138,13 @@ function Page(props: Props) {
 
   const onLogOut = async () => {
     const param = {
-      id: field.id
+      jobId: field.id
     }
     const res = await taskOperationTaskExport(param);
     if (res && res.code === RESPONSE_CODE.success) {
       if (res.data) {
-        window.location.href = `${BASIC_CONFIG.SOURCE_URL}/${res.data}`;
+        const href = getDownloadPath(res.data);
+        window.open(href, '_blank');
       }
     } else {
       notification.error({ message: res && res.msg || '导出失败，请重试' });

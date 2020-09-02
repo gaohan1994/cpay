@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 14:29:51 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 14:34:56
+ * @Last Modified time: 2020-09-01 16:05:48
  * 
  * @todo 软件更新软件信息获取表单选择数据列表
  */
@@ -83,7 +83,7 @@ export function useSoftInfoFromData(props: any) {
  */
 export function useSoftInfo(firmId: any, cupConnMode: any, dccSupFlag: any, type: any) {
   const { list, setList } = useFormSelectedList(taskSoftListByType, [firmId, cupConnMode, dccSupFlag, type], { firmId, cupConnMode, dccSupFlag, type });
-  const softInfoList: any[] = list;
+  const softInfoList: any[] = type ? list : [];
   const setSoftInfoList = setList;
   return { softInfoList, setSoftInfoList };
 }

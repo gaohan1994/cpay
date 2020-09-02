@@ -15,9 +15,8 @@ import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
 import { SyncOutlined, PauseOutlined, CaretRightOutlined, LogoutOutlined } from '@ant-design/icons';
-import { RESPONSE_CODE, BASIC_CONFIG } from '@/common/config';
-import { taskOperationTaskExport } from '../../constants/api';
-import { taskDownloadTaskList } from '../constants/api';
+import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
+import { taskDownloadTaskList, taskDownloadTaskExport } from '../constants/api';
 
 type Props = {};
 
@@ -152,12 +151,13 @@ function Page(props: Props) {
    */
   const onLogOut = async () => {
     const param = {
-      id: id
+      jobId: id
     }
-    const res = await taskOperationTaskExport(param);
+    const res = await taskDownloadTaskExport(param);
     if (res && res.code === RESPONSE_CODE.success) {
       if (res.data) {
-        window.location.href = `${BASIC_CONFIG.SOURCE_URL}/${res.data}`;
+        const href = getDownloadPath(res.data);
+        window.open(href, '_blank');
       }
     } else {
       notification.error({ message: res && res.msg || '导出失败，请重试' });
@@ -180,7 +180,6 @@ function Page(props: Props) {
     selectedRowKeys,
     onChange: onChangeSelectedRows,
   };
-
 
   return (
     <div>

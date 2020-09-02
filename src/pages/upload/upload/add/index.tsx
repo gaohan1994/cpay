@@ -127,6 +127,7 @@ export default function Page() {
         isGroupUpdate: `${downloadJobOutput.isGroupUpdate}`,
         activateType: `${downloadJobOutput.activateType}`,
       });
+      setGroupFilterTypeValue(downloadJobOutput.isGroupUpdate);
       setReleaseTypeValue(`${downloadJobOutput.releaseType}`);
       setTerminalFirmValue(downloadJobOutput.firmId);
       setDeptId(downloadJobOutput.deptId);
@@ -445,7 +446,7 @@ export default function Page() {
       return;
     }
     const termianlModels = form.getFieldValue('terminalTypes');
-    if (termianlModels && termianlModels.length === 0) {
+    if (!termianlModels || termianlModels && termianlModels.length === 0) {
       message.error('请选择终端型号');
       return;
     }

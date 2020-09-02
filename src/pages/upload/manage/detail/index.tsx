@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-12 15:51:52 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 14:11:23
+ * @Last Modified time: 2020-09-01 16:15:34
  * 
  * @todo 软件信息详情页
  */
@@ -264,11 +264,11 @@ function Page() {
     },
     {
       title: '版本更新说明',
-      dataIndex: 'description',
+      dataIndex: 'remark',
     },
     {
       title: '上传文件名称',
-      dataIndex: 'fileName',
+      dataIndex: 'uploadFileName',
     },
   ]);
 
@@ -414,7 +414,7 @@ function Page() {
     },
     {
       label: '版本更新说明',
-      key: 'versionDescription',
+      key: 'remark',
       requiredType: 'input' as any,
       render: () => <TextArea />
     },
