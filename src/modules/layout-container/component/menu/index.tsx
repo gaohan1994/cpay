@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Menu } from 'antd';
-import './index.scss';
+import './index.less';
 import { ILayoutSiderMenu } from '../../types';
 import { MenuInfo } from 'rc-menu/lib/interface';
 import { history } from '@/common/history-util';
+import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 
 const { Sider } = Layout;
 const { SubMenu } = Menu;
@@ -58,48 +59,76 @@ function LayoutMenu(props: Props) {
     (history as any).push(`/${menu.key}`);
   };
 
+  const triggerResizeEvent = () => {
+    // eslint-disable-line
+    const event = document.createEvent('HTMLEvents');
+    event.initEvent('resize', true, false);
+    window.dispatchEvent(event);
+  }
+  const toggle = (e: any) => {
+    triggerResizeEvent();
+  };
+
+  const renderTrigger = () => {
+    return (
+      <div style={{  textAlign: 'left', zIndex: 999 }}>
+        <span className={'trigger'} onClick={toggle}>
+
+          {
+            collapsed ? (
+              <MenuUnfoldOutlined />
+            ) : (
+                <MenuFoldOutlined />
+              )
+          }
+        </span>
+      </div>
+
+    )
+  }
+
   return (
     <Sider
       theme='light'
       collapsible
       collapsed={collapsed}
       onCollapse={onCollapse}
+      trigger={renderTrigger()}
+      style={{ zIndex: 999 }}
     >
-      <div className='layout-container-menu'>
-        {menus && (
-          <Menu
-            onClick={onMenuClick}
-            mode='inline'
-            openKeys={openKeys}
-            onOpenChange={onOpenChange}
-          >
-            {menus.map((menuItem: ILayoutSiderMenu, index: number) => {
-              if (!!menuItem.subMenus) {
-                return (
-                  <SubMenu
-                    key={menuItem.value}
-                    icon={<menuItem.icon />}
-                    title={menuItem.name}
-                  >
-                    {menuItem.subMenus.map((subMenuItem, subIndex) => {
-                      return (
-                        <Menu.Item key={subMenuItem.value}>
-                          {subMenuItem.name}
-                        </Menu.Item>
-                      );
-                    })}
-                  </SubMenu>
-                );
-              }
+      {menus && (
+        <Menu
+          onClick={onMenuClick}
+          mode='inline'
+          openKeys={openKeys}
+          onOpenChange={onOpenChange}
+        >
+          {menus.map((menuItem: ILayoutSiderMenu, index: number) => {
+            if (!!menuItem.subMenus) {
               return (
-                <Menu.Item key={menuItem.value} icon={<menuItem.icon />}>
-                  {menuItem.name}
-                </Menu.Item>
+                <SubMenu
+                  key={menuItem.value}
+                  icon={<menuItem.icon />}
+                  title={menuItem.name}
+                >
+                  {menuItem.subMenus.map((subMenuItem, subIndex) => {
+                    return (
+                      <Menu.Item key={subMenuItem.value}>
+                        {subMenuItem.name}
+                      </Menu.Item>
+                    );
+                  })}
+                </SubMenu>
               );
-            })}
-          </Menu>
-        )}
-      </div>
+            }
+            return (
+              <Menu.Item key={menuItem.value} icon={<menuItem.icon />}>
+                {menuItem.name}
+              </Menu.Item>
+            );
+          })}
+        </Menu>
+      )}
     </Sider>
   );
 }

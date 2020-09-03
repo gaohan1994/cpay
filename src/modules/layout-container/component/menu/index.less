@@ -1,0 +1,21 @@
+@import '~antd/lib/style/themes/default.less';
+
+@pro-header-hover-bg: rgba(0, 0, 0, 0.025);
+
+:global {
+  .ant-layout-sider-trigger {
+    text-align: left;
+  }
+}
+
+.trigger {
+  height: @layout-header-height;
+  padding: ~'calc((@{layout-header-height} - 20px) / 2)' 18px;
+  // float: left;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s, padding 0s;
+  &:hover {
+    background: @pro-header-hover-bg;
+  }
+}

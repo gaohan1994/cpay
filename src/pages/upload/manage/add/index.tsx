@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 13:52:44 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 18:01:57
+ * @Last Modified time: 2020-09-03 17:44:24
  * 
  * @todo 软件新增页面
  */
@@ -19,6 +19,7 @@ import { useHistory } from 'react-router-dom';
 import { softInfoEdit, softInfoAdd } from '../../constants/api';
 import UploadApp from '@/pages/application/manage/component/UploadApp';
 import { UploadOutlined } from '@ant-design/icons';
+import FixedFoot, { ErrorField } from '@/component/fixed-foot';
 
 const { TextArea } = Input;
 
@@ -31,6 +32,21 @@ const customFormLayout = {
   },
 }
 
+const fieldLabels = {
+  type: '软件类型',
+  appUpload: '应用包',
+  appName: '软件名称',
+  code: '软件编码',
+  versionName: '应用版本',
+  versionCode: '内部版本',
+  iconPath: '应用图标',
+  dccSupFlag: '是否支持DCC',
+  cupConnMode: '银联间直连',
+  firmId: '终端厂商',
+  terminalTypes: '终端型号',
+  remark: '版本更新说明'
+}
+
 export default function Page() {
   const id = useQueryParam('id');
   useStore(['driver_type', 'unionpay_connection', 'is_dcc_sup']);
@@ -41,6 +57,7 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [appIcon, setAppIcon] = useState('');
   const [apkFile, setApkFile] = useState({} as any);
+  const [error, setError] = useState<ErrorField[]>([]);
 
   const {
     deiverTypeList,
@@ -136,7 +153,7 @@ export default function Page() {
   const forms = [
     {
       ...getCustomSelectFromItemData({
-        label: '软件类型',
+        label: fieldLabels.type,
         key: 'type',
         list: deiverTypeList,
         valueKey: 'dictValue',
@@ -150,50 +167,50 @@ export default function Page() {
     },
     {
       show: !id,
-      label: '上传应用包',
+      label: fieldLabels.appUpload,
       key: 'appUpload',
       requiredText: '请上传应用包',
       render: renderUpload,
       ...customFormLayout,
     },
     {
-      label: '软件名称',
+      label: fieldLabels.appName,
       key: 'appName',
       requiredType: 'input' as any,
     },
     {
-      label: '软件编码',
+      label: fieldLabels.code,
       key: 'code',
       requiredText: '软件编码不能为空',
       render: () => <Input disabled />
     },
     {
-      label: '应用版本',
+      label: fieldLabels.versionName,
       key: 'versionName',
       requiredText: '应用版本不能为空',
       render: () => <Input disabled />
     },
     {
-      label: '内部版本',
+      label: fieldLabels.versionCode,
       key: 'versionCode',
       requiredText: '内部版本不能为空',
       render: () => <Input disabled />
     },
     {
-      label: '应用图标',
+      label: fieldLabels.iconPath,
       key: 'iconPath',
       requiredText: '应用图标不能为空',
       render: renderIcon
     },
     {
-      label: '是否支持DCC',
+      label: fieldLabels.dccSupFlag,
       key: 'dccSupFlag',
       requiredType: 'select',
       render: () => <Switch checkedChildren="是" unCheckedChildren="否" />
     },
     {
       ...getCustomSelectFromItemData({
-        label: '银联间直连',
+        label: fieldLabels.cupConnMode,
         key: 'cupConnMode',
         list: unionpayConnectionList,
         valueKey: 'dictValue',
@@ -202,7 +219,7 @@ export default function Page() {
     },
     {
       ...getCustomSelectFromItemData({
-        label: '终端厂商',
+        label: fieldLabels.firmId,
         key: 'firmId',
         value: terminalFirmValue,
         onChange: (value: any) => {
@@ -218,7 +235,7 @@ export default function Page() {
       })
     },
     {
-      label: '终端型号',
+      label: fieldLabels.terminalTypes,
       key: 'terminalTypes',
       requiredType: 'select',
       render: () =>
@@ -230,7 +247,7 @@ export default function Page() {
         />,
     },
     {
-      label: '版本更新说明',
+      label: fieldLabels.remark,
       key: 'remark',
       requiredType: 'input' as any,
       render: () => <TextArea />
@@ -288,6 +305,7 @@ export default function Page() {
       }
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
+      setError(errorInfo.errorFields);
     }
   }
 
@@ -300,13 +318,19 @@ export default function Page() {
           style={{ backgroundColor: 'white' }}
         >
           <CustomFormItems items={forms} singleCol={true} />
-          <Form.Item {...ButtonLayout} >
+          {/* <Form.Item {...ButtonLayout} >
             <Button type="primary" onClick={onSubmit}>
               保存
             </Button>
-          </Form.Item>
+          </Form.Item> */}
         </Form>
       </div>
+      <FixedFoot errors={error} fieldLabels={fieldLabels}>
+        <Button type="primary" loading={loading} onClick={onSubmit}>
+          提交
+        </Button>
+        <Button onClick={() => history.goBack()}>返回</Button>
+      </FixedFoot>
     </Spin>
   )
 }

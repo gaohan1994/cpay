@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 13:37:29 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 18:02:27
+ * @Last Modified time: 2020-09-03 17:37:32
  * 
  * @todo 提取日志新增页面
  */
@@ -24,6 +24,7 @@ import { RESPONSE_CODE } from '@/common/config';
 import { useHistory } from 'react-router-dom';
 import { createTableColumns } from '@/component/table';
 import { useAntdTable } from 'ahooks';
+import FixedFoot, { ErrorField } from '@/component/fixed-foot/index';
 
 const customFormLayout = {
   labelCol: {
@@ -34,6 +35,19 @@ const customFormLayout = {
   },
 }
 
+const fieldLabels = {
+  jobName: '任务名称',
+  type: '日志提取方式',
+  appCode: '应用包名',
+  logFile: '文件路径',
+  firmId: '终端厂商',
+  terminalType: '终端型号',
+  validStartTime: '有效起始日期',
+  validEndTime: '有效截止日期',
+  logBeginTime: '日志起始日期',
+  logEndTime: '日志结束日期',
+  tusns: '终端集合'
+}
 
 export default function Page() {
   const id = useQueryParam('id');
@@ -46,6 +60,7 @@ export default function Page() {
   const [selectedRow, setSelectedRow] = useState([] as any[]);
   const [codeVisible, setCodeVisible] = useState(false);
   const [appCode, setAppCode] = useState('');
+  const [error, setError] = useState<ErrorField[]>([]);
 
   const {
     terminalFirmList,
@@ -131,13 +146,13 @@ export default function Page() {
    */
   const forms: CustomFromItem[] = [
     {
-      label: '任务名称',
+      label: fieldLabels.appCode,
       key: 'jobName',
       requiredType: 'input' as any,
     },
     {
       ...getCustomSelectFromItemData({
-        label: '日志提取方式',
+        label: fieldLabels.type,
         key: 'type',
         list: logUploadTypeList,
         valueKey: 'dictValue',
@@ -152,16 +167,24 @@ export default function Page() {
       })
     },
     {
-      show: logUploadTypeValue !== undefined,
-      label: logUploadTypeValue === '0' ? '应用包名' : '文件路径',
+      show: logUploadTypeValue === '0',
+      label: fieldLabels.appCode,
       key: 'appCode',
       requiredType: 'input' as any,
       render: renderCode,
       ...customFormLayout,
     },
     {
+      show: logUploadTypeValue === '1',
+      label: fieldLabels.appCode,
+      key: 'logFile',
+      requiredType: 'input' as any,
+      render: renderCode,
+      ...customFormLayout,
+    },
+    {
       ...getCustomSelectFromItemData({
-        label: '终端厂商',
+        label: fieldLabels.firmId,
         key: 'firmId',
         value: terminalFirmValue,
         list: terminalFirmList,
@@ -176,7 +199,7 @@ export default function Page() {
     },
     {
       ...getCustomSelectFromItemData({
-        label: '终端型号',
+        label: fieldLabels.terminalType,
         key: 'terminalType',
         list: terminalTypeList,
         valueKey: 'typeCode',
@@ -185,31 +208,31 @@ export default function Page() {
       })
     },
     {
-      label: '有效起始日期',
+      label: fieldLabels.validStartTime,
       key: 'validStartTime',
       render: () => renderDate('请选择有效起始日期', true),
       requiredType: 'select' as any
     },
     {
-      label: '有效截止日期',
+      label: fieldLabels.validEndTime,
       key: 'validEndTime',
       render: () => renderDate('请选择有效截止日期', true),
       requiredType: 'select' as any
     },
     {
-      label: '日志起始日期',
+      label: fieldLabels.logBeginTime,
       key: 'logBeginTime',
       render: () => renderDate('请选择日志起始日期', false),
       requiredType: 'select' as any
     },
     {
-      label: '日志结束日期',
+      label: fieldLabels.logEndTime,
       key: 'logEndTime',
       render: () => renderDate('请选择日志结束日期', false),
       requiredType: 'select' as any
     },
     {
-      label: '终端集合',
+      label: fieldLabels.tusns,
       key: 'tusns',
       requiredType: 'select',
       render: () => <FormTusns options={tusnsOptions} setOptions={setTusnsOptions} onAddTerminals={onAddTerminals} />
@@ -302,6 +325,14 @@ export default function Page() {
         validStartTime: fields.validStartTime.format('YYYY-MM-DD HH:mm:ss'),
         validEndTime: fields.validEndTime.format('YYYY-MM-DD HH:mm:ss'),
       }
+
+      if (logUploadTypeValue === '1') {
+        param = {
+          ...param,
+          appCode: fields.logFile
+        }
+        delete param.logFile
+      }
       setLoading(true);
       if (id) {
         param = {
@@ -331,6 +362,7 @@ export default function Page() {
       }
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
+      setError(errorInfo.errorFields);
     }
   }
 
@@ -362,9 +394,8 @@ export default function Page() {
     type: 'radio'
   };
 
-
   return (
-    <Spin spinning={loading}>
+    <Spin spinning={loading} style={{ paddingBottom: 80  }}>
       <div style={{ paddingTop: 10 }}>
         <Form
           form={form}
@@ -372,11 +403,11 @@ export default function Page() {
           style={{ backgroundColor: 'white' }}
         >
           <CustomFormItems items={forms} singleCol={true} />
-          <Form.Item {...ButtonLayout} >
+          {/* <Form.Item {...ButtonLayout} >
             <Button type="primary" onClick={onSubmit}>
               保存
           </Button>
-          </Form.Item>
+          </Form.Item> */}
         </Form>
         <TableTusns
           visible={modalVisible}
@@ -408,6 +439,12 @@ export default function Page() {
           />
         </div>
       </Modal>
+      <FixedFoot errors={error} fieldLabels={fieldLabels}>
+        <Button type="primary" loading={loading} onClick={onSubmit}>
+          提交
+        </Button>
+        <Button onClick={() => history.goBack()}>返回</Button>
+      </FixedFoot>
     </Spin>
   )
 }

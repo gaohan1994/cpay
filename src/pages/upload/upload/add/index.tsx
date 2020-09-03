@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 14:37:54 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 14:44:06
+ * @Last Modified time: 2020-09-03 18:02:24
  * 
  * @todo 软件更新新增页面
  */
@@ -27,6 +27,30 @@ import { TableTusns } from '../../component/table.tusns';
 import numeral from 'numeral';
 import { RESPONSE_CODE } from '@/common/config';
 import { useHistory } from 'react-router-dom';
+import FixedFoot, { ErrorField } from '@/component/fixed-foot';
+
+const fieldLabels = {
+  jobName: '任务名称',
+  firmId: '终端厂商',
+  terminalTypes: '终端型号',
+  activateTypes: '终端类型',
+  cupConnMode: '银联间直连',
+  bussType: '业务类型',
+  dccSupFlag: 'DCC交易',
+  zzFlag: '终端分类',
+  validDateShow: '任务时间修改开关',
+  validStartTime: '有效起始日期',
+  validEndTime: '有效截止日期',
+  showNotify: '更新通知方式',
+  isRealTime: '更细实时性',
+  releaseType: '发布类型',
+  deptId: '机构名称',
+  isGroupUpdate: '组别过滤方式',
+  activateType: '升级范围',
+  groupIds: '终端组别',
+  tusns: '终端集合',
+}
+
 
 export default function Page() {
   const id = useQueryParam('id');
@@ -56,6 +80,7 @@ export default function Page() {
   const groupIdsRef: any = useRef();
   const [terminalTypes, setTerminalTypes] = useState([] as any[]);
   const [groupIdsInit, setGroupIdsInit] = useState(false);
+  const [error, setError] = useState<ErrorField[]>([]);
 
   /**
    * 第一步初始化数据
@@ -89,7 +114,7 @@ export default function Page() {
   }, [dictRes.loading]);
 
   useEffect(() => {
-    form.setFieldsValue({ 'tusns': tusnsOptions });
+    form.setFieldsValue({ 'tusns': tusnsOptions.join(';') });
   }, [tusnsOptions])
 
   /**
@@ -116,6 +141,9 @@ export default function Page() {
   useEffect(() => {
     if (dictLoading) {
       return;
+    }
+    if (detail.tusnList) {
+      setTusnsOptions(detail.tusnList);
     }
     if (detail.downloadJobOutput) {
       const downloadJobOutput = detail.downloadJobOutput;
@@ -183,13 +211,13 @@ export default function Page() {
    */
   const terminalInfoForms: CustomFromItem[] = [
     {
-      label: '任务名称',
+      label: fieldLabels.jobName,
       key: 'jobName',
       requiredType: 'input'
     },
     {
       ...getCustomSelectFromItemData({
-        label: '终端厂商',
+        label: fieldLabels.firmId,
         key: 'firmId',
         value: terminalFirmValue,
         list: terminalFirmList,
@@ -204,7 +232,7 @@ export default function Page() {
       })
     },
     {
-      label: '终端型号',
+      label: fieldLabels.terminalTypes,
       key: 'terminalTypes',
       requiredType: 'select',
       render: () =>
@@ -220,7 +248,7 @@ export default function Page() {
         />
     },
     {
-      label: '终端类型',
+      label: fieldLabels.activateTypes,
       key: 'activateTypes',
       requiredType: 'select',
       render: () =>
@@ -233,7 +261,7 @@ export default function Page() {
     },
     {
       ...getCustomSelectFromItemData({
-        label: '银联间直连',
+        label: fieldLabels.cupConnMode,
         key: 'cupConnMode',
         list: unionpayConnectionList,
         valueKey: 'dictValue',
@@ -247,7 +275,7 @@ export default function Page() {
     },
     {
       ...getCustomSelectFromItemData({
-        label: '业务类型',
+        label: fieldLabels.bussType,
         key: 'bussType',
         list: bussTypeList,
         valueKey: 'dictValue',
@@ -255,7 +283,7 @@ export default function Page() {
       })
     },
     {
-      label: 'DCC交易',
+      label: fieldLabels.dccSupFlag,
       key: 'dccSupFlag',
       requiredType: 'select',
       render: () =>
@@ -271,7 +299,7 @@ export default function Page() {
     },
     {
       ...getCustomSelectFromItemData({
-        label: '终端分类',
+        label: fieldLabels.zzFlag,
         key: 'zzFlag',
         list: zzFlagList,
         valueKey: 'dictValue',
@@ -286,7 +314,7 @@ export default function Page() {
    */
   const taskTimeForms: CustomFromItem[] = [
     {
-      label: '任务时间修改开关',
+      label: fieldLabels.validDateShow,
       key: 'validDateShow',
       render: () => <Switch defaultChecked={false} checked={validDateShow} onChange={setValidDateShow} />,
       labelCol: {
@@ -299,7 +327,7 @@ export default function Page() {
     },
     {
       show: validDateShow,
-      label: '有效起始日期',
+      label: fieldLabels.validStartTime,
       key: 'validStartTime',
       requiredType: 'select',
       render: () => <DatePicker
@@ -311,7 +339,7 @@ export default function Page() {
     },
     {
       show: validDateShow,
-      label: '有效截止日期',
+      label: fieldLabels.validEndTime,
       key: 'validEndTime',
       requiredType: 'select',
       render: () => <DatePicker
@@ -328,7 +356,7 @@ export default function Page() {
    */
   const updateModeForms: CustomFromItem[] = [
     {
-      label: '更新通知方式',
+      label: fieldLabels.showNotify,
       key: 'showNotify',
       requiredType: 'select',
       render: () =>
@@ -339,7 +367,7 @@ export default function Page() {
         />
     },
     {
-      label: '更细实时性',
+      label: fieldLabels.isRealTime,
       key: 'isRealTime',
       requiredType: 'select',
       render: () =>
@@ -357,7 +385,7 @@ export default function Page() {
   const releaseTypeForms: CustomFromItem[] = [
     {
       ...getCustomSelectFromItemData({
-        label: '发布类型',
+        label: fieldLabels.releaseType,
         key: 'releaseType',
         list: releaseTypeList,
         valueKey: 'dictValue',
@@ -376,7 +404,7 @@ export default function Page() {
     if (releaseTypeValue === '1') {
       return [
         {
-          label: '机构名称',
+          label: fieldLabels.deptId,
           key: 'deptId',
           requiredType: 'select',
           render: () => renderTreeSelect(
@@ -394,7 +422,7 @@ export default function Page() {
           )
         },
         {
-          label: '组别过滤方式',
+          label: fieldLabels.isGroupUpdate,
           key: 'isGroupUpdate',
           render: () =>
             <CustomRadioGroup
@@ -408,7 +436,7 @@ export default function Page() {
             />
         },
         {
-          label: '升级范围',
+          label: fieldLabels.activateType,
           key: 'activateType',
           requiredType: 'select',
           render: () =>
@@ -420,7 +448,7 @@ export default function Page() {
             />
         },
         {
-          label: '终端组别',
+          label: fieldLabels.groupIds,
           key: 'groupIds',
           itemSingleCol: true,
           show: groupFilterTypeValue !== 0,
@@ -461,7 +489,7 @@ export default function Page() {
     if (releaseTypeValue === '0') {
       return [
         {
-          label: '终端集合',
+          label: fieldLabels.tusns,
           key: 'tusns',
           itemSingleCol: true,
           requiredType: 'select',
@@ -560,6 +588,7 @@ export default function Page() {
 
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
+      setError(errorInfo.errorFields);
     }
   }
 
@@ -602,22 +631,28 @@ export default function Page() {
         <CustomFormItems items={updateModeForms} />
         <Divider orientation="left">【发布类型】</Divider>
         <CustomFormItems items={releaseTypeForms.concat(getReleaseTypeFormsByDept()).concat(getReleaseTypeFormsByCondition())} />
-        <Form.Item {...ButtonLayout} >
+        {/* <Form.Item {...ButtonLayout} >
           <Button type="primary" onClick={onSubmit}>
             保存
         </Button>
-        </Form.Item>
+        </Form.Item> */}
       </Form>
       <TableTusns
         visible={modalVisible}
         hideModal={() => setModalVisible(false)}
         fetchParam={{
           firmId: terminalFirmValue,
-          terminalTypeIds: form.getFieldValue('termianlModels'),
+          terminalTypeIds: form.getFieldValue('terminalTypes'),
         }}
         setOptions={setTusnsOptions}
         options={tusnsOptions}
       />
+      <FixedFoot errors={error} fieldLabels={fieldLabels}>
+        <Button type="primary" loading={loading} onClick={onSubmit}>
+          提交
+        </Button>
+        <Button onClick={() => history.goBack()}>返回</Button>
+      </FixedFoot>
     </Spin>
 
   )

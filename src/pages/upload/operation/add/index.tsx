@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 14:13:46 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 14:23:02
+ * @Last Modified time: 2020-09-03 17:53:27
  * 
  * @todo 远程运维新增页面
  */
@@ -26,6 +26,18 @@ import { useHistory } from 'react-router-dom';
 import { useDetail } from '@/pages/common/costom-hooks/use-detail';
 import { merge } from 'lodash';
 import numeral from 'numeral';
+import FixedFoot, { ErrorField } from '@/component/fixed-foot';
+
+const fieldLabels = {
+  jobName: '任务名称',
+  operatorCommand: '操作指令',
+  firmId: '终端厂商',
+  terminalTypeId: '终端类型',
+  releaseType: '发布类型',
+  deptId: '机构名称',
+  isGroupUpdate: '组别过滤方式',
+  groupIds: '终端组别'
+}
 
 export default function Page() {
   const id = useQueryParam('id');
@@ -38,6 +50,7 @@ export default function Page() {
   const [modalVisible, setModalVisible] = useState(false);
   const [tusnsOptions, setTusnsOptions] = useState([]);
   const [groupFilterTypeValue, setGroupFilterTypeValue] = useState('0');
+  const [error, setError] = useState<ErrorField[]>([]);
 
   const {
     operatorCommandList,
@@ -101,13 +114,13 @@ export default function Page() {
 
   const forms: CustomFromItem[] = [
     {
-      label: '任务名称',
+      label: fieldLabels.jobName,
       key: 'jobName',
       requiredType: 'input' as any,
     },
     {
       ...getCustomSelectFromItemData({
-        label: '操作指令',
+        label: fieldLabels.operatorCommand,
         key: 'operatorCommand',
         list: operatorCommandList,
         valueKey: 'dictValue',
@@ -117,7 +130,7 @@ export default function Page() {
     },
     {
       ...getCustomSelectFromItemData({
-        label: '终端厂商',
+        label: fieldLabels.firmId,
         key: 'firmId',
         value: terminalFirmValue,
         list: terminalFirmList,
@@ -132,7 +145,7 @@ export default function Page() {
     },
     {
       ...getCustomSelectFromItemData({
-        label: '终端类型',
+        label: fieldLabels.terminalTypeId,
         key: 'terminalTypeId',
         list: terminalTypeList,
         valueKey: 'id',
@@ -142,7 +155,7 @@ export default function Page() {
     },
     {
       ...getCustomSelectFromItemData({
-        label: '发布类型',
+        label: fieldLabels.releaseType,
         key: 'releaseType',
         list: releaseTypeList,
         valueKey: 'dictValue',
@@ -161,7 +174,7 @@ export default function Page() {
     if (releaseTypeValue === '1') {
       return [
         {
-          label: '机构名称',
+          label: fieldLabels.deptId,
           key: 'deptId',
           requiredType: 'select',
           render: () => renderTreeSelect(
@@ -179,7 +192,7 @@ export default function Page() {
           )
         },
         {
-          label: '组别过滤方式',
+          label: fieldLabels.isGroupUpdate,
           key: 'isGroupUpdate',
           render: () =>
             <CustomRadioGroup
@@ -193,7 +206,7 @@ export default function Page() {
             />
         },
         {
-          label: '终端组别',
+          label: fieldLabels.groupIds,
           key: 'groupIds',
           itemSingleCol: true,
           show: groupFilterTypeValue !== '0',
@@ -282,6 +295,7 @@ export default function Page() {
       }
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
+      setError(errorInfo.errorFields);
     }
   }
 
@@ -291,13 +305,14 @@ export default function Page() {
         <Form
           form={form}
           className="ant-advanced-search-form"
+          style={{ backgroundColor: 'white' }}
         >
           <CustomFormItems items={forms.concat(getReleaseTypeFormsByDept()).concat(getReleaseTypeFormsByCondition())} singleCol={true} />
-          <Form.Item {...ButtonLayout} >
+          {/* <Form.Item {...ButtonLayout} >
             <Button type="primary" onClick={onSubmit}>
               保存
-        </Button>
-          </Form.Item>
+           </Button>
+          </Form.Item> */}
         </Form>
         <TableTusns
           visible={modalVisible}
@@ -307,7 +322,12 @@ export default function Page() {
           options={tusnsOptions}
         />
       </div>
-
+      <FixedFoot errors={error} fieldLabels={fieldLabels}>
+        <Button type="primary" loading={loading} onClick={onSubmit}>
+          提交
+        </Button>
+        <Button onClick={() => history.goBack()}>返回</Button>
+      </FixedFoot>
     </Spin>
   )
 }
