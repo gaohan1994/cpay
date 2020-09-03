@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Menu } from 'antd';
+import { useMount } from 'ahooks';
+// import History from 'react-router-dom'
 import './index.scss';
 import { ILayoutSiderMenu } from '../../types';
 import { MenuInfo } from 'rc-menu/lib/interface';
@@ -20,12 +22,14 @@ type Props = {
  * @returns
  */
 function LayoutMenu(props: Props) {
+  // const history = History.useHistory();
   const { menus } = props;
   const [rootSubmenuKeys, setRootSubmenuKeys] = useState([] as string[]);
   const [collapsed, setCollapsed] = useState(false);
   const [openKeys, setOpenKeys] = useState([] as string[]);
+  const [selectedKeys, setSelectedKeys] = useState([] as string[]);
 
-  useEffect(() => {
+  useMount(() => {
     let rootKeys: string[] = [];
     menus.map((item, index) => {
       if (!!item.subMenus) {
@@ -33,13 +37,27 @@ function LayoutMenu(props: Props) {
       }
     });
     setRootSubmenuKeys(rootKeys);
-  }, []);
+    const keys = window.location.hash.split('/')[1];
+    onOpenChange([keys]);
+
+    const secondKey = window.location.hash.split('/')[2];
+    const didSelectKeys = [
+      keys,
+      secondKey
+        ? secondKey.indexOf('-') !== -1
+          ? secondKey.split('-')[0]
+          : secondKey
+        : '',
+    ];
+    onSelect({ key: didSelectKeys.join('/') });
+  });
 
   const onCollapse = () => {
     setCollapsed(!collapsed);
   };
 
   const onOpenChange = (keys: any) => {
+    console.log('keys', keys);
     const latestOpenKey: any = keys.find(
       (key: any) => openKeys.indexOf(key) === -1
     );
@@ -58,22 +76,27 @@ function LayoutMenu(props: Props) {
     (history as any).push(`/${menu.key}`);
   };
 
+  const onSelect = (keys: any) => {
+    setSelectedKeys(keys.key);
+  };
   return (
     <Sider
-      theme='light'
+      theme="light"
       collapsible
       collapsed={collapsed}
       onCollapse={onCollapse}
     >
-      <div className='layout-container-menu'>
+      <div className="layout-container-menu">
         {menus && (
           <Menu
             onClick={onMenuClick}
-            mode='inline'
+            mode="inline"
             openKeys={openKeys}
             onOpenChange={onOpenChange}
+            onSelect={onSelect}
+            selectedKeys={selectedKeys}
           >
-            {menus.map((menuItem: ILayoutSiderMenu, index: number) => {
+            {menus.map((menuItem: ILayoutSiderMenu) => {
               if (!!menuItem.subMenus) {
                 return (
                   <SubMenu
