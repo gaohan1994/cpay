@@ -80,20 +80,6 @@ export default () => {
     },
   ];
 
-  //   createTime: "2020-08-24 16:06:42"
-  // curAddress: "福建省福州市闽侯县荆溪镇海峡软件新城"
-  // deptId: 100
-  // distance: "2794.29"
-  // id: 1
-  // latitude: "38.037601"
-  // lockStatus: 1
-  // lockTime: "2020-08-24 16:06:37"
-  // longidude: "114.535231"
-  // moveCount: 1
-  // moveStatus: 1
-  // operationType: 1
-  // tusn: "00001104D1V1421111111"
-  // updateTime: "2020-08-31 09:37:23"
   const columns = createTableColumns([
     {
       title: '操作',
