@@ -455,6 +455,7 @@ export default function Page() {
         <Form
           form={form}
           className="ant-advanced-search-form"
+          style={{ backgroundColor: 'white' }}
         >
           <CustomFormItems items={forms} singleCol={true} />
           <Form.Item {...ButtonLayout} >

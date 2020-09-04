@@ -9,123 +9,184 @@
 import React, { useEffect, useState } from 'react';
 import { notification, Row, Form, Input, Button, Radio, Rate, Spin } from 'antd';
 import { useHistory } from 'react-router-dom';
-import { formatSearch } from '@/common/request-util';
-import { appInfoDetail, appAuditApk, appShelve } from '../../constants/api';
+import { useQueryParam } from '@/common/request-util';
+import { appInfoDetail, appShelve } from '../../constants/api';
 import { RESPONSE_CODE } from '../../../../common/config';
-import { IAppInfoDetail } from '../../types';
 import TextArea from 'antd/lib/input/TextArea';
+import { useDetail } from '@/pages/common/costom-hooks/use-detail';
+import { CustomFormItems } from '@/component/custom-form';
+import FixedFoot, { ErrorField } from '@/component/fixed-foot';
+import { CustomFromItem } from '@/common/type';
 
-const { Item } = Form;
-
-const formLayout = {
-  labelCol: {
-    span: 4,
-  },
-  wrapperCol: {
-    span: 14,
-  },
+const fieldLabels = {
+  apkName: '应用名称',
+  apkCode: '应用包名',
+  iconPath: '应用图标',
+  versionName: '应用版本',
+  versionCode: '内部版本',
+  deptName: '所属机构',
+  groupName: '所属组别',
+  typeName: '应用分类',
+  firmName: '终端厂商',
+  terminalTypes: '终端型号',
+  permissions: '权限',
+  keyWord: '关键词',
+  apkDescription: '应用简介',
+  versionDescription: '版本更新说明',
+  picPaths: '应用截图',
+  reviewMsg: '审核信息',
+  currentReviewMsg: '请填写审核意见',
+  isUninstall: '是否可卸载',
+  reDegree: '应用推荐度'
 }
 
-const buttonLayout = {
-  wrapperCol: {
-    offset: 4,
-    span: 16,
-  }
-}
 
 function Page() {
   const history = useHistory();
-  const { search } = history.location;
-  const field = formatSearch(search);
-  const [detailArr, setDetailArr] = useState([] as any[]);
+  const id = useQueryParam('id');
+  const [flag, setFlag] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<ErrorField[]>([]);
   const [form] = Form.useForm();
 
-  /**
-   * @todo 根据url的id从接口拿取详情信息
-   */
+  const { detail } = useDetail(id, appInfoDetail, setLoading);
+
   useEffect(() => {
-    if (field.id) {
-      appInfoDetail(field.id, getDetailCallback);
+    let permissions: string[] = [];
+    let permissionsStr: string = '';
+    let images: string[] = [];
+    if (typeof detail.permissions === 'string' && detail.permissions.length > 0) {
+      permissions = detail.permissions.split(';');
+      let str = '';
+      for (let i = 0; i < permissions.length; i++) {
+        str += permissions[i];
+        str += '\r\n';
+      }
+      permissionsStr = str;
     }
-  }, [history.location.search]);
+    if (typeof detail.picPaths === 'string' && detail.picPaths.length > 0) {
+      images = detail.picPaths.split(';')
+    }
+    form.setFieldsValue({
+      ...detail,
+      permissions: permissionsStr,
+      picPaths: images
+    });
+    setFlag(!flag);
+  }, [detail]);
+
+  const forms: CustomFromItem[] = [
+    {
+      label: fieldLabels.apkName,
+      key: 'apkName',
+      render: () => <Input disabled />
+    },
+    {
+      label: fieldLabels.apkCode,
+      key: 'apkCode',
+      render: () => <Input disabled />
+    },
+    {
+      label: fieldLabels.iconPath,
+      key: 'iconPath',
+      render: () => renderIcon(form.getFieldValue('iconPath'))
+    },
+    {
+      label: fieldLabels.versionName,
+      key: 'versionName',
+      render: () => <Input disabled />
+    },
+    {
+      label: fieldLabels.versionCode,
+      key: 'versionCode',
+      render: () => <Input disabled />
+    },
+    {
+      label: fieldLabels.deptName,
+      key: 'deptName',
+      render: () => <Input disabled />
+    },
+    {
+      label: fieldLabels.groupName,
+      key: 'groupName',
+      render: () => <Input disabled />
+    },
+    {
+      label: fieldLabels.typeName,
+      key: 'typeName',
+      render: () => <Input disabled />
+    },
+    {
+      label: fieldLabels.firmName,
+      key: 'firmName',
+      render: () => <Input disabled />
+    },
+    {
+      label: fieldLabels.terminalTypes,
+      key: 'terminalTypes',
+      render: () => <Input disabled />
+    },
+    {
+      label: fieldLabels.permissions,
+      key: 'permissions',
+      render: () => renderColumns(form.getFieldValue('permissions'))
+    },
+    {
+      label: fieldLabels.keyWord,
+      key: 'keyWord',
+      render: () => <Input disabled />
+    },
+    {
+      label: fieldLabels.apkDescription,
+      key: 'apkDescription',
+      render: () => <Input disabled />
+    },
+    {
+      label: fieldLabels.versionDescription,
+      key: 'versionDescription',
+      render: () => <Input disabled />
+    },
+    {
+      label: fieldLabels.picPaths,
+      key: 'picPaths',
+      render: () => renderImages(form.getFieldValue('picPaths'))
+    },
+    {
+      label: fieldLabels.reviewMsg,
+      key: 'reviewMsg',
+      render: () => <Input disabled />
+    },
+    {
+      label: fieldLabels.isUninstall,
+      key: 'isUninstall',
+      render: () => renderIsUninstall(),
+      requiredType: 'select',
+    },
+    {
+      label: fieldLabels.reDegree,
+      key: 'reDegree',
+      render: () => <Rate />,
+      requiredType: 'select',
+    },
+  ]
 
   /**
-   * @todo 从接口拿到应用详情后的回调
-   * @param result 
-   */
-  const getDetailCallback = (result: any) => {
-    if (result && result.code === RESPONSE_CODE.success) {
-      let detail: IAppInfoDetail = result.data;
-      let arr: any[] = [];
-      let permissions: string[] = [];
-      let permissionsStr: string = '';
-      let images: string[] = [];
-      if (typeof detail.permissions && detail.permissions.length > 0) {
-        permissions = detail.permissions.split(';');
-        let str = '';
-        for (let i = 0; i < permissions.length; i++) {
-          str += permissions[i];
-          str += '\r\n';
-        }
-        permissionsStr = str;
-      }
-      if (typeof detail.picPaths === 'string' && detail.picPaths.length > 0) {
-        images = detail.picPaths.split(';')
-      }
-      arr.push({ label: "应用名称", name: 'apkName', value: detail.apkName });
-      arr.push({ label: "应用包名", name: 'apkCode', value: detail.apkCode });
-      arr.push({ label: "应用图标", name: 'iconPath', value: detail.iconPath, render: (path: string) => renderIcon(path) });
-      arr.push({ label: "应用版本", name: 'versionName', value: detail.versionName });
-      arr.push({ label: "内部版本", name: 'versionCode', value: detail.versionCode });
-      arr.push({ label: "所属机构", name: 'deptName', value: detail.deptName || '--' });
-      arr.push({ label: "所属组别", name: 'groupName', value: detail.groupName || '--' });
-      arr.push({ label: "应用分类", name: 'typeName', value: detail.typeName || '--' });
-      arr.push({ label: "终端厂商", name: 'firmName', value: detail.firmName || '--' });
-      arr.push({ label: "终端型号", name: 'terminalTypes', value: detail.terminalTypes || '--' });
-      arr.push({ label: "权限", name: 'permissions', value: permissionsStr, render: (columns: string[]) => renderColumns(columns) });
-      arr.push({ label: "关键词", name: 'keyWord', value: detail.keyWord });
-      arr.push({ label: "应用简介", name: 'apkDescription', value: detail.apkDescription });
-      arr.push({ label: "版本更新说明", name: 'versionDescription', value: detail.versionDescription });
-      arr.push({ label: "应用截图", name: 'picPaths', value: images, render: (paths: string[]) => renderImages(paths) });
-      arr.push({ label: "审核信息", name: 'reviewMsg', value: detail.reviewMsg });
-      arr.push({ label: "是否可卸载", name: 'isUninstall', renderItem: renderIsUninstallItem });
-      arr.push({ label: "应用推荐度", name: 'reDegree', renderItem: renderReDegree });
-
-      form.setFieldsValue({
-        apkName: detail.apkName,
-        apkCode: detail.apkCode,
-        iconPath: detail.apkCode,
-        versionName: detail.versionName,
-        versionCode: detail.versionCode,
-        deptName: detail.deptName,
-        groupName: detail.groupName,
-        typeName: detail.typeName,
-        firmName: detail.firmName,
-        terminalTypes: detail.terminalTypes,
-        permissions: permissionsStr,
-        keyWord: detail.keyWord,
-        apkDescription: detail.apkDescription,
-        versionDescription: detail.versionDescription,
-        picPaths: detail.picPaths,
-        reviewMsg: detail.reviewMsg,
-        isUninstall: detail.isUninstall || 1,
-        reDegree: detail.reDegree || 0
-      })
-      setDetailArr(arr);
-    } else {
-      notification.warn(result.msg || '获取详情失败，请刷新页面重试');
-    }
-  }
-
-  /**
-   * @todo 渲染应用图标
-   * @param imagePath 
-   */
+     * @todo 渲染应用图标
+     * @param imagePath 
+     */
   const renderIcon = (imagePath: string) => {
-    return (
-      <img src={imagePath} style={{ width: '50px', height: '50px' }} />
-    )
+    if (typeof imagePath === 'string' && imagePath.length > 0) {
+      return (
+        <img
+          src={imagePath}
+          style={{ width: 80, height: 80, background: '#f2f2f2', borderRadius: 10 }}
+        />
+      )
+    } else {
+      return (
+        <div style={{ width: 80, height: 80, background: '#f2f2f2', borderRadius: 10 }}></div>
+      )
+    }
   }
 
   /**
@@ -133,17 +194,21 @@ function Page() {
    * @param imagePaths 
    */
   const renderImages = (imagePaths: string[]) => {
-    return (
-      <Row>
-        {
-          imagePaths.length > 0 && imagePaths.map(item => {
-            return (
-              <img src={item} style={{ width: '80px', height: '80px', marginRight: '20px', marginBottom: '10px', marginTop: '10px' }} />
-            )
-          })
-        }
-      </Row>
-    )
+    if (Array.isArray(imagePaths) && imagePaths.length > 0) {
+      return (
+        <Row>
+          {
+            imagePaths.length > 0 && imagePaths.map(item => {
+              return (
+                <img key={item} src={item} style={{ width: '80px', height: '80px', marginRight: '20px', marginBottom: '10px', marginTop: '10px' }} />
+              )
+            })
+          }
+        </Row>
+      )
+    } else {
+      return <div />
+    }
   }
 
   /**
@@ -156,51 +221,26 @@ function Page() {
     )
   }
 
+
   /**
    * @todo 渲染是否可卸载的表单
    * @param item 
    */
-  const renderIsUninstallItem = (item: any) => {
+  const renderIsUninstall = () => {
     return (
-      <Item label={item.label} name={item.name} rules={[{
-        required: true,
-        message: '请选择应用是否可卸载'
-      }]}
-      >
-        <Radio.Group>
-          <Radio value={1}>可卸载</Radio>
-          <Radio value={0}>不可卸载</Radio>
-        </Radio.Group>
-      </Item>
+      <Radio.Group>
+        <Radio value={1}>可卸载</Radio>
+        <Radio value={0}>不可卸载</Radio>
+      </Radio.Group>
     )
   }
 
-  /**
-   * @todo 渲染设置推荐度的表单
-   * @param item 
-   */
-  const renderReDegree = (item: any) => {
-    return (
-      <Item label={item.label} name={item.name} rules={[{
-        required: true,
-        message: '请设置推荐度'
-      }]}
-      >
-        <Rate />
-      </Item>
-    )
-  }
-
-  /**
-   * @todo 调用商家操作
-   * @param isPass 
-   */
-  const onPublish = async (isPass: boolean) => {
+  const onSubmit = async () => {
     try {
       const values = await form.validateFields();
       console.log('Success:', values);
       const params = {
-        appId: field.id,
+        appId: id,
         isOnShelves: true,
         isUninstall: form.getFieldValue('isUninstall'),
         reDegree: form.getFieldValue('reDegree'),
@@ -216,46 +256,27 @@ function Page() {
       }
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
+      setError(errorInfo.errorFields);
     }
   }
 
   return (
     <Spin spinning={loading}>
-      <div style={{ paddingLeft: '30px', paddingTop: '10px', width: '60vw' }}>
+      <div style={{ paddingTop: 10 }}>
         <Form
           form={form}
-          name="advanced_search"
           className="ant-advanced-search-form"
-          {...formLayout}
           style={{ backgroundColor: 'white' }}
         >
-          {
-            detailArr.length > 0 && detailArr.map((item: any) => {
-              if (item.renderItem) {
-                return item.renderItem(item);
-              } else {
-                return (
-                  <Item label={item.label} name={item.name}  >
-                    {
-                      item.render ? item.render(item.value) : (
-                        <Input disabled />
-                      )
-                    }
-                  </Item>
-                )
-              }
-            })
-          }
-          <Item {...buttonLayout} >
-            <Button type="primary" onClick={() => onPublish(true)}>
-              发布
-            </Button>
-            <Button type="primary" onClick={() => history.goBack()} style={{ marginLeft: 20 }}>
-              返回
-          </Button>
-          </Item>
+          <CustomFormItems items={forms} singleCol={true} />
         </Form>
       </div>
+      <FixedFoot errors={error} fieldLabels={fieldLabels}>
+        <Button type="primary" loading={loading} onClick={onSubmit}>
+          发布
+        </Button>
+        <Button onClick={() => history.goBack()}>返回</Button>
+      </FixedFoot>
     </Spin>
   )
 }
