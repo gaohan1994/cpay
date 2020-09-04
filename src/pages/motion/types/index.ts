@@ -30,6 +30,13 @@ export interface RecordListItem extends MapItem {
   updateTime: string;
 }
 
+export interface KeyListItem {
+  dayCanUsedCount: string;
+  dayUsedCount: string;
+  id: string;
+  mapKey: string;
+}
+
 export declare module FetchField {
   interface List {
     latitude: string;
@@ -39,4 +46,6 @@ export declare module FetchField {
     tusn: string;
   }
   interface Exp extends List {}
+
+  type KeyList = KeyListItem;
 }

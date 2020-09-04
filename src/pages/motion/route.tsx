@@ -9,6 +9,7 @@
 import { AppstoreAddOutlined } from '@ant-design/icons';
 import Motion from '@/pages/motion';
 import Location from '@/pages/motion/location';
+import Manage from '@/pages/motion/manage';
 
 export const MotionMenu = {
   name: '移机监控',
@@ -28,6 +29,12 @@ const routerConfig: any[] = [
     path: '/motion/location',
     name: '终端位置',
     component: Location,
+    exact: true,
+  },
+  {
+    path: '/motion/manage',
+    name: '地图管理',
+    component: Manage,
     exact: true,
   },
 ];

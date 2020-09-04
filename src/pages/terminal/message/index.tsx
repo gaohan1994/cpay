@@ -279,7 +279,7 @@ export default () => {
     {
       title: '终端厂商',
       width: 120,
-      dataIndex: 'merchantName',
+      dataIndex: 'firmName',
     },
     {
       title: '终端型号',
@@ -334,7 +334,7 @@ export default () => {
     },
     {
       title: '终端使用情况',
-      dataIndex: 'tusn',
+      dataIndex: '',
     },
   ]);
 
