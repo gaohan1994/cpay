@@ -23,8 +23,11 @@ import {
 } from '../constants';
 import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
 import history from '@/common/history-util';
+import { useSelectorHook } from '@/common/redux-util';
+import { getDictText } from '@/pages/common/util';
 
 export default () => {
+  const [form] = Form.useForm();
   useStore([
     'terminal_type',
     'is_support_dcc',
@@ -32,16 +35,19 @@ export default () => {
     'buss_type',
     'term_real_status',
   ]);
+  const common = useSelectorHook((state) => state.common);
   const initState = {
     formTreeValue: -1,
     terminalGroup: [] as ITerminalGroupByDeptId[],
     groupValue: '',
     terminalFirmList: [] as ITerminalFirmItem[],
-    terminalFirmTypeList: {} as { [key: string]: ITerminalType[] },
+    terminalFirmTypeList: [] as ITerminalType[],
+    firmValue: '',
   };
   const [groupValue, setGroupValue] = useState(initState.groupValue);
   const [formTreeValue, setFormTreeValue] = useState(initState.formTreeValue);
   const [terminalGroup, setTerminalGroup] = useState(initState.terminalGroup);
+  const [firmValue, setFirmValue] = useState(initState.firmValue);
   const [terminalFirmList, setTerminalFirmList] = useState(
     initState.terminalFirmList
   );
@@ -59,7 +65,13 @@ export default () => {
     });
   }, [formTreeValue]);
 
-  const [form] = Form.useForm();
+  useEffect(() => {
+    // 终端厂商变化导致终端型号要变
+    if (firmValue !== '') {
+      form.setFieldsValue({ terminalTypeCode: '' });
+      onFirmLoadData(firmValue);
+    }
+  }, [firmValue]);
 
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: PaginatedParams[0], tableProps: any) => {
@@ -78,14 +90,9 @@ export default () => {
     setFormTreeValue(deptId);
   };
 
-  const onFirmLoadData = (selectedOptions: any) => {
-    const targetOption = selectedOptions[selectedOptions.length - 1];
-    targetOption.loading = true;
-    getTerminalTypeListByFirm({ firmId: targetOption.value }, (data) => {
-      targetOption.loading = false;
-      setTerminalFirmTypeList({
-        [targetOption.value]: data,
-      });
+  const onFirmLoadData = (firmId: string) => {
+    getTerminalTypeListByFirm({ firmId: firmId }, (data) => {
+      setTerminalFirmTypeList(data);
     });
   };
   const { submit, reset } = search;
@@ -127,7 +134,7 @@ export default () => {
       formType: FormItmeType.Normal,
     },
     {
-      span: 4,
+      span: 6,
       formName: 'deptId',
       formType: FormItmeType.TreeSelectCommon,
       onChange: onChange,
@@ -135,6 +142,7 @@ export default () => {
     {
       placeholder: '所属组',
       formName: 'groupId',
+      span: 6,
       formType: FormItmeType.Select,
       selectData:
         (terminalGroup &&
@@ -152,30 +160,33 @@ export default () => {
     },
     {
       placeholder: '终端厂商',
-      formType: FormItmeType.Cascader,
+      formType: FormItmeType.Select,
+      selectData:
+        terminalFirmList &&
+        terminalFirmList.map((item) => {
+          return {
+            value: `${item.id}`,
+            title: `${item.firmName}`,
+          };
+        }),
+      onChange: (firmId: any) => {
+        console.log('firmId: ', firmId);
+        setFirmValue(firmId);
+      },
       formName: 'firmId',
-      options:
-        (terminalFirmList &&
-          terminalFirmList.map((item) => {
-            return {
-              label: item.firmName,
-              value: `${item.id}`,
-              isLeaf: false,
-              ...(!!terminalFirmTypeList[item.id]
-                ? {
-                    children: terminalFirmTypeList[item.id].map((typeItem) => {
-                      return {
-                        label: typeItem.typeName,
-                        value: typeItem.typeCode,
-                      };
-                    }),
-                  }
-                : {}),
-            };
-          })) ||
-        [],
-      loadData: onFirmLoadData,
-      changeOnSelect: true,
+    },
+    {
+      placeholder: '终端型号',
+      formType: FormItmeType.Select,
+      selectData:
+        terminalFirmTypeList &&
+        terminalFirmTypeList.map((item) => {
+          return {
+            value: `${item.typeCode}`,
+            title: `${item.typeName}`,
+          };
+        }),
+      formName: 'terminalTypeCode',
     },
     {
       placeholder: '终端类型',
@@ -186,30 +197,57 @@ export default () => {
     },
     {
       placeholder: '是否支持DCC',
-      formName: 'is_support_dcc',
+      formName: 'dccSupFlag',
       formType: FormItmeType.SelectCommon,
       dictList: 'is_support_dcc',
     },
     {
       placeholder: '银联间直联',
-      formName: 'unionpay_connection',
+      formName: 'cupConnMode',
       formType: FormItmeType.SelectCommon,
       dictList: 'unionpay_connection',
     },
     {
       placeholder: '业务类型',
       formType: FormItmeType.SelectCommon,
-      formName: '',
+      formName: 'bussType',
       dictList: 'buss_type',
     },
     {
       placeholder: '终端状态',
       formType: FormItmeType.SelectCommon,
-      formName: 'status',
+      formName: 'activateType',
       dictList: 'term_real_status',
     },
   ];
 
+  // activateType: 1
+  // address: "1"
+  // bussType: "01"
+  // city: "福州市"
+  // county: "鼓楼区"
+  // createBy: "admin"
+  // createTime: "2020-08-14 10:39:37"
+  // cupConnMode: 0
+  // dccSupFlag: 0
+  // deptId: 100
+  // deptName: "总行"
+  // firmId: 10
+  // firmName: "升腾"
+  // id: 4534
+  // imei: "1"
+  // imsi: "1"
+  // merchantId: 21
+  // merchantName: "福州水果商"
+  // netMark: "1"
+  // province: "福建省"
+  // status: 1
+  // terminalCode: "70410958"
+  // terminalCopsSign: 0
+  // terminalTypeId: 37
+  // terminalTypeName: "k9"
+  // tusn: "D1V0670410958"
+  // updateTime: "2020-08-31
   const columns = createTableColumns([
     {
       title: '操作',
@@ -230,9 +268,13 @@ export default () => {
       dataIndex: 'tusn',
     },
     {
+      title: '终端编号',
+      dataIndex: 'terminalCode',
+    },
+    {
       title: '商户编号',
       width: 80,
-      dataIndex: 'merchantId',
+      dataIndex: 'merchantCode',
     },
     {
       title: '终端厂商',
@@ -241,41 +283,57 @@ export default () => {
     },
     {
       title: '终端型号',
-      width: 80,
       dataIndex: 'terminalTypeName',
     },
     {
       title: '终端类型',
-      width: 80,
       dataIndex: 'terminalTypeName',
     },
     {
       title: '所属机构',
-      width: 80,
       dataIndex: 'deptName',
     },
     {
       title: '所属组',
-      dataIndex: 'tusn',
+      dataIndex: 'terminalGroupId',
+      render: (terminalGroupId: any) => {
+        return <span>{terminalGroupId}</span>;
+      },
     },
     {
       title: '商户名称',
-      dataIndex: 'tusn',
+      dataIndex: 'merchantName',
     },
     {
       title: '是否支持DCC',
-      dataIndex: 'tusn',
+      dataIndex: 'dccSupFlag',
+      render: (dcc: any) => {
+        return <span>{Number(dcc) === 0 ? '支持' : '不支持'}</span>;
+      },
     },
     {
       title: '银联间直连',
-      dataIndex: 'tusn',
+      dataIndex: 'cupConnMode',
+      render: (conn: any) => {
+        return <span>{Number(conn) === 0 ? '是' : '否'}</span>;
+      },
     },
     {
       title: '业务类型',
-      dataIndex: 'tusn',
+      dataIndex: 'bussType',
+      render: (type: any) => {
+        return <span>{getDictText(type, 'buss_type')}</span>;
+      },
     },
     {
       title: '终端状态',
+      dataIndex: 'activateType',
+      render: (status: any) => {
+        return <span>{getDictText(status, 'term_real_status')}</span>;
+      },
+    },
+    {
+      title: '终端使用情况',
       dataIndex: 'tusn',
     },
   ]);
@@ -312,7 +370,7 @@ export default () => {
       <Table
         style={{ overflowX: 'auto' }}
         columns={columns}
-        rowKey="email"
+        rowKey="id"
         {...tableProps}
         scroll={{ x: 2200 }}
       />
