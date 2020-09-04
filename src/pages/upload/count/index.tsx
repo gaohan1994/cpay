@@ -69,7 +69,7 @@ function Page(props: Props) {
       ),
       fixed: 'left',
       align: 'center',
-      width: 60,
+      width: 70,
     },
     {
       title: '任务名称',

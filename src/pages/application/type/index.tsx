@@ -18,6 +18,7 @@ import { createTableColumns } from '@/component/table';
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { RESPONSE_CODE, BASIC_CONFIG } from '@/common/config';
 import { IAppType } from '../types';
+import invariant from 'invariant';
 
 
 const { Item } = Form;
@@ -65,16 +66,25 @@ function Page(props: Props) {
    * @param item 要删除的item
    */
   const onRemove = async (item: any) => {
-    const param = {
-      ids: item.id
-    }
-    const res = await appTypeRemove(param);
-    if (res && res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '删除成功' });
-      submit();
-    } else {
-      notification.error({ message: res.msg || '删除失败，请重试' });
-    }
+    Modal.confirm({
+      title: '提示',
+      content: `确认要将当前应用分类删除吗?`,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const param = {
+            ids: item.id
+          }
+          const result = await appTypeRemove(param);
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除应用分类失败，请重试');
+          notification.success({ message: '删除应用分类成功!' });
+          submit();
+        } catch (error) {
+          notification.warn({ message: error.message });
+        }
+      },
+    });
   }
 
   /**
@@ -84,20 +94,14 @@ function Page(props: Props) {
     {
       title: '操作',
       render: (key, item) => (
-        <Row style={{ alignItems: 'center' }}>
+        <div>
           <a onClick={() => showModal(item)}>修改</a>
           <Divider type="vertical" />
-          <Popconfirm
-            title="是否确认删除？"
-            onConfirm={() => onRemove(item)}
-            okText="是"
-            cancelText="否"
-          >
-            <a href="#">删除</a>
-          </Popconfirm>
-        </Row>
+          <a onClick={() => onRemove(item)}>删除</a>
+        </div>
       ),
       fixed: 'left',
+      align: 'center',
       width: 150,
     },
     {

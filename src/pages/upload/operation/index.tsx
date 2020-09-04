@@ -14,7 +14,7 @@ import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
-import { taskOperationJobList, taskOperationJobPublish, taskOperationJobRemove } from '../constants/api';
+import { taskOperationJobList, taskOperationJobPublish, taskOperationJobRemove, taskOperationJobPuase } from '../constants/api';
 import { PlusOutlined, CopyOutlined, BarsOutlined, CaretRightOutlined, PauseOutlined } from '@ant-design/icons';
 import { RESPONSE_CODE } from '@/common/config';
 import history from '@/common/history-util';
@@ -37,7 +37,7 @@ const initState = {
 
 function Page(props: Props) {
   // 请求dept数据
-  useStore(['task_job_status', 'terminal_operator_command']);
+  useStore(['operator_job_status', 'terminal_operator_command']);
 
   const [terminalFirmList, setTerminalFirmList] = useState(
     initState.terminalFirmList
@@ -52,6 +52,7 @@ function Page(props: Props) {
     initState.terminalTypeValue
   );
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);  // 选中的列的key值列表
+  const [selectedRows, setSelectedRows] = useState([] as any[]);
 
   useEffect(() => {
     /** 获取终端厂商列表 */
@@ -114,6 +115,8 @@ function Page(props: Props) {
           invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除任务失败，请重试');
           notification.success({ message: '删除任务成功!' });
           submit();
+          setSelectedRows([]);
+          setSelectedRowKeys([]);
         } catch (error) {
           notification.warn({ message: error.message });
         }
@@ -147,7 +150,7 @@ function Page(props: Props) {
     {
       title: '任务状态',
       dataIndex: 'status',
-      dictType: 'task_job_status',
+      dictType: 'operator_job_status',
       render: (item: any) => {
         return <Tag color={getTaskJobStatusColor(item)}>{item}</Tag>
       }
@@ -218,10 +221,16 @@ function Page(props: Props) {
     },
   ];
 
+  /**
+   * @todo 新增
+   */
   const onAdd = () => {
     history.push('/upload/operation-add');
   }
 
+  /**
+   * @todo 复制
+   */
   const onCopy = () => {
     if (selectedRowKeys.length === 0) {
       notification.error({ message: "请选择任务" });
@@ -234,6 +243,9 @@ function Page(props: Props) {
     history.push(`/upload/operation-add?id=${selectedRowKeys[0]}&type=0`);
   }
 
+  /**
+   * @todo 执行情况
+   */
   const onOperationDetail = () => {
     if (selectedRowKeys.length === 0) {
       notification.error({ message: "请选择任务" });
@@ -243,9 +255,16 @@ function Page(props: Props) {
       notification.error({ message: "请选择一条任务" });
       return;
     }
+    if (selectedRows[0].status === 1) {
+      notification.error({ message: "请先启动当前任务" });
+      return;
+    }
     history.push(`/upload/operation-operation?id=${selectedRowKeys[0]}`);
   }
 
+  /**
+   * @todo 启动
+   */
   const onStart = async () => {
     if (selectedRowKeys.length === 0) {
       notification.error({ message: "请选择任务" });
@@ -255,11 +274,51 @@ function Page(props: Props) {
       notification.error({ message: "请选择一条任务" });
       return;
     }
+    if (selectedRows[0].status === 5) {
+      notification.error({ message: "任务已经启动！" });
+      return;
+    }
+    if (selectedRows[0].status === 7) {
+      notification.error({ message: "任务已经结束！" });
+      return;
+    }
     const res = await taskOperationJobPublish(selectedRowKeys[0]);
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '启动任务成功' });
-      setSelectedRowKeys([]);
       submit();
+      setSelectedRows([]);
+      setSelectedRowKeys([]);
+    } else {
+      notification.error({ message: res && res.msg || '执行任务失败，请重试' });
+    }
+  }
+
+  /**
+   * @todo 暂停
+   */
+  const onPause = async () => {
+    if (selectedRowKeys.length === 0) {
+      notification.error({ message: "请选择任务" });
+      return;
+    }
+    if (selectedRowKeys.length > 1) {
+      notification.error({ message: "请选择一条任务" });
+      return;
+    }
+    if (selectedRows[0].status === 6) {
+      notification.error({ message: "任务已经暂停！" });
+      return;
+    }
+    if (selectedRows[0].status === 7) {
+      notification.error({ message: "任务已经结束！" });
+      return;
+    }
+    const res = await taskOperationJobPuase(selectedRowKeys[0]);
+    if (res && res.code === RESPONSE_CODE.success) {
+      notification.success({ message: '启动任务成功' });
+      submit();
+      setSelectedRows([]);
+      setSelectedRowKeys([]);
     } else {
       notification.error({ message: res && res.msg || '执行任务失败，请重试' });
     }
@@ -270,12 +329,18 @@ function Page(props: Props) {
     { title: '复制', onClick: onCopy, icon: <CopyOutlined /> },
     { title: '执行情况', onClick: onOperationDetail, icon: <BarsOutlined /> },
     { title: '启动', onClick: onStart, icon: <CaretRightOutlined />, type: "primary" as any, },
-    { title: '暂停', onClick: onCopy, icon: <PauseOutlined />, type: "primary" as any, },
+    { title: '暂停', onClick: onPause, icon: <PauseOutlined />, type: "primary" as any, },
   ]
+
+  const onChangeSelectedRows = (selectedRowKeys: any[], selectedRows: any[]) => {
+    setSelectedRowKeys(selectedRowKeys);
+    setSelectedRows(selectedRows);
+  }
 
   const rowSelection = {
     selectedRowKeys,
-    onChange: setSelectedRowKeys,
+    onChange: onChangeSelectedRows,
+    type: 'radio'
   };
 
   return (

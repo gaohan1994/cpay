@@ -71,7 +71,8 @@ function Page(props: Props) {
         <a onClick={() => onAudit(item)}>审核</a>
       ),
       fixed: 'left',
-      width: 60,
+      align: 'center',
+      width: 70,
     },
     {
       title: '应用名称',
@@ -100,6 +101,7 @@ function Page(props: Props) {
     {
       title: '应用包名',
       dataIndex: 'apkCode',
+      width: 200
     },
     {
       title: '应用版本',
@@ -129,6 +131,7 @@ function Page(props: Props) {
     {
       title: '申请时间',
       dataIndex: 'updateTime',
+      width: 200
     },
   ]);
 
@@ -181,7 +184,7 @@ function Page(props: Props) {
           reset,
         }}
       />
-      <Table rowKey="id" columns={columns}  {...tableProps} scroll={{ x: 2200 }} />
+      <Table rowKey="id" columns={columns}  {...tableProps} scroll={{ x: 1400 }} />
     </div>
   );
 }

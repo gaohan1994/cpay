@@ -52,6 +52,41 @@ export const taskDownloadJobPublish = (id: number) =>
   ApiRequest.post(`/cpay-admin/task/downloadJob/publish/${id}`, {});
 
 /**
+* 
+* @param id 暂停软件更新的任务
+*/
+export const taskDownloadJobPause = (id: number) =>
+  ApiRequest.post(`/cpay-admin/task/downloadJob/pause/${id}`, {});
+
+/**
+* @todo 软件更新执行情况任务启动
+* @param params
+*/
+export const taskDownloadJobDelay = (params: { ids: string }) =>
+  ApiRequest.post(`/cpay-admin/task/downloadJob/delay`, params);
+
+/**
+* @todo 软件更新执行情况任务启动
+* @param params
+*/
+export const taskDownloadJobImportTemplate = () =>
+  ApiRequest.get(`/cpay-admin/task/downloadJob/importTemplate`);
+
+/**
+* @todo 软件更新执行情况任务启动
+* @param params
+*/
+export const taskDownloadTaskReset = (params: { ids: string }) =>
+  ApiRequest.post(`/cpay-admin/task/downloadTask/reset`, params);
+
+/**
+ * @todo 删除软件更新任务基本信息
+ * @param params
+ */
+export const taskDownloadTaskPause = (params: { ids: string }) =>
+  ApiRequest.post(`/cpay-admin/task/downloadTask/pause`, params);
+
+/**
  * @todo 根据软件类型获取软件名称
  * @param params 
  * @param callback 

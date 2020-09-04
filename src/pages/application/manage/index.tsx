@@ -119,15 +119,22 @@ function Page(props: Props) {
    * @param item 
    */
   const onRemoveItem = async (item: any) => {
-    setLoading(true);
-    const res = await appInfoRemove({ ids: item.id });
-    setLoading(false);
-    if (res && res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '应用已放入回收站' });
-      submit();
-    } else {
-      notification.warn({ message: res.msg || '删除应用失败' });
-    }
+    Modal.confirm({
+      title: '提示',
+      content: `确认要将当前应用删除吗?`,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const result = await appInfoRemove({ ids: item.id });
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除应用失败，请重试');
+          notification.success({ message: '删除应用成功!' });
+          submit();
+        } catch (error) {
+          notification.warn({ message: error.message });
+        }
+      },
+    });
   }
 
   /**
@@ -171,7 +178,7 @@ function Page(props: Props) {
     {
       title: '操作',
       render: (key, item) => (
-        <Row style={{ alignItems: 'center' }}>
+        <div >
           <a onClick={() => onDetail(item)}>详情</a>
           {
             item.status !== 4 && (
@@ -185,20 +192,14 @@ function Page(props: Props) {
             item.status !== 4 && (
               <>
                 <Divider type="vertical" />
-                <Popconfirm
-                  title="是否确认删除？"
-                  onConfirm={() => onRemoveItem(item)}
-                  okText="是"
-                  cancelText="否"
-                >
-                  <a href="#">删除</a>
-                </Popconfirm>
+                <a onClick={() => onRemoveItem(item)}>删除</a>
               </>
             )
           }
-        </Row>
+        </div>
       ),
       fixed: 'left',
+      align: 'center',
       width: 150,
     },
     {
@@ -229,6 +230,7 @@ function Page(props: Props) {
     {
       title: '应用包名',
       dataIndex: 'apkCode',
+      width: 200
     },
     {
       title: '应用版本',
@@ -258,6 +260,7 @@ function Page(props: Props) {
     {
       title: '上传时间',
       dataIndex: 'createTime',
+      width: 200
     },
   ]);
 
@@ -347,7 +350,7 @@ function Page(props: Props) {
           extraButtons
         }}
       />
-      <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} scroll={{ x: 2200 }} />
+      <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} scroll={{ x: 1600 }} />
     </Spin>
   );
 }

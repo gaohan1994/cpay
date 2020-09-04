@@ -24,10 +24,11 @@ type Props = {};
 
 function Page(props: Props) {
   // 请求dept数据
-  useStore(['task_job_status']);
+  useStore(['log_job_status']);
 
   const [form] = Form.useForm();
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);  // 选中的列的key值列表
+  const [selectedRows, setSelectedRows] = useState([] as any[]);
 
 
   const { tableProps, search }: any = useAntdTable(
@@ -75,6 +76,8 @@ function Page(props: Props) {
           invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除任务失败，请重试');
           notification.success({ message: '删除任务成功!' });
           submit();
+          setSelectedRowKeys([]);
+          setSelectedRows([]);
         } catch (error) {
           notification.warn({ message: error.message });
         }
@@ -104,6 +107,8 @@ function Page(props: Props) {
           invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除任务失败，请重试');
           notification.success({ message: '删除任务成功!' });
           submit();
+          setSelectedRowKeys([]);
+          setSelectedRows([]);
         } catch (error) {
           notification.warn({ message: error.message });
         }
@@ -127,11 +132,16 @@ function Page(props: Props) {
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '执行任务成功' });
       submit();
+      setSelectedRowKeys([]);
+      setSelectedRows([]);
     } else {
       notification.error({ message: res && res.msg || '执行任务失败，请重试' });
     }
   }
 
+  /**
+   * @todo 执行情况查询
+   */
   const onOperationDetail = () => {
     if (selectedRowKeys.length === 0) {
       notification.error({ message: "请选择任务" });
@@ -139,6 +149,10 @@ function Page(props: Props) {
     }
     if (selectedRowKeys.length > 1) {
       notification.error({ message: "请选择一条任务" });
+      return;
+    }
+    if (selectedRows[0].status === 1) {
+      notification.error({ message: "请先执行当前任务" });
       return;
     }
     history.push(`/upload/log-operation?id=${selectedRowKeys[0]}`);
@@ -154,7 +168,7 @@ function Page(props: Props) {
         <div>
           <a onClick={() => onDetail(item)}>详情</a>
           {
-            item.status === 0 && (
+            item.status === 1 || item.status === 3 && (
               <>
                 <Divider type="vertical" />
                 <a onClick={() => onEdit(item)}>修改</a>
@@ -162,7 +176,7 @@ function Page(props: Props) {
             )
           }
           {
-            item.status === 0 && (
+            item.status === 1 || item.status === 3 && (
               <>
                 <Divider type="vertical" />
                 <a onClick={() => onRemoveItem(item)}>删除</a>
@@ -182,7 +196,7 @@ function Page(props: Props) {
     {
       title: '发布状态',
       dataIndex: 'status',
-      dictType: 'task_job_status',
+      dictType: 'log_job_status',
     },
     {
       title: '有效起始日期',
@@ -223,9 +237,14 @@ function Page(props: Props) {
     { title: '执行任务', onClick: onPublish, icon: <CheckOutlined />, type: "primary" as any, },
   ]
 
+  const onChangeSelectedRows = (selectedRowKeys: any[], selectedRows: any[]) => {
+    setSelectedRowKeys(selectedRowKeys);
+    setSelectedRows(selectedRows);
+  }
+
   const rowSelection = {
     selectedRowKeys,
-    onChange: setSelectedRowKeys,
+    onChange: onChangeSelectedRows,
   };
 
   return (

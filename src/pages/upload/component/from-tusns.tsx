@@ -6,9 +6,13 @@
  * 
  * @todo 封装的终端集合选择表单
  */
-import React, { useState } from "react";
-import { Space, Button } from "antd";
-import { PlusOutlined, CloseOutlined, UploadOutlined, ClearOutlined } from '@ant-design/icons';
+import React, { useState, useRef, useEffect } from "react";
+import { Space, Button, Modal, Form, Col, Row, Input, notification } from 'antd';
+import { PlusOutlined, CloseOutlined, UploadOutlined, ClearOutlined, DownloadOutlined } from '@ant-design/icons';
+import { useForm } from "antd/lib/form/Form";
+import SelectUpload from "./select-upload";
+import { taskDownloadJobImportTemplate } from "../upload/constants/api";
+import { RESPONSE_CODE, getDownloadPath } from '../../../common/config';
 
 interface Props {
   onAddTerminals: () => void;
@@ -19,6 +23,16 @@ interface Props {
 export function FormTusns(props: Props) {
   const { onAddTerminals, options, setOptions } = props;
   const [selectedOptions, setSelectOptions] = useState([] as any[]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [form] = useForm();
+  const uploadRef: any = useRef();
+  const [file, setFile] = useState({} as any);
+
+  useEffect(() => {
+    if (uploadRef && uploadRef.current && uploadRef.current.file) {
+      setFile(uploadRef.current.file);
+    }
+  }, [uploadRef]);
 
   /**
    * @todo 删除选中的终端
@@ -50,7 +64,7 @@ export function FormTusns(props: Props) {
    * @todo excel导入终端
    */
   const onImportTerminals = () => {
-
+    setModalVisible(true);
   }
 
   /**
@@ -68,15 +82,35 @@ export function FormTusns(props: Props) {
     setSelectOptions(arr);
   }
 
+  const hideModal = () => {
+    setModalVisible(false);
+  }
+
+  const handleOk = () => {
+
+  }
+
+  const onDownloadImportTemplate = async () => {
+    const res = await taskDownloadJobImportTemplate();
+    if (res && res.code === RESPONSE_CODE.success) {
+      const href = getDownloadPath(res.data);
+      window.open(href, '_blank');
+    } else {
+      notification.error({ message: res && res.msg || '下载模版失败' });
+    }
+  }
+
+  console.log('test bbb', file);
+
   return (
     <Space direction="vertical" style={{ width: '100%' }}>
       <Space>
         <Button type="primary" icon={<PlusOutlined />} onClick={onAddTerminals}>
           添加终端
         </Button>
-        <Button type="primary" icon={<UploadOutlined />} onClick={onImportTerminals}>
+        {/* <Button type="primary" icon={<UploadOutlined />} onClick={onImportTerminals}>
           Excel导入
-        </Button>
+        </Button> */}
         <Button type="primary" icon={<CloseOutlined />} onClick={() => onDeleTerminals()}>
           删除
         </Button>
@@ -105,6 +139,36 @@ export function FormTusns(props: Props) {
           })
         }
       </select>
+      <Modal
+        visible={modalVisible}
+        onCancel={hideModal}
+        onOk={handleOk}
+        title="终端导入"
+        footer={<Button type='primary' onClick={handleOk}>上传</Button>}
+      >
+        <Form
+          form={form}
+        >
+          <Form.Item label="文件上传" name='file' rules={[
+            {
+              required: true,
+              message: '请上传文件',
+            }]}
+          >
+            <Row>
+              <Col span={12}>
+                <Input disabled={true} value={''} />
+              </Col>
+              <Col span={12}>
+                <SelectUpload
+                  uploadRef={uploadRef}
+                  maxSize='100M' />
+              </Col>
+            </Row>
+          </Form.Item>
+        </Form>
+        <Button type='primary' onClick={onDownloadImportTemplate}><DownloadOutlined />下载模版</Button>
+      </Modal>
     </Space>
   )
 }

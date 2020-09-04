@@ -17,6 +17,7 @@ export const getTaskJobStatusColor = (status: string) => {
     case '暂停':
       return '#f8ac59';
     case '启动':
+    case '启动中':
       return '#3cc051';
     case '结束':
       return '#57b5e3';

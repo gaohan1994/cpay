@@ -192,11 +192,18 @@ export const taskOperationJobRemove = (params: { ids: string }) =>
   ApiRequest.post(`/cpay-admin/task/operationJob/remove`, params);
 
 /**
-* @todo 添加终端操作任务任务(远程运维新增)
-* @param params 
+* @todo 启动终端操作任务(远程运维启动)
+* @param id 
 */
 export const taskOperationJobPublish = (id: number) =>
   ApiRequest.post(`/cpay-admin/task/operationJob/publish/${id}`, {});
+
+/**
+ * @todo 暂停终端操作任务(远程运维暂停)
+ * @param id 
+ */
+export const taskOperationJobPuase = (id: number) =>
+  ApiRequest.post(`/cpay-admin/task/operationJob/pause/${id}`, {});
 
 /**
 * @todo 查询终端操作任务列表(远程运维执行情况)

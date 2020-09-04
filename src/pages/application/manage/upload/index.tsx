@@ -16,6 +16,7 @@ import { merge } from 'lodash';
 import { useDetail } from '@/pages/common/costom-hooks/use-detail';
 import { appInfoDetail, appInfoEdit, appInfoAdd } from '../../constants/api';
 import { useHistory } from 'react-router-dom';
+import FixedFoot, { ErrorField } from '@/component/fixed-foot';
 
 const { TextArea } = Input;
 
@@ -26,6 +27,24 @@ const customFormLayout = {
   wrapperCol: {
     span: 16,
   },
+}
+
+const fieldLabels = {
+  appUpload: '上传应用包',
+  apkName: '应用名称',
+  apkCode: '应用包名',
+  versionName: '应用版本',
+  versionCode: '内部版本',
+  appIcon: '应用图标',
+  deptId: '所属机构',
+  groupId: '所属组别',
+  typeId: '应用类别',
+  firmId: '终端厂商',
+  terminalTypes: '终端型号',
+  keyWord: '关键词',
+  versionDescription: '版本更新说明',
+  apkDescription: '应用简介',
+  picPaths: '应用截图',
 }
 
 export default function Page() {
@@ -46,6 +65,7 @@ export default function Page() {
   const [previewImage, setPreviewImage] = useState('');
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewTitle, setPreviewTitle] = useState('');
+  const [error, setError] = useState<ErrorField[]>([]);
 
   const {
     terminalGroupList,
@@ -256,50 +276,50 @@ export default function Page() {
   const forms = [
     {
       show: !id,
-      label: '上传应用包',
+      label: fieldLabels.appUpload,
       key: 'appUpload',
       requiredText: '请上传应用包',
       render: renderUpload,
       ...customFormLayout,
     },
     {
-      label: '应用名称',
+      label: fieldLabels.apkName,
       key: 'apkName',
       requiredType: 'input' as any,
     },
     {
-      label: '应用包名',
+      label: fieldLabels.apkCode,
       key: 'apkCode',
       requiredText: '应用包名不能为空',
       render: () => <Input disabled />
     },
     {
-      label: '应用版本',
+      label: fieldLabels.versionName,
       key: 'versionName',
       requiredText: '应用版本不能为空',
       render: () => <Input disabled />
     },
     {
-      label: '内部版本',
+      label: fieldLabels.versionCode,
       key: 'versionCode',
       requiredText: '内部版本不能为空',
       render: () => <Input disabled />
     },
     {
-      label: '应用图标',
+      label: fieldLabels.appIcon,
       key: 'appIcon',
       requiredText: '应用图标不能为空',
       render: renderIcon
     },
     {
-      label: '所属机构',
+      label: fieldLabels.deptId,
       key: 'deptId',
       requiredText: '所属机构不能为空',
       render: () => <Input disabled />
     },
     {
       ...getCustomSelectFromItemData({
-        label: '所属组别',
+        label: fieldLabels.groupId,
         key: 'groupId',
         list: terminalGroupList,
         valueKey: 'id',
@@ -309,7 +329,7 @@ export default function Page() {
     },
     {
       ...getCustomSelectFromItemData({
-        label: '应用类别',
+        label: fieldLabels.typeId,
         key: 'typeId',
         list: appTypeList,
         valueKey: 'id',
@@ -319,7 +339,7 @@ export default function Page() {
     },
     {
       ...getCustomSelectFromItemData({
-        label: '终端厂商',
+        label: fieldLabels.firmId,
         key: 'firmId',
         value: terminalFirmValue,
         onChange: (value: any) => {
@@ -335,7 +355,7 @@ export default function Page() {
       })
     },
     {
-      label: '终端型号',
+      label: fieldLabels.terminalTypes,
       key: 'terminalTypes',
       requiredType: 'select',
       render: () =>
@@ -347,7 +367,7 @@ export default function Page() {
         />,
     },
     {
-      label: '关键词',
+      label: fieldLabels.keyWord,
       key: 'keyWord',
       requiredType: 'input' as any,
       ...customFormLayout,
@@ -360,19 +380,19 @@ export default function Page() {
         </Row>
     },
     {
-      label: '版本更新说明',
+      label: fieldLabels.versionDescription,
       key: 'versionDescription',
       requiredType: 'input' as any,
       render: () => <TextArea />
     },
     {
-      label: '应用简介',
+      label: fieldLabels.apkDescription,
       key: 'apkDescription',
       requiredType: 'input' as any,
       render: () => <TextArea />
     },
     {
-      label: '应用截图',
+      label: fieldLabels.picPaths,
       key: 'picPaths',
       requiredText: '请上传3-5张截图',
       ...customFormLayout,
@@ -446,6 +466,7 @@ export default function Page() {
       }
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
+      setError(errorInfo.errorFields);
     }
   }
 
@@ -461,7 +482,7 @@ export default function Page() {
           <Form.Item {...ButtonLayout} >
             <Button type="primary" onClick={onSubmit}>
               保存
-        </Button>
+            </Button>
           </Form.Item>
         </Form>
         <Modal
@@ -473,6 +494,12 @@ export default function Page() {
           <img alt="example" style={{ width: '100%' }} src={previewImage} />
         </Modal>
       </div>
+      <FixedFoot errors={error} fieldLabels={fieldLabels}>
+        <Button type="primary" loading={loading} onClick={onSubmit}>
+          发布
+        </Button>
+        <Button onClick={() => history.goBack()}>返回</Button>
+      </FixedFoot>
     </Spin>
 
   )

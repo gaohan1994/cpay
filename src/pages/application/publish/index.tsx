@@ -7,7 +7,7 @@
  * @todo 应用发布列表页面
  */
 import React, { useState, useEffect } from 'react';
-import { Form, Table, Row, Popconfirm, notification, Divider, Tag, Spin } from 'antd';
+import { Form, Table, Row, Popconfirm, notification, Divider, Tag, Spin, Modal } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { getAppTypeList, appPublishList, appShelve } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
@@ -21,6 +21,7 @@ import { terminalGroupListByDept } from '@/pages/terminal/message/constants/api'
 import { IAppType } from '../types';
 import { RESPONSE_CODE } from '@/common/config';
 import { getAppStatusColor } from '../common/util';
+import invariant from 'invariant';
 
 type Props = {};
 
@@ -94,15 +95,22 @@ function Page(props: Props) {
    * @param item 
    */
   const onUnshelveItem = async (item: any) => {
-    setLoading(true);
-    const res = await appShelve({ appId: item.id, isOnShelves: false });
-    setLoading(false);
-    if (res && res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '应用已下架' });
-      submit();
-    } else {
-      notification.warn({ message: res.msg || '下架应用失败' });
-    }
+    Modal.confirm({
+      title: '提示',
+      content: `确认要下架当前应用吗?`,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const result = await appShelve({ appId: item.id, isOnShelves: false });
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '下架应用失败，请重试');
+          notification.success({ message: '下架应用成功!' });
+          submit();
+        } catch (error) {
+          notification.warn({ message: error.message });
+        }
+      },
+    });
   }
 
   /**
@@ -117,7 +125,7 @@ function Page(props: Props) {
     {
       title: '操作',
       render: (key, item) => (
-        <Row style={{ alignItems: 'center' }}>
+        <div>
           <a onClick={() => onDetail(item)}>详情</a>
           {
             (item.status === 2 || item.status === 5) && (
@@ -131,21 +139,15 @@ function Page(props: Props) {
             item.status === 4 && (
               <>
                 <Divider type="vertical" />
-                <Popconfirm
-                  title="是否确认下架？"
-                  onConfirm={() => onUnshelveItem(item)}
-                  okText="是"
-                  cancelText="否"
-                >
-                  <a href="#">下架</a>
-                </Popconfirm>
+                <a onClick={() => onUnshelveItem(item)}>下架</a>
               </>
             )
           }
-        </Row>
+        </div>
       ),
       fixed: 'left',
-      width: 100,
+      align: 'center',
+      width: 140,
     },
     {
       title: '应用名称',
@@ -174,6 +176,7 @@ function Page(props: Props) {
     {
       title: '应用包名',
       dataIndex: 'apkCode',
+      width: 200,
     },
     {
       title: '应用版本',
@@ -203,6 +206,7 @@ function Page(props: Props) {
     {
       title: '发布时间',
       dataIndex: 'updateTime',
+      width: 200,
     },
   ]);
 
@@ -272,7 +276,7 @@ function Page(props: Props) {
           reset,
         }}
       />
-      <Table rowKey="id" columns={columns}  {...tableProps} scroll={{ x: 2200 }} />
+      <Table rowKey="id" columns={columns}  {...tableProps} scroll={{ x: 1400 }} />
     </Spin>
   );
 }

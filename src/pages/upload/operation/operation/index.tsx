@@ -7,7 +7,7 @@
  * @todo 执行情况查询
  */
 import React, { useState } from 'react';
-import { Form, Table, notification } from 'antd';
+import { Form, Table, notification, Modal } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { formatListResult, formatSearch } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -16,15 +16,16 @@ import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
 import { SyncOutlined, PauseOutlined, CaretRightOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useRedux } from '@/common/redux-util';
-import { RESPONSE_CODE, BASIC_CONFIG, getDownloadPath } from '@/common/config';
+import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
 import { taskOperationTaskList, taskOperationTaskExport, taskOperationTaskReset, taskOperationTaskPause } from '../../constants/api';
 import { useHistory } from 'react-router-dom';
+import invariant from 'invariant';
 
 type Props = {};
 
 function Page(props: Props) {
   // 请求dept数据
-  useStore(['task_job_status', 'terminal_operator_command']);
+  useStore(['operator_task_status', 'terminal_operator_command']);
   const [useSelector, dispatch] = useRedux();
   const history = useHistory();
   const { search: historySearch } = history.location;
@@ -34,7 +35,7 @@ function Page(props: Props) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);  // 选中的列的key值列表
   const [selectedRows, setSelectedRows] = useState([] as any[]);
 
-  const { tableProps, search }: any = useAntdTable(
+  const { tableProps, search, params: fetchParams }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) =>
       taskOperationTaskList({ jobId: field.id, pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
     {
@@ -55,7 +56,7 @@ function Page(props: Props) {
     {
       title: '任务状态',
       dataIndex: 'status',
-      dictType: 'task_job_status',
+      dictType: 'operator_task_status',
     },
     {
       title: '操作指令',
@@ -92,7 +93,7 @@ function Page(props: Props) {
     {
       formName: ['status'],
       formType: FormItmeType.SelectCommon,
-      dictList: ['task_job_status'],
+      dictList: ['operator_task_status'],
     },
   ];
 
@@ -136,19 +137,32 @@ function Page(props: Props) {
     }
   }
 
+  /**
+   * @todo 导出
+   */
   const onLogOut = async () => {
-    const param = {
-      jobId: field.id
-    }
-    const res = await taskOperationTaskExport(param);
-    if (res && res.code === RESPONSE_CODE.success) {
-      if (res.data) {
-        const href = getDownloadPath(res.data);
-        window.open(href, '_blank');
-      }
-    } else {
-      notification.error({ message: res && res.msg || '导出失败，请重试' });
-    }
+    Modal.confirm({
+      title: '提示',
+      content: `确认导出远程运维-执行情况信息?`,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          const param = {
+            jobId: field.id,
+            ...fetchParams[1]
+          }
+          const result = await taskOperationTaskExport(param);
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '导出失败，请重试');
+          if (result.data) {
+            const href = getDownloadPath(result.data);
+            window.open(href, '_blank');
+          }
+        } catch (error) {
+          notification.warn({ message: error.message });
+        }
+      },
+    });
   }
 
   const extraButtons = [

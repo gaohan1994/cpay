@@ -24,7 +24,7 @@ type Props = {};
 
 function Page(props: Props) {
   // 请求dept数据
-  useStore(['log_upload_status']);
+  useStore(['log_task_status']);
   const history = useHistory();
   const id = useQueryParam('id');
 
@@ -53,7 +53,7 @@ function Page(props: Props) {
     {
       title: '状态',
       dataIndex: 'status',
-      dictType: 'log_upload_status'
+      dictType: 'log_task_status'
     },
     {
       title: '提取开始时间',
@@ -85,7 +85,7 @@ function Page(props: Props) {
     {
       formName: ['status'],
       formType: FormItmeType.SelectCommon,
-      dictList: ['log_upload_status'],
+      dictList: ['log_task_status'],
     },
   ];
 
@@ -104,6 +104,8 @@ function Page(props: Props) {
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '重置任务成功' });
       submit();
+      setSelectedRowKeys([]);
+      setSelectedRows([]);
     } else {
       notification.error({ message: res && res.msg || '重置任务失败，请重试' });
     }
@@ -124,6 +126,8 @@ function Page(props: Props) {
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '取消任务成功' });
       submit();
+      setSelectedRowKeys([]);
+      setSelectedRows([]);
     } else {
       notification.error({ message: res && res.msg || '取消任务失败，请重试' });
     }
@@ -144,7 +148,7 @@ function Page(props: Props) {
     if (selectedRows[0].logPath) {
       window.location.href = selectedRows[0].logPath;
     } else {
-      notification.error({ message: "没有日志下载地址" });
+      notification.error({ message: "文件还未上传成功！" });
     }
   }
 

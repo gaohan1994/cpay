@@ -36,7 +36,7 @@ export default function FooterToolbar(props: any) {
   };
 
   return (
-    <div className={`toolbar ${className}`} {...restProps} style={{ width: width }}>
+    <div className={`toolbar ${className || ''}`} {...restProps} style={{ width: width, borderLeft: '1px solid #f0f0f0' }}>
       <div className={'left'}>{extra}</div>
       <div className={'right'}>{children}</div>
     </div>
