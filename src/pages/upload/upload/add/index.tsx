@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 14:37:54 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-03 18:02:24
+ * @Last Modified time: 2020-09-07 15:34:35
  * 
  * @todo 软件更新新增页面
  */
@@ -22,12 +22,12 @@ import { CustomRadioGroup } from '@/component/radio-group';
 import moment from 'moment';
 import { renderTreeSelect } from '@/component/form/render';
 import { FormItmeType } from '@/component/form/type';
-import { FormTusns } from '../../component/from-tusns';
-import { TableTusns } from '../../component/table.tusns';
+import { FormTusns } from '../../component/form-tusns';
 import numeral from 'numeral';
 import { RESPONSE_CODE } from '@/common/config';
 import { useHistory } from 'react-router-dom';
 import FixedFoot, { ErrorField } from '@/component/fixed-foot';
+import { FormTusnsFailed } from '../../component/form-tusns-failed';
 
 const fieldLabels = {
   jobName: '任务名称',
@@ -49,6 +49,7 @@ const fieldLabels = {
   activateType: '升级范围',
   groupIds: '终端组别',
   tusns: '终端集合',
+  fialedTusns: '导入失败集合',
 }
 
 
@@ -70,8 +71,8 @@ export default function Page() {
 
   const [softInfoFormsNum, setSoftInfoFormsNum] = useState(1);
   const [validDateShow, setValidDateShow] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
   const [tusnsOptions, setTusnsOptions] = useState([]);
+  const [failedTusnsOptions, setFailedTusnsOptions] = useState([]);
   const [groupFilterTypeValue, setGroupFilterTypeValue] = useState(0);
   const [loading, setLoading] = useState(false);
   const [dictLoading, setDictLoading] = useState(true);
@@ -79,6 +80,7 @@ export default function Page() {
   const activateTypesRef: any = useRef();
   const groupIdsRef: any = useRef();
   const [terminalTypes, setTerminalTypes] = useState([] as any[]);
+  const [activeTypes, setActiveTypes] = useState([] as any[]);
   const [groupIdsInit, setGroupIdsInit] = useState(false);
   const [error, setError] = useState<ErrorField[]>([]);
 
@@ -97,6 +99,7 @@ export default function Page() {
     unionpayConnectionList,
     cupConnModeValue, setCupConnModeValue,
     bussTypeList,
+    bussTypeValue, setBussTypeValue,
     dccSupFlagList,
     dccSupFlagValue, setDccSupFlagValue,
     releaseTypeList,
@@ -106,7 +109,8 @@ export default function Page() {
     terminalGroupList,
     activateTypeList,
     isGroupUpdateList,
-    zzFlagList
+    zzFlagList,
+    zzFlagValue, setZzFlagValue
   } = useFormSelectData(form.getFieldsValue());
 
   useEffect(() => {
@@ -142,9 +146,6 @@ export default function Page() {
     if (dictLoading) {
       return;
     }
-    if (detail.tusnList) {
-      setTusnsOptions(detail.tusnList);
-    }
     if (detail.downloadJobOutput) {
       const downloadJobOutput = detail.downloadJobOutput;
       form.setFieldsValue({
@@ -155,6 +156,10 @@ export default function Page() {
         isGroupUpdate: `${downloadJobOutput.isGroupUpdate}`,
         activateType: `${downloadJobOutput.activateType}`,
       });
+      setBussTypeValue(downloadJobOutput.bussType);
+      setCupConnModeValue(`${downloadJobOutput.cupConnMode}`);
+      setDccSupFlagValue(`${downloadJobOutput.dccSupFlag}`);
+      setZzFlagValue(downloadJobOutput.zzFlag);
       setGroupFilterTypeValue(downloadJobOutput.isGroupUpdate);
       setReleaseTypeValue(`${downloadJobOutput.releaseType}`);
       setTerminalFirmValue(downloadJobOutput.firmId);
@@ -192,7 +197,15 @@ export default function Page() {
           setSoftInfoFormsNum(0);
         }
       }, 100);
-
+    }
+    if (detail.tusnList) {
+      // 在修改操作时：使用setTimeout是为了保证终端集合是在所有表单设置完以后再执行，
+      // 由于获取终端信息是要根据（厂商、终端型号等参数），在终端集合组件
+      // 中监听了这些参数的变化，当参数发生改变时把终端集合置空，如果不在
+      // 所有表单设置完成后置空终端集合，会导致终端集合设置以后又被置空
+      setTimeout(() => {
+        setTusnsOptions(detail.tusnList);
+      }, 0)
     }
   }, [detail, dictLoading]);
 
@@ -256,7 +269,10 @@ export default function Page() {
           ref={activateTypesRef}
           list={activateTypesList}
           valueKey={'dictValue'} nameKey={'dictLabel'}
-          setForm={(value: any[]) => { form.setFieldsValue({ 'activateTypes': value }) }}
+          setForm={(value: any[]) => {
+            form.setFieldsValue({ 'activateTypes': value });
+            setActiveTypes(value);
+          }}
         />
     },
     {
@@ -266,7 +282,7 @@ export default function Page() {
         list: unionpayConnectionList,
         valueKey: 'dictValue',
         nameKey: 'dictLabel',
-        value: setCupConnModeValue,
+        value: cupConnModeValue,
         onChange: (id: any) => {
           setCupConnModeValue(id);
           resetSoftInfo();
@@ -280,6 +296,7 @@ export default function Page() {
         list: bussTypeList,
         valueKey: 'dictValue',
         nameKey: 'dictLabel',
+        setValue: setBussTypeValue,
       })
     },
     {
@@ -304,7 +321,8 @@ export default function Page() {
         list: zzFlagList,
         valueKey: 'dictValue',
         nameKey: 'dictLabel',
-        required: true
+        required: true,
+        setValue: setZzFlagValue
       })
     },
   ]
@@ -466,23 +484,6 @@ export default function Page() {
   }
 
   /**
-   * @todo 新增终端操作
-   */
-  const onAddTerminals = () => {
-    if (terminalFirmValue.length === 0) {
-      message.error('请选择终端厂商');
-      return;
-    }
-    const termianlModels = form.getFieldValue('terminalTypes');
-    if (!termianlModels || termianlModels && termianlModels.length === 0) {
-      message.error('请选择终端型号');
-      return;
-    }
-
-    setModalVisible(true)
-  }
-
-  /**
    * @todo 获取发布类型表单按条件查询方式表单项
    */
   const getReleaseTypeFormsByCondition = (): CustomFromItem[] => {
@@ -493,7 +494,29 @@ export default function Page() {
           key: 'tusns',
           itemSingleCol: true,
           requiredType: 'select',
-          render: () => <FormTusns options={tusnsOptions} setOptions={setTusnsOptions} onAddTerminals={onAddTerminals} />
+          render: () =>
+            <FormTusns
+              options={tusnsOptions}
+              setOptions={setTusnsOptions}
+              setFailedOptions={setFailedTusnsOptions}
+              fetchParam={{
+                firmId: terminalFirmValue,
+                terminalTypeCodes: terminalTypes,
+                activeTypes: activeTypes,
+                cupConnMode: cupConnModeValue,
+                bussType: bussTypeValue,
+                dccSupFlag: dccSupFlagValue,
+                zzFlag: zzFlagValue
+              }}
+            />
+        },
+        {
+          label: fieldLabels.fialedTusns,
+          key: 'fialedTusns',
+          itemSingleCol: true,
+          show: failedTusnsOptions.length > 0,
+          render: () =>
+            <FormTusnsFailed options={failedTusnsOptions} />
         }
       ]
     }
@@ -637,16 +660,6 @@ export default function Page() {
         </Button>
         </Form.Item> */}
       </Form>
-      <TableTusns
-        visible={modalVisible}
-        hideModal={() => setModalVisible(false)}
-        fetchParam={{
-          firmId: terminalFirmValue,
-          terminalTypeIds: form.getFieldValue('terminalTypes'),
-        }}
-        setOptions={setTusnsOptions}
-        options={tusnsOptions}
-      />
       <FixedFoot errors={error} fieldLabels={fieldLabels}>
         <Button type="primary" loading={loading} onClick={onSubmit}>
           提交

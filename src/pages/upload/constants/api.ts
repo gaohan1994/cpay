@@ -130,6 +130,12 @@ export const taskUploadJobPublish = (id: number) =>
   ApiRequest.post(`/cpay-admin/task/uploadJob/publish/${id}`, {});
 
 /**
+ * @todo 导入终端信息
+ */
+export const taskUploadJobImportData = (param: any) =>
+  ApiRequest.postFormData(`/cpay-admin/task/uploadJob/importData`, param);
+
+/**
  * @todo 查询终端上传任务列表(日志提取)
  * @param params 
  */

@@ -20,6 +20,7 @@ export function useFormSelectData(props: any, form: FormInstance) {
   const { terminalFirmList, setTerminalFirmList } = useTerminalFirmList();
   const [terminalFirmValue, setTerminalFirmValue] = useState('');
   const { terminalTypeList, setTerminalTypeList } = useTerminalTypeList(firmId || -1);
+  const [terminalTypeValue, setTerminalTypeValue] = useState('');
   const [logUploadTypeList, setLogUploadTypeList] = useState([] as DictDetailItem[]);
   const [logUploadTypeValue, setLogUploadTypeValue] = useState('');
 
@@ -47,6 +48,7 @@ export function useFormSelectData(props: any, form: FormInstance) {
     terminalFirmList, setTerminalFirmList,
     terminalFirmValue, setTerminalFirmValue,
     terminalTypeList, setTerminalTypeList,
+    terminalTypeValue, setTerminalTypeValue,
     logUploadTypeList, setLogUploadTypeList,
     logUploadTypeValue, setLogUploadTypeValue
   };

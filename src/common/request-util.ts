@@ -108,7 +108,7 @@ export const formatListWithKey = (result: any): any[] => {
  * @class ApiRequest
  */
 class ApiRequest {
-  baseOptions(params: any, method: string = 'GET'): Promise<any> {
+  baseOptions(params: any, method: string = 'GET', hasHeader?: boolean): Promise<any> {
     let { url, data } = params;
     let contentType =
       url === '/cpay-admin/login' || method === 'POST'
@@ -124,6 +124,9 @@ class ApiRequest {
       credentials: 'include',
       ...(method === 'POST' ? { body: data } : {}),
     };
+    if (hasHeader === false) {
+      delete option.headers
+    }
     console.log('option', option);
     return fetch(`${BASE_URL}${url}`, option)
       .then((res) => res.json())
@@ -145,6 +148,14 @@ class ApiRequest {
       data: jsonToQueryString(data).replace('?', ''),
     };
     return this.baseOptions(params, 'POST');
+  }
+
+  postFormData(url: string, data: any) {
+    let params = {
+      url,
+      data: data,
+    };
+    return this.baseOptions(params, 'POST', false);
   }
 
   put(url: string, data: string = '') {

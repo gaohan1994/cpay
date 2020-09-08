@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 14:13:13 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 14:13:40
+ * @Last Modified time: 2020-09-07 14:40:50
  * 
  * @todo 远程运维新增获取表单选择数据列表
  */
@@ -22,6 +22,7 @@ export function useFormSelectData(props: any, form: FormInstance) {
   const { terminalFirmList, setTerminalFirmList } = useTerminalFirmList();
   const [terminalFirmValue, setTerminalFirmValue] = useState('');
   const { terminalTypeList, setTerminalTypeList } = useTerminalTypeList(firmId || -1);
+  const [terminalTypeValue, setTerminalTypeValue] = useState('');
   const [releaseTypeList, setReleaseTypeList] = useState([] as DictDetailItem[]);
   const [releaseTypeValue, setReleaseTypeValue] = useState('');
   const [deptTreeData, setDeptTreeData] = useState([] as any);
@@ -61,6 +62,7 @@ export function useFormSelectData(props: any, form: FormInstance) {
     terminalFirmList, setTerminalFirmList,
     terminalFirmValue, setTerminalFirmValue,
     terminalTypeList, setTerminalTypeList,
+    terminalTypeValue, setTerminalTypeValue,
     releaseTypeList, setReleaseTypeList,
     releaseTypeValue, setReleaseTypeValue,
     deptTreeData, setDeptTreeData,

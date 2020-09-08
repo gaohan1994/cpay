@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 13:37:29 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-03 17:37:32
+ * @Last Modified time: 2020-09-07 14:39:10
  * 
  * @todo 提取日志新增页面
  */
@@ -11,11 +11,10 @@ import { Spin, Form, Button, DatePicker, message, notification, Row, Col, Input,
 import { useStore } from '@/pages/common/costom-hooks';
 import { useFormSelectData } from './costom-hooks';
 import { useForm } from 'antd/lib/form/Form';
-import { CustomFormItems, ButtonLayout, getCustomSelectFromItemData } from '@/component/custom-form';
-import { TableTusns } from '../../component/table.tusns';
+import { CustomFormItems, getCustomSelectFromItemData } from '@/component/custom-form';
 import { CustomFromItem } from '@/common/type';
 import moment from 'moment';
-import { FormTusns } from '../../component/from-tusns';
+import { FormTusns } from '../../component/form-tusns';
 import { useQueryParam, formatListResult } from '@/common/request-util';
 import { useDetail } from '@/pages/common/costom-hooks/use-detail';
 import { taskUploadJobDetail, taskUploadJobEdit, taskUploadJobAdd, taskLogSetList } from '../../constants/api';
@@ -25,6 +24,7 @@ import { useHistory } from 'react-router-dom';
 import { createTableColumns } from '@/component/table';
 import { useAntdTable } from 'ahooks';
 import FixedFoot, { ErrorField } from '@/component/fixed-foot/index';
+import { FormTusnsFailed } from '../../component/form-tusns-failed';
 
 const customFormLayout = {
   labelCol: {
@@ -46,7 +46,8 @@ const fieldLabels = {
   validEndTime: '有效截止日期',
   logBeginTime: '日志起始日期',
   logEndTime: '日志结束日期',
-  tusns: '终端集合'
+  tusns: '终端集合',
+  fialedTusns: '导入失败集合',
 }
 
 export default function Page() {
@@ -55,8 +56,8 @@ export default function Page() {
   const [form] = useForm();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
   const [tusnsOptions, setTusnsOptions] = useState([]);
+  const [failedTusnsOptions, setFailedTusnsOptions] = useState([]);
   const [selectedRow, setSelectedRow] = useState([] as any[]);
   const [codeVisible, setCodeVisible] = useState(false);
   const [appCode, setAppCode] = useState('');
@@ -66,6 +67,7 @@ export default function Page() {
     terminalFirmList,
     terminalFirmValue, setTerminalFirmValue,
     terminalTypeList,
+    terminalTypeValue, setTerminalTypeValue,
     logUploadTypeList,
     logUploadTypeValue, setLogUploadTypeValue
   } = useFormSelectData({ ...form.getFieldsValue() }, form);
@@ -106,6 +108,7 @@ export default function Page() {
       setLogUploadTypeValue(`${detail.type}`);
     }
     setTerminalFirmValue(detail.firmId);
+    setTerminalTypeValue(detail.terminalType);
     setAppCode(detail.appCode);
     if (detail.logBeginTime) {
       form.setFieldsValue({ logBeginTime: moment(detail.logBeginTime) });
@@ -120,26 +123,15 @@ export default function Page() {
       form.setFieldsValue({ validEndTime: moment(detail.validEndTime) });
     }
     if (detail.tusns) {
-      setTusnsOptions(detail.tusns.split(','))
+      // 在修改操作时：使用setTimeout是为了保证终端集合是在所有表单设置完以后再执行，
+      // 由于获取终端信息是要根据（厂商、终端型号等参数），在终端集合组件
+      // 中监听了这些参数的变化，当参数发生改变时把终端集合置空，如果不在
+      // 所有表单设置完成后置空终端集合，会导致终端集合设置以后又被置空
+      setTimeout(() => {
+        setTusnsOptions(detail.tusns.split(','))
+      });
     }
   }, [detail]);
-
-  /**
-   * @todo 新增终端操作
-   */
-  const onAddTerminals = () => {
-    if (!terminalFirmValue || terminalFirmValue.length === 0) {
-      message.error('请选择终端厂商');
-      return;
-    }
-    const terminalType = form.getFieldValue('terminalType');
-    if (!terminalType || terminalType && terminalType.length === 0) {
-      message.error('请选择终端型号');
-      return;
-    }
-
-    setModalVisible(true)
-  }
 
   /**
    * @todo 表单数据
@@ -205,6 +197,8 @@ export default function Page() {
         valueKey: 'typeCode',
         nameKey: 'typeName',
         required: true,
+        value: terminalTypeValue,
+        setValue: setTerminalTypeValue
       })
     },
     {
@@ -235,7 +229,20 @@ export default function Page() {
       label: fieldLabels.tusns,
       key: 'tusns',
       requiredType: 'select',
-      render: () => <FormTusns options={tusnsOptions} setOptions={setTusnsOptions} onAddTerminals={onAddTerminals} />
+      render: () =>
+        <FormTusns
+          options={tusnsOptions}
+          setOptions={setTusnsOptions}
+          fetchParam={{ firmId: terminalFirmValue, terminalTypeCodes: terminalTypeValue }}
+          setFailedOptions={setFailedTusnsOptions}
+        />
+    },
+    {
+      label: fieldLabels.fialedTusns,
+      key: 'fialedTusns',
+      show: failedTusnsOptions.length > 0,
+      render: () =>
+        <FormTusnsFailed options={failedTusnsOptions} />
     }
   ]
 
@@ -395,7 +402,7 @@ export default function Page() {
   };
 
   return (
-    <Spin spinning={loading} style={{ paddingBottom: 80  }}>
+    <Spin spinning={loading} style={{ paddingBottom: 80 }}>
       <div style={{ paddingTop: 10 }}>
         <Form
           form={form}
@@ -409,13 +416,6 @@ export default function Page() {
           </Button>
           </Form.Item> */}
         </Form>
-        <TableTusns
-          visible={modalVisible}
-          hideModal={() => setModalVisible(false)}
-          fetchParam={{ firmId: terminalFirmValue, terminalTypeCodes: form.getFieldValue('terminalType') }}
-          setOptions={setTusnsOptions}
-          options={tusnsOptions}
-        />
       </div>
       <Modal
         title={"应用包名选择"}

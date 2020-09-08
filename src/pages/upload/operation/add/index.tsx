@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 14:13:46 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-03 17:53:27
+ * @Last Modified time: 2020-09-07 14:44:13
  * 
  * @todo 远程运维新增页面
  */
@@ -17,8 +17,7 @@ import { renderTreeSelect } from '@/component/form/render';
 import { FormItmeType } from '@/component/form/type';
 import { CustomRadioGroup } from '@/component/radio-group';
 import { CustomCheckGroup } from '@/component/checkbox-group';
-import { FormTusns } from '../../component/from-tusns';
-import { TableTusns } from '../../component/table.tusns';
+import { FormTusns } from '../../component/form-tusns';
 import { taskOperationJobAdd, taskOperationJobDetail, taskOperationJobEdit } from '../../constants/api';
 import { useQueryParam } from '@/common/request-util';
 import { RESPONSE_CODE } from '@/common/config';
@@ -27,6 +26,7 @@ import { useDetail } from '@/pages/common/costom-hooks/use-detail';
 import { merge } from 'lodash';
 import numeral from 'numeral';
 import FixedFoot, { ErrorField } from '@/component/fixed-foot';
+import { FormTusnsFailed } from '../../component/form-tusns-failed';
 
 const fieldLabels = {
   jobName: '任务名称',
@@ -36,7 +36,8 @@ const fieldLabels = {
   releaseType: '发布类型',
   deptId: '机构名称',
   isGroupUpdate: '组别过滤方式',
-  groupIds: '终端组别'
+  groupIds: '终端组别',
+  fialedTusns: '导入失败集合',
 }
 
 export default function Page() {
@@ -47,8 +48,8 @@ export default function Page() {
   const history = useHistory();
   const res = useStore(['terminal_operator_command', 'release_type', 'is_group_update']);
   const [loading, setLoading] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
   const [tusnsOptions, setTusnsOptions] = useState([]);
+  const [failedTusnsOptions, setFailedTusnsOptions] = useState([]);
   const [groupFilterTypeValue, setGroupFilterTypeValue] = useState('0');
   const [error, setError] = useState<ErrorField[]>([]);
 
@@ -57,6 +58,7 @@ export default function Page() {
     terminalFirmList,
     terminalFirmValue, setTerminalFirmValue,
     terminalTypeList,
+    terminalTypeValue, setTerminalTypeValue,
     releaseTypeList,
     releaseTypeValue, setReleaseTypeValue,
     deptTreeData,
@@ -80,6 +82,9 @@ export default function Page() {
   useEffect(() => {
     if (!res.loading) {
       form.setFieldsValue(initialValues);
+      if (typeof detail.terminalTypeId === 'number') {
+        setTerminalTypeValue(detail.terminalTypeId);
+      }
       if (typeof detail.deptId === 'number') {
         setDeptId(detail.deptId);
       }
@@ -88,7 +93,13 @@ export default function Page() {
         form.setFieldsValue({ releaseType: `${detail.releaseType}` });
       }
       if (detail.tusns) {
-        setTusnsOptions(detail.tusns.split(';'))
+        // 在修改操作时：使用setTimeout是为了保证终端集合是在所有表单设置完以后再执行，
+        // 由于获取终端信息是要根据（厂商、终端型号等参数），在终端集合组件
+        // 中监听了这些参数的变化，当参数发生改变时把终端集合置空，如果不在
+        // 所有表单设置完成后置空终端集合，会导致终端集合设置以后又被置空
+        setTimeout(() => {
+          setTusnsOptions(detail.tusns.split(';'));
+        }, 0)
       }
       form.setFieldsValue({ isGroupUpdate: `${detail.isGroupUpdate}` });
       setGroupFilterTypeValue(`${detail.isGroupUpdate}`);
@@ -151,6 +162,8 @@ export default function Page() {
         valueKey: 'id',
         nameKey: 'typeName',
         required: true,
+        value: terminalTypeValue,
+        setValue: setTerminalTypeValue,
       })
     },
     {
@@ -224,23 +237,6 @@ export default function Page() {
   }
 
   /**
-   * @todo 新增终端操作
-   */
-  const onAddTerminals = () => {
-    if (terminalFirmValue.length === 0) {
-      message.error('请选择终端厂商');
-      return;
-    }
-    const terminalTypeId = form.getFieldValue('terminalTypeId');
-    if (!terminalTypeId || terminalTypeId && terminalTypeId.length === 0) {
-      message.error('请选择终端型号');
-      return;
-    }
-
-    setModalVisible(true)
-  }
-
-  /**
    * @todo 获取发布类型表单按条件查询方式表单项
    */
   const getReleaseTypeFormsByCondition = (): CustomFromItem[] => {
@@ -250,7 +246,23 @@ export default function Page() {
           label: '终端集合',
           key: 'tusns',
           requiredType: 'select',
-          render: () => <FormTusns options={tusnsOptions} setOptions={setTusnsOptions} onAddTerminals={onAddTerminals} />
+          render: () =>
+            <FormTusns
+              options={tusnsOptions}
+              setOptions={setTusnsOptions}
+              fetchParam={{
+                firmId: terminalFirmValue,
+                terminalTypeId: terminalTypeValue
+              }}
+              setFailedOptions={setFailedTusnsOptions}
+            />
+        },
+        {
+          label: fieldLabels.fialedTusns,
+          key: 'fialedTusns',
+          show: failedTusnsOptions.length > 0,
+          render: () =>
+            <FormTusnsFailed options={failedTusnsOptions} />
         }
       ]
     }
@@ -314,13 +326,6 @@ export default function Page() {
            </Button>
           </Form.Item> */}
         </Form>
-        <TableTusns
-          visible={modalVisible}
-          hideModal={() => setModalVisible(false)}
-          fetchParam={{ firmId: terminalFirmValue, terminalTypeIds: form.getFieldValue('terminalTypeId') }}
-          setOptions={setTusnsOptions}
-          options={tusnsOptions}
-        />
       </div>
       <FixedFoot errors={error} fieldLabels={fieldLabels}>
         <Button type="primary" loading={loading} onClick={onSubmit}>

@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-11 17:48:19 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-21 10:03:36
+ * @Last Modified time: 2020-09-07 13:53:13
  * 
  * @todo 上传apk用到的组件
  */
@@ -17,6 +17,7 @@ type Props = {
   renderRequire?: () => any;
   renderButton?: () => any;
   fileType?: { type: string, message: string };
+  setFile?: any;
 }
 
 function SelectUpload(props: Props) {
@@ -77,6 +78,7 @@ function SelectUpload(props: Props) {
       }
     }
     setFile(file);
+    props.setFile(file);
     return false;
   }
 

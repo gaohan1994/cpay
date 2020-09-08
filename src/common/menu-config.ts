@@ -12,6 +12,7 @@ import TerminalRoute, { TerminalMenu } from '@/pages/terminal/route';
 import ApplicationRoute, { ApplicationMenu } from '@/pages/application/route';
 import UploadRoute, { UploadMenu } from '@/pages/upload/route';
 import MotionRoute, { MotionMenu } from '@/pages/motion/route';
+import ReportRoute, { ReportMenu } from '@/pages/report/route';
 import AdvertisementRoute, {
   AdvertisementMenu,
 } from '@/pages/advertisement/route';
@@ -60,6 +61,10 @@ const menuConfig: ILayoutSiderMenu[] = [
     subMenus: formartRouteToMenu(MotionRoute),
     icon: FundViewOutlined,
   },
+  {
+    ...ReportMenu,
+    subMenus: formartRouteToMenu(ReportRoute),
+  }
 ];
 
 export { menuConfig };

@@ -21,14 +21,16 @@ export const CustomRadioGroup = React.forwardRef((props: Props, ref) => {
   }), []);
 
   useEffect(() => {
-    if (list.length > 0) {
+    if (list.length > 0 && !valueProps) {
       setValue(list[0][valueKey]);
+    } else {
+      setValue(valueProps);
     }
-  }, [list]);
+  }, [list, valueProps]);
 
-  useEffect(() => {
-    setValue(valueProps);
-  }, [valueProps])
+  // useEffect(() => {
+  //   setValue(valueProps);
+  // }, [valueProps]);
 
   useEffect(() => {
     if (setForm && !Array.isArray(value)) {

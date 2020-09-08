@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 14:37:18 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 14:37:45
+ * @Last Modified time: 2020-09-07 15:13:07
  * 
  * @todo 软件更新新增获取表单选择数据列表
  */
@@ -19,12 +19,14 @@ export function useFormSelectData(props: any) {
   const { terminalFirmList, setTerminalFirmList } = useTerminalFirmList();
   const [terminalFirmValue, setTerminalFirmValue] = useState('');
   const { terminalTypeList, setTerminalTypeList } = useTerminalTypeList(firmId || -1);
+  const [terminalTypeValue, setTerminalTypeValue] = useState('');
   const [activateTypesList, setActivateTypesList] = useState([] as DictDetailItem[]);
   const [unionpayConnectionList, setUnionpayConnectionList] = useState([] as DictDetailItem[]);
   const [cupConnModeValue, setCupConnModeValue] = useState('');
   const [dccSupFlagList, setDccSupFlagList] = useState([] as DictDetailItem[]);
   const [dccSupFlagValue, setDccSupFlagValue] = useState('');
   const [bussTypeList, setBussTypeList] = useState([] as DictDetailItem[]);
+  const [bussTypeValue, setBussTypeValue] = useState('');
   const [releaseTypeList, setReleaseTypeList] = useState([] as DictDetailItem[]);
   const [releaseTypeValue, setReleaseTypeValue] = useState('');
   const [deptTreeData, setDeptTreeData] = useState([] as any);
@@ -33,6 +35,7 @@ export function useFormSelectData(props: any) {
   const [activateTypeList, setActivateTypeList] = useState([] as DictDetailItem[]);
   const [isGroupUpdateList, setIsGroupUpdateList] = useState([] as DictDetailItem[]);
   const [zzFlagList, setZzFlagList] = useState([] as DictDetailItem[]);
+  const [zzFlagValue, setZzFlagValue] = useState('');
 
   useEffect(() => {
     setActivateTypesList(state.terminal_type && state.terminal_type.data || []);
@@ -53,10 +56,12 @@ export function useFormSelectData(props: any) {
     terminalFirmList, setTerminalFirmList,
     terminalFirmValue, setTerminalFirmValue,
     terminalTypeList, setTerminalTypeList,
+    terminalTypeValue, setTerminalTypeValue,
     activateTypesList, setActivateTypesList,
     unionpayConnectionList, setUnionpayConnectionList,
     cupConnModeValue, setCupConnModeValue,
     bussTypeList, setBussTypeList,
+    bussTypeValue, setBussTypeValue,
     dccSupFlagList, setDccSupFlagList,
     dccSupFlagValue, setDccSupFlagValue,
     releaseTypeList, setReleaseTypeList,
@@ -66,6 +71,7 @@ export function useFormSelectData(props: any) {
     terminalGroupList, setTerminalGroupList,
     activateTypeList, setActivateTypeList,
     isGroupUpdateList, setIsGroupUpdateList,
-    zzFlagList, setZzFlagList
+    zzFlagList, setZzFlagList,
+    zzFlagValue, setZzFlagValue
   };
 }

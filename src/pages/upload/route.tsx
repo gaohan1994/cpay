@@ -3,10 +3,10 @@
  * @Author: Ghan
  * @Date: 2020-07-20 17:28:31
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 15:12:03
+ * @Last Modified time: 2020-09-07 11:30:47
  */
 
-import { AppstoreAddOutlined } from '@ant-design/icons';
+import { ToolOutlined } from '@ant-design/icons';
 
 import Uploadmanage from '@/pages/upload/manage';
 import UploadManageAdd from '@/pages/upload/manage/add';
@@ -28,7 +28,7 @@ import UploadCount from '@/pages/upload/count';
 
 export const UploadMenu = {
   name: '远程更新',
-  icon: AppstoreAddOutlined,
+  icon: ToolOutlined,
   path: 'upload',
   value: 'upload'
 };

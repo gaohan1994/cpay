@@ -338,7 +338,7 @@ function Page(props: Props) {
     selectedRowKeys,
     onChange: setSelectedRowKeys,
   };
-
+  
   return (
     <Spin spinning={loading}>
       <Forms
@@ -350,9 +350,24 @@ function Page(props: Props) {
           extraButtons
         }}
       />
-      <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} scroll={{ x: 1600 }} />
+      <Table
+        rowKey="id"
+        rowSelection={rowSelection}
+        columns={columns}
+        {...tableProps}
+        scroll={{ x: 1600 }}
+        pagination={{
+          ...tableProps.pagination,
+          showQuickJumper: true,
+          showSizeChanger: true,
+          showTotal: (total, range) => `第${range[0]}到${range[1]}条，共${total}条记录。`
+        }}
+      />
     </Spin>
   );
+
+
 }
 export default Page;
+
 
