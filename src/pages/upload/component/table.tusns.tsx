@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 11:47:28 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 13:34:12
+ * @Last Modified time: 2020-09-10 15:56:39
  * 
  * @todo 终端选择modal
  */
@@ -13,7 +13,7 @@ import { useAntdTable } from 'ahooks';
 import { terminalInfoList } from '@/pages/terminal/message/constants/api';
 import { formatListResult } from '@/common/request-util';
 import { FormItem, FormItmeType } from '@/component/form/type';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 
 interface Props {
   visible: boolean;       // modal是否展示
@@ -36,6 +36,22 @@ export function TableTusns(props: Props) {
     }
   );
   const { submit, reset } = search;
+
+  /**
+   * @todo 自定义查询，把选中列表置空
+   */
+  const customSubmit = () => {
+    setSelectedRowKeys([]);
+    submit();
+  }
+
+  /**
+   * @todo 自定义重置，把选中列表置空
+   */
+  const customReset = () => {
+    setSelectedRowKeys([]);
+    reset();
+  }
 
   useEffect(() => {
     setSelectedRowKeys([]);
@@ -150,12 +166,20 @@ export function TableTusns(props: Props) {
           form={form}
           forms={forms}
           formButtonProps={{
-            submit,
-            reset,
+            submit: customSubmit,
+            reset: customReset,
           }}
         />
-        <Table rowKey="tusn" rowSelection={rowSelection} columns={columns}  {...tableProps} style={{ overflowX: 'auto', paddingRight: '24px' }} />
+        <Table
+          rowKey="tusn"
+          rowSelection={rowSelection}
+          columns={columns}
+          {...tableProps}
+          style={{ overflowX: 'auto', paddingRight: '24px' }}
+          pagination={getStandardPagination(tableProps.pagination)}
+        />
       </div>
+
     </Modal>
   )
 }

@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 13:37:29 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-07 14:39:10
+ * @Last Modified time: 2020-09-10 15:17:40
  * 
  * @todo 提取日志新增页面
  */
@@ -21,7 +21,7 @@ import { taskUploadJobDetail, taskUploadJobEdit, taskUploadJobAdd, taskLogSetLis
 import { merge } from 'lodash';
 import { RESPONSE_CODE } from '@/common/config';
 import { useHistory } from 'react-router-dom';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { useAntdTable } from 'ahooks';
 import FixedFoot, { ErrorField } from '@/component/fixed-foot/index';
 import { FormTusnsFailed } from '../../component/form-tusns-failed';
@@ -151,7 +151,6 @@ export default function Page() {
         nameKey: 'dictLabel',
         required: true,
         value: logUploadTypeValue,
-        // setValue: setLogUploadTypeValue,
         onChange: (id: any) => {
           setLogUploadTypeValue(id);
           form.setFieldsValue({ appCode: undefined });
@@ -402,7 +401,7 @@ export default function Page() {
   };
 
   return (
-    <Spin spinning={loading} style={{ paddingBottom: 80 }}>
+    <Spin spinning={loading}>
       <div style={{ paddingTop: 10 }}>
         <Form
           form={form}
@@ -410,11 +409,6 @@ export default function Page() {
           style={{ backgroundColor: 'white' }}
         >
           <CustomFormItems items={forms} singleCol={true} />
-          {/* <Form.Item {...ButtonLayout} >
-            <Button type="primary" onClick={onSubmit}>
-              保存
-          </Button>
-          </Form.Item> */}
         </Form>
       </div>
       <Modal
@@ -436,6 +430,7 @@ export default function Page() {
             {...tableProps}
             style={{ overflowX: 'auto', paddingRight: '24px' }}
             scroll={{ x: 1000 }}
+            pagination={getStandardPagination(tableProps.pagination)}
           />
         </div>
       </Modal>

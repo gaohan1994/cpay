@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-10 14:50:24 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 10:53:27
+ * @Last Modified time: 2020-09-10 15:12:08
  * 
  * @todo 应用管理列表页
  */
@@ -14,7 +14,7 @@ import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import history from '@/common/history-util';
 import { ITerminalGroupByDeptId } from '@/pages/terminal/message/types';
 import { terminalGroupListByDept } from '@/pages/terminal/message/constants/api';
@@ -77,6 +77,23 @@ function Page(props: Props) {
   const { submit, reset } = search;
 
   /**
+   * @todo 自定义查询，把选中列表置空
+   */
+  const customSubmit = () => {
+    setSelectedRowKeys([]);
+    submit();
+  }
+
+  /**
+   * @todo 自定义重置，把选中列表置空
+   */
+  const customReset = () => {
+    setSelectedRowKeys([]);
+    reset();
+  }
+
+
+  /**
    * @todo 跳转上传页面
    */
   const onUpload = () => {
@@ -126,10 +143,12 @@ function Page(props: Props) {
       cancelText: '取消',
       onOk: async () => {
         try {
+          setLoading(true);
           const result = await appInfoRemove({ ids: item.id });
+          setLoading(false);
           invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除应用失败，请重试');
           notification.success({ message: '删除应用成功!' });
-          submit();
+          customSubmit();
         } catch (error) {
           notification.warn({ message: error.message });
         }
@@ -159,8 +178,7 @@ function Page(props: Props) {
             notification.success({
               message: '提交审核成功',
             });
-            setSelectedRowKeys([]);
-            submit();
+            customSubmit();
           } else {
             notification.warn({ message: result.msg || '提交审核失败' });
           }
@@ -269,7 +287,6 @@ function Page(props: Props) {
    */
   const forms: FormItem[] = [
     {
-      span: 4,
       formName: 'deptId',
       formType: FormItmeType.TreeSelectCommon,
       onChange: onChangeDept,
@@ -338,15 +355,15 @@ function Page(props: Props) {
     selectedRowKeys,
     onChange: setSelectedRowKeys,
   };
-  
+
   return (
     <Spin spinning={loading}>
       <Forms
         form={form}
         forms={forms}
         formButtonProps={{
-          submit,
-          reset,
+          submit: customSubmit,
+          reset: customReset,
           extraButtons
         }}
       />
@@ -356,12 +373,7 @@ function Page(props: Props) {
         columns={columns}
         {...tableProps}
         scroll={{ x: 1600 }}
-        pagination={{
-          ...tableProps.pagination,
-          showQuickJumper: true,
-          showSizeChanger: true,
-          showTotal: (total, range) => `第${range[0]}到${range[1]}条，共${total}条记录。`
-        }}
+        pagination={getStandardPagination(tableProps.pagination)}
       />
     </Spin>
   );

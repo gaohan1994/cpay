@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 14:44:18 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 14:49:42
+ * @Last Modified time: 2020-09-10 13:37:26
  * 
  * @todo 软件更新任务详情
  */
@@ -46,7 +46,6 @@ export default function Page() {
     'buss_type', 'unionpay_connection', 'dcc_sup_flag',
     'terminal_type', 'activate_type', 'is_group_update', 'zz_flag'
   ]);
-  const dictList = useSelectorHook((state) => state.common.dictList);
 
   const [loading, setLoading] = useState(false);
   const [detailArr, setDetailArr] = useState([] as any[]);
@@ -128,22 +127,22 @@ export default function Page() {
     },
     {
       title: '成功',
-      dataIndex: 'status',
+      dataIndex: 'successCount',
       render: (item: any) => (<div style={{ color: '#468847' }}>{item || 0}</div>)
     },
     {
       title: '失败',
-      dataIndex: 'status',
+      dataIndex: 'failureCount',
       render: (item: any) => (<div style={{ color: '#ce3739' }}>{item || 0}</div>)
     },
     {
       title: '待执行',
-      dataIndex: 'status',
+      dataIndex: 'executeCount',
       render: (item: any) => (<div style={{ color: '#8FBC8F' }}>{item || 0}</div>)
     },
     {
       title: '执行中',
-      dataIndex: 'status',
+      dataIndex: 'executingCount',
       render: (item: any) => (<div style={{ color: '#32CD32' }}>{item || 0}</div>)
     },
     {

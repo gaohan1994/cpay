@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-12 09:35:39 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 10:12:26
+ * @Last Modified time: 2020-09-10 15:13:44
  * 
  * @todo 应用审核列表
  */
@@ -14,7 +14,7 @@ import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { IAppType } from '../types';
 import history from '@/common/history-util';
 import { getAppStatusColor } from '../common/util';
@@ -140,7 +140,6 @@ function Page(props: Props) {
    */
   const forms: FormItem[] = [
     {
-      span: 4,
       formName: 'deptId',
       formType: FormItmeType.TreeSelectCommon,
     },
@@ -184,7 +183,13 @@ function Page(props: Props) {
           reset,
         }}
       />
-      <Table rowKey="id" columns={columns}  {...tableProps} scroll={{ x: 1400 }} />
+      <Table
+        rowKey="id"
+        columns={columns}
+        {...tableProps}
+        scroll={{ x: 1400 }}
+        pagination={getStandardPagination(tableProps.pagination)}
+      />
     </div>
   );
 }

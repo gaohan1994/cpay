@@ -2,15 +2,15 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-20 11:40:15 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 16:23:08
+ * @Last Modified time: 2020-09-10 15:15:55
  * 
- * @todo 远程下载列表
+ * @todo 更新试点列表
  */
-import React from 'react';
-import { Form, Table, Modal, notification } from 'antd';
+import React, { useState } from 'react';
+import { Form, Table, Modal, notification, Spin } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { formatListResult } from '@/common/request-util';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { taskCountList, taskCountRemove } from '../constants/api';
 import invariant from 'invariant';
 import { RESPONSE_CODE } from '@/common/config';
@@ -18,6 +18,8 @@ import { RESPONSE_CODE } from '@/common/config';
 type Props = {};
 
 function Page(props: Props) {
+
+  const [loading, setLoading] = useState(false);
 
   const [form] = Form.useForm();
   const { tableProps, search }: any = useAntdTable(
@@ -29,6 +31,8 @@ function Page(props: Props) {
     }
   );
   const { reset } = search;
+
+
 
   /**
    * @todo 删除记录
@@ -45,7 +49,9 @@ function Page(props: Props) {
           const param = {
             ids: item.id
           }
+          setLoading(true);
           const result = await taskCountRemove(param);
+          setLoading(false);
           reset();
           invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除记录失败，请重试');
           notification.success({ message: '删除记录成功!' });
@@ -91,9 +97,14 @@ function Page(props: Props) {
 
 
   return (
-    <div>
-      <Table rowKey="id" columns={columns}  {...tableProps} />
-    </div>
+    <Spin spinning={loading}>
+      <Table
+        rowKey="id"
+        columns={columns}
+        {...tableProps}
+        pagination={getStandardPagination(tableProps.pagination)}
+      />
+    </Spin>
   );
 }
 export default Page;

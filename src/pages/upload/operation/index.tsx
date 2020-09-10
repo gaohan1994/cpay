@@ -2,18 +2,18 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-18 14:56:36 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 14:29:05
+ * @Last Modified time: 2020-09-10 15:47:17
  * 
  * @todo 远程运维列表
  */
 import React, { useState, useEffect } from 'react';
-import { Form, Table, Tag, Divider, notification, Modal } from 'antd';
+import { Form, Table, Tag, Divider, notification, Modal, Spin } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { taskOperationJobList, taskOperationJobPublish, taskOperationJobRemove, taskOperationJobPuase } from '../constants/api';
 import { PlusOutlined, CopyOutlined, BarsOutlined, CaretRightOutlined, PauseOutlined } from '@ant-design/icons';
 import { RESPONSE_CODE } from '@/common/config';
@@ -39,6 +39,7 @@ function Page(props: Props) {
   // 请求dept数据
   useStore(['operator_job_status', 'terminal_operator_command']);
 
+  const [loading, setLoading] = useState(false);
   const [terminalFirmList, setTerminalFirmList] = useState(
     initState.terminalFirmList
   );
@@ -85,6 +86,24 @@ function Page(props: Props) {
   const { submit, reset } = search;
 
   /**
+   * @todo 自定义查询，把选中列表置空
+   */
+  const customSubmit = () => {
+    setSelectedRowKeys([]);
+    setSelectedRows([]);
+    submit();
+  }
+
+  /**
+   * @todo 自定义重置，把选中列表置空
+   */
+  const customReset = () => {
+    setSelectedRowKeys([]);
+    setSelectedRows([]);
+    reset();
+  }
+
+  /**
    * @todo 跳转到应用审核页面
    * @param item 
    */
@@ -111,12 +130,12 @@ function Page(props: Props) {
           const param = {
             ids: item.id
           }
+          setLoading(true);
           const result = await taskOperationJobRemove(param);
+          setLoading(false);
           invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除任务失败，请重试');
           notification.success({ message: '删除任务成功!' });
-          submit();
-          setSelectedRows([]);
-          setSelectedRowKeys([]);
+          customSubmit();
         } catch (error) {
           notification.warn({ message: error.message });
         }
@@ -282,12 +301,12 @@ function Page(props: Props) {
       notification.error({ message: "任务已经结束！" });
       return;
     }
+    setLoading(true);
     const res = await taskOperationJobPublish(selectedRowKeys[0]);
+    setLoading(false);
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '启动任务成功' });
-      submit();
-      setSelectedRows([]);
-      setSelectedRowKeys([]);
+      customSubmit();
     } else {
       notification.error({ message: res && res.msg || '执行任务失败，请重试' });
     }
@@ -313,12 +332,12 @@ function Page(props: Props) {
       notification.error({ message: "任务已经结束！" });
       return;
     }
+    setLoading(true);
     const res = await taskOperationJobPuase(selectedRowKeys[0]);
+    setLoading(false);
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '启动任务成功' });
-      submit();
-      setSelectedRows([]);
-      setSelectedRowKeys([]);
+      customSubmit();
     } else {
       notification.error({ message: res && res.msg || '执行任务失败，请重试' });
     }
@@ -344,18 +363,24 @@ function Page(props: Props) {
   };
 
   return (
-    <div>
+    <Spin spinning={loading}>
       <Forms
         form={form}
         forms={forms}
         formButtonProps={{
-          submit,
-          reset,
+          submit: customSubmit,
+          reset: customReset,
           extraButtons
         }}
       />
-      <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} />
-    </div>
+      <Table
+        rowKey="id"
+        rowSelection={rowSelection}
+        columns={columns}
+        {...tableProps}
+        pagination={getStandardPagination(tableProps.pagination)}
+      />
+    </Spin>
   );
 }
 export default Page;

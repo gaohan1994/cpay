@@ -19,6 +19,20 @@ export const getDictText = (data: string, dictType: string,) => {
 }
 
 /**
+ * @todo 通过机构id获取机构名称
+ * @param id 
+ */
+export const getDeptName = (id: number) => {
+  const state = store.getState();
+  const deptData = state.common.deptData;
+
+  const targetItem: any =
+    deptData &&
+    deptData.find((item) => item.id === id);
+  return targetItem && targetItem.name || '--';
+}
+
+/**
  * @todo 获取通用的表单规则
  * @param label 表单的文字
  * @param type 检验类型：select-选择 input-输入

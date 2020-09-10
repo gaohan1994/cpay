@@ -2,9 +2,9 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-09 11:16:42 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-09 18:03:40
+ * @Last Modified time: 2020-09-09 18:04:01
  * 
- * @todo 终端信息统计
+ * @todo 应用信息统计
  */
 import React, { useEffect, useState } from 'react';
 import { Form, Table, Col, DatePicker, message, Radio } from 'antd';
@@ -12,7 +12,7 @@ import { useAntdTable } from 'ahooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns } from '@/component/table';
-import { getTerminalInfoReport } from '../constants/api';
+import { getAppPublishReport } from '../constants/api';
 import { formatReportListResult } from '../common/util';
 import echarts from 'echarts/lib/echarts';
 import 'echarts/lib/chart/line';
@@ -39,7 +39,7 @@ function Page(props: Props) {
 
   const [form] = Form.useForm();
   const res: any = useAntdTable(
-    (paginatedParams: any, tableProps: any) => getTerminalInfoReport({
+    (paginatedParams: any, tableProps: any) => getAppPublishReport({
       ...tableProps,
       startTime: tableProps.startTime ? tableProps.startTime.format('YYYYMM') : tableProps.startTime.format('YYYYMM'),
       endTime: tableProps.endTime ? tableProps.endTime.format('YYYYMM') : tableProps.endTime,

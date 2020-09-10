@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-11 18:00:33 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 10:43:47
+ * @Last Modified time: 2020-09-10 15:11:42
  * 
  * @todo 应用管理的回收站页面
  */
@@ -14,7 +14,7 @@ import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { CloseOutlined } from '@ant-design/icons';
 import { RESPONSE_CODE } from '../../../../common/config';
 import invariant from 'invariant';
@@ -40,6 +40,22 @@ function Page(props: Props) {
   const { submit, reset } = search;
 
   /**
+   * @todo 自定义查询，把选中列表置空
+   */
+  const customSubmit = () => {
+    setSelectedRowKeys([]);
+    submit();
+  }
+
+  /**
+   * @todo 自定义重置，把选中列表置空
+   */
+  const customReset = () => {
+    setSelectedRowKeys([]);
+    reset();
+  }
+
+  /**
    * @todo 还原单项应用
    * @param item 
    */
@@ -49,7 +65,7 @@ function Page(props: Props) {
     setLoading(false);
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '还原应用成功' });
-      submit();
+      customSubmit();
     } else {
       notification.warn({ message: res.msg || '还原应用失败' });
     }
@@ -60,14 +76,32 @@ function Page(props: Props) {
    * @param item 
    */
   const onDeleteItem = async (item: any) => {
-    setLoading(true);
-    const res = await appInfoDelete({ ids: item.id });
-    setLoading(false);
-    if (res && res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '删除应用成功' });
-      submit();
-    } else {
-      notification.warn({ message: res.msg || '删除应用失败' });
+    try {
+      Modal.confirm({
+        title: '提示',
+        content: `应用删除后无法还原，确定删除当前应用吗?`,
+        okText: '确定',
+        cancelText: '取消',
+        onOk: async () => {
+          const params: any = {
+            ids: item.id,
+          };
+          setLoading(true);
+          const result = await appInfoDelete(params);
+          setLoading(false);
+
+          if (result && result.code === RESPONSE_CODE.success) {
+            notification.success({
+              message: '删除成功',
+            });
+            customSubmit();
+          } else {
+            notification.warn({ message: result.msg || '删除失败' });
+          }
+        },
+      });
+    } catch (error) {
+      notification.warn({ message: error.message });
     }
   }
 
@@ -77,10 +111,9 @@ function Page(props: Props) {
   const onDeleteBatch = async () => {
     try {
       invariant(selectedRowKeys.length > 0, '请选择记录');
-
       Modal.confirm({
         title: '提示',
-        content: `应用删除后无法还原，确定删除选中应用?`,
+        content: `应用删除后无法还原，确定删除选中应用吗?`,
         okText: '确定',
         cancelText: '取消',
         onOk: async () => {
@@ -95,8 +128,7 @@ function Page(props: Props) {
             notification.success({
               message: '删除成功',
             });
-            setSelectedRowKeys([]);
-            submit();
+            customSubmit();
           } else {
             notification.warn({ message: result.msg || '删除失败' });
           }
@@ -114,28 +146,15 @@ function Page(props: Props) {
     {
       title: '操作',
       render: (key, item) => (
-        <Row style={{ alignItems: 'center' }}>
-          <Popconfirm
-            title="是否确认还原？"
-            onConfirm={() => onRecoveItem(item)}
-            okText="是"
-            cancelText="否"
-          >
-            <a href="#">还原</a>
-          </Popconfirm>
+        <div>
+          <a onClick={() => onRecoveItem(item)}>还原</a>
           <Divider type="vertical" />
-          <Popconfirm
-            title="是否确认删除？"
-            onConfirm={() => onDeleteItem(item)}
-            okText="是"
-            cancelText="否"
-          >
-            <a href="#">删除</a>
-          </Popconfirm>
-        </Row>
+          <a onClick={() => onDeleteItem(item)}>删除</a>
+        </div>
       ),
       fixed: 'left',
-      width: 150,
+      width: 140,
+      align: 'center'
     },
     {
       title: '应用名称',
@@ -172,6 +191,7 @@ function Page(props: Props) {
     {
       title: '应用包名',
       dataIndex: 'apkCode',
+      width: 200
     },
     {
       title: '内部版本',
@@ -189,6 +209,7 @@ function Page(props: Props) {
     {
       title: '上传时间',
       dataIndex: 'createTime',
+      width: 200
     },
   ]);
 
@@ -197,7 +218,6 @@ function Page(props: Props) {
    */
   const forms: FormItem[] = [
     {
-      span: 4,
       formName: 'deptId',
       formType: FormItmeType.TreeSelectCommon,
     },
@@ -218,20 +238,25 @@ function Page(props: Props) {
   };
 
   return (
-    <div>
-      <Spin spinning={loading}>
-        <Forms
-          form={form}
-          forms={forms}
-          formButtonProps={{
-            submit,
-            reset,
-            extraButtons
-          }}
-        />
-        <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} scroll={{ x: 2200 }} />
-      </Spin>
-    </div>
+    <Spin spinning={loading}>
+      <Forms
+        form={form}
+        forms={forms}
+        formButtonProps={{
+          submit: customSubmit,
+          reset: customReset,
+          extraButtons
+        }}
+      />
+      <Table
+        rowKey="id"
+        rowSelection={rowSelection}
+        columns={columns}
+        {...tableProps}
+        scroll={{ x: 1500 }}
+        pagination={getStandardPagination(tableProps.pagination)}
+      />
+    </Spin>
   );
 }
 export default Page;

@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-13 11:15:48 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 13:43:59
+ * @Last Modified time: 2020-09-10 15:20:58
  * 
  * @todo 日志提取任务详情页
  */
@@ -34,6 +34,13 @@ function Page() {
   const [loading, setLoading] = useState(false);
   const [detailArr, setDetailArr] = useState(initDetailArr as any[]);
   const id = useQueryParam('id');
+
+  /**
+   * @todo 初始页面数据
+   */
+  useEffect(() => {
+    getDetailCallback({ code: RESPONSE_CODE.success, data: {} });
+  }, []);
 
   /**
    * @todo 获取完相应字典数据，设置详情值
@@ -71,7 +78,7 @@ function Page() {
       arr.push({ label: "有效期截止日期", value: detail.validEndTime });
       arr.push({ label: "提取开始日期", value: detail.logBeginTime });
       arr.push({ label: "提取结束日期", value: detail.logEndTime });
-      arr.push({ label: "终端集合", value: detail.tusns.split(',').join(' ') });
+      arr.push({ label: "终端集合", value: detail.tusns && detail.tusns.split(',').join(' ') });
       setDetailArr(arr);
     } else {
       notification.warn(result.msg || '获取详情失败，请刷新页面重试');

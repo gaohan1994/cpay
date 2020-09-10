@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-10 14:45:02 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 11:30:01
+ * @Last Modified time: 2020-09-10 14:03:55
  * 
  * @todo 应用类型页面
  */
@@ -14,7 +14,7 @@ import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { PlusOutlined, LoadingOutlined } from '@ant-design/icons';
 import { RESPONSE_CODE, BASIC_CONFIG } from '@/common/config';
 import { IAppType } from '../types';
@@ -76,7 +76,9 @@ function Page(props: Props) {
           const param = {
             ids: item.id
           }
+          setLoading(true);
           const result = await appTypeRemove(param);
+          setLoading(false);
           invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除应用分类失败，请重试');
           notification.success({ message: '删除应用分类成功!' });
           submit();
@@ -274,6 +276,9 @@ function Page(props: Props) {
     }
   };
 
+  /**
+   * @todo 上传按钮
+   */
   const uploadButton = (
     <div>
       {uploadLoading ? <LoadingOutlined /> : <PlusOutlined />}
@@ -292,7 +297,12 @@ function Page(props: Props) {
           extraButtons
         }}
       />
-      <Table rowKey="id" columns={columns}  {...tableProps} />
+      <Table
+        rowKey="id"
+        columns={columns}
+        {...tableProps}
+        pagination={getStandardPagination(tableProps.pagination)}
+      />
       <Modal
         title={editItem.id ? "编辑" : "新增"}
         cancelText="取消"

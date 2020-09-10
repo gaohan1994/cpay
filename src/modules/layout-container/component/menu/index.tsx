@@ -114,7 +114,7 @@ function LayoutMenu(props: Props) {
       collapsed={collapsed}
       onCollapse={onCollapse}
       trigger={renderTrigger()}
-      style={{ zIndex: 999 }}
+      style={{ zIndex: 999, overflow: 'hidden auto' }}
     >
       <div className="layout-container-menu">
         {menus && (
@@ -126,17 +126,18 @@ function LayoutMenu(props: Props) {
             onSelect={onSelect}
             selectedKeys={selectedKeys}
           >
-            {menus.map((menuItem: ILayoutSiderMenu) => {
+            {menus.map((menuItem: ILayoutSiderMenu, index: number) => {
               if (!!menuItem.subMenus) {
                 return (
                   <SubMenu
                     key={menuItem.value}
                     icon={<menuItem.icon />}
                     title={menuItem.name}
+                    style={{ paddingBottom: index === menus.length - 1 ? 50 : 0 }}
                   >
                     {menuItem.subMenus.map((subMenuItem, subIndex) => {
                       return (
-                        <Menu.Item key={subMenuItem.value}>
+                        <Menu.Item key={subMenuItem.value} >
                           {subMenuItem.name}
                         </Menu.Item>
                       );
@@ -145,7 +146,7 @@ function LayoutMenu(props: Props) {
                 );
               }
               return (
-                <Menu.Item key={menuItem.value} icon={<menuItem.icon />}>
+                <Menu.Item key={menuItem.value} icon={<menuItem.icon />} style={{ paddingBottom: index === menus.length - 1 ? 50 : 0 }}>
                   {menuItem.name}
                 </Menu.Item>
               );

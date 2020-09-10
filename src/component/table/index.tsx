@@ -1,6 +1,7 @@
 import React from 'react';
 import { ColumnConfigItem } from './type';
 import { UseDictRenderHelper } from './render';
+import { PaginationProps } from 'antd/lib/pagination';
 
 export function createTableColumns(columnsConfig: ColumnConfigItem[]) {
   const columns = columnsConfig.map((item) => {
@@ -50,4 +51,17 @@ export function createTableColumns(columnsConfig: ColumnConfigItem[]) {
   });
 
   return columns;
+}
+
+/**
+ * @todo 获取标准的分页
+ * @param pagination 
+ */
+export const getStandardPagination = (pagination: any): PaginationProps => {
+  return {
+    ...pagination,
+    showQuickJumper: true,
+    showSizeChanger: true,
+    showTotal: (total, range) => `第${range[0]}到${range[1]}条，共${total}条记录。`
+  }
 }

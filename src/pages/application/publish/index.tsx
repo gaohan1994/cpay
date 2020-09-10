@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-12 09:27:59 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 10:59:08
+ * @Last Modified time: 2020-09-10 15:13:25
  * 
  * @todo 应用发布列表页面
  */
@@ -14,7 +14,7 @@ import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import history from '@/common/history-util';
 import { ITerminalGroupByDeptId } from '@/pages/terminal/message/types';
 import { terminalGroupListByDept } from '@/pages/terminal/message/constants/api';
@@ -102,7 +102,9 @@ function Page(props: Props) {
       cancelText: '取消',
       onOk: async () => {
         try {
+          setLoading(true);
           const result = await appShelve({ appId: item.id, isOnShelves: false });
+          setLoading(false);
           invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '下架应用失败，请重试');
           notification.success({ message: '下架应用成功!' });
           submit();
@@ -121,6 +123,9 @@ function Page(props: Props) {
     history.push(`/application/publish-publish?id=${item.id}`);
   }
 
+  /**
+   * @todo 创建table列
+   */
   const columns = createTableColumns([
     {
       title: '操作',
@@ -210,9 +215,11 @@ function Page(props: Props) {
     },
   ]);
 
+  /**
+   * @todo 查询表单
+   */
   const forms: FormItem[] = [
     {
-      span: 4,
       formName: 'deptId',
       formType: FormItmeType.TreeSelectCommon,
       onChange: onChange,
@@ -276,7 +283,13 @@ function Page(props: Props) {
           reset,
         }}
       />
-      <Table rowKey="id" columns={columns}  {...tableProps} scroll={{ x: 1400 }} />
+      <Table
+        rowKey="id"
+        columns={columns}
+        {...tableProps}
+        scroll={{ x: 1400 }}
+        pagination={getStandardPagination(tableProps.pagination)}
+      />
     </Spin>
   );
 }

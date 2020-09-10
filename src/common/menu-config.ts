@@ -2,8 +2,8 @@
  * 侧边栏Menu的配置
  * @Author: Ghan
  * @Date: 2020-07-20 17:29:06
- * @Last Modified by: Ghan
- * @Last Modified time: 2020-07-20 17:39:16
+ * @Last Modified by: centerm.gaozhiying
+ * @Last Modified time: 2020-09-09 11:46:30
  */
 import { ILayoutSiderMenu } from '@/modules/layout-container/types';
 import { merge } from 'lodash';
@@ -13,6 +13,7 @@ import ApplicationRoute, { ApplicationMenu } from '@/pages/application/route';
 import UploadRoute, { UploadMenu } from '@/pages/upload/route';
 import MotionRoute, { MotionMenu } from '@/pages/motion/route';
 import ReportRoute, { ReportMenu } from '@/pages/report/route';
+import SystemRoute, { SystemMenu } from '@/pages/system/route';
 import AdvertisementRoute, {
   AdvertisementMenu,
 } from '@/pages/advertisement/route';
@@ -64,6 +65,10 @@ const menuConfig: ILayoutSiderMenu[] = [
   {
     ...ReportMenu,
     subMenus: formartRouteToMenu(ReportRoute),
+  },
+  {
+    ...SystemMenu,
+    subMenus: formartRouteToMenu(SystemRoute),
   }
 ];
 

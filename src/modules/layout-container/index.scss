@@ -3,6 +3,7 @@
   background: rgba(255, 255, 255, 0.2);
   margin: 16px;
 }
+
 .site-layout .site-layout-background {
   background: #fff;
 }
@@ -12,6 +13,30 @@
     &-menu {
       overflow-y: auto;
       // height: 'calc(100vh - 64px)';
+    }
+  }
+}
+
+.header {
+  background-color: #136ee3 !important;
+  align-items: center;
+  display: flex;
+
+  &-logo {
+    height: 41px;
+  }
+
+  &-divider {
+    height: 20px !important;
+    margin-left: 20px !important;
+    margin-right: 20px !important;
+  }
+
+  &-title {
+    &-dept {
+      color: white;
+      font-size: 18px;
+      font-weight: 200;
     }
   }
 }

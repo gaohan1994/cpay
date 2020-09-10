@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-26 11:27:53 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-10 16:16:52
+ * @Last Modified time: 2020-09-10 16:13:09
  * 
  * @todo 软件更新执行情况查询
  */
@@ -13,17 +13,17 @@ import { formatListResult, useQueryParam } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
-import { createTableColumns, getStandardPagination } from '@/component/table';
+import { createTableColumns } from '@/component/table';
 import { SyncOutlined, PauseOutlined, CaretRightOutlined, LogoutOutlined } from '@ant-design/icons';
 import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
-import { taskDownloadTaskList, taskDownloadTaskExport, taskDownloadTaskReset, taskDownloadTaskPause } from '../constants/api';
 import invariant from 'invariant';
+import { taskDownloadTaskList } from '@/pages/upload/upload/constants/api';
 
 type Props = {};
 
 function Page(props: Props) {
   // 请求dept数据
-  useStore(['download_task_status', 'terminal_operator_command', 'download_task_type']);
+  useStore(['download_task_status', 'terminal_operator_command']);
   const id = useQueryParam('id');
   const jobName = useQueryParam('jobName');
 
@@ -77,11 +77,6 @@ function Page(props: Props) {
       dataIndex: 'versionCode',
     },
     {
-      title: '操作类型',
-      dataIndex: 'actionType',
-      dictType: 'download_task_type',
-    },
-    {
       title: '状态',
       dataIndex: 'status',
       dictType: 'download_task_status',
@@ -91,12 +86,28 @@ function Page(props: Props) {
       dataIndex: 'resultMsg',
     },
     {
-      title: '任务开始时间',
-      dataIndex: 'startTime',
+      title: '终端号',
+      dataIndex: 'terminal',
     },
     {
-      title: '任务结束时间',
-      dataIndex: 'endTime',
+      title: '商户号',
+      dataIndex: 'merchantId',
+    },
+    {
+      title: '商户名称',
+      dataIndex: 'merchantName',
+    },
+    {
+      title: '商家姓名',
+      dataIndex: 'name',
+    },
+    {
+      title: '商家手机号',
+      dataIndex: 'phone',
+    },
+    {
+      title: '商家地址',
+      dataIndex: 'address',
     },
   ]);
 
@@ -120,67 +131,11 @@ function Page(props: Props) {
       formType: FormItmeType.Normal,
     },
     {
-      formName: ['actionType', 'status'],
+      formName: ['status'],
       formType: FormItmeType.SelectCommon,
-      dictList: ['download_task_type', 'download_task_status'],
+      dictList: ['download_task_status'],
     },
   ];
-
-  /**
-   * @todo 重置任务
-   */
-  const onStartTask = async () => {
-    if (selectedRowKeys.length === 0) {
-      notification.error({ message: "请选择任务" });
-      return;
-    }
-    for (let i = 0; i < selectedRows.length; i++) {
-      if (selectedRows[i].status !== 6 && selectedRows[i].status !== 9) {
-        notification.error({ message: "不能选择暂停和下载失败以外的任务启动！" });
-        return;
-      }
-    }
-    const param = {
-      ids: selectedRowKeys.join(',')
-    }
-    setLoading(true);
-    const res = await taskDownloadTaskReset(param);
-    setLoading(false);
-    if (res && res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '启动任务成功' });
-      customSubmit();
-    } else {
-      notification.error({ message: res && res.msg || '启动任务失败，请重试' });
-    }
-  }
-
-  /**
-   * @todo 暂停任务
-   */
-  const onPauseTask = async () => {
-    if (selectedRowKeys.length === 0) {
-      notification.error({ message: "请选择任务" });
-      return;
-    }
-    for (let i = 0; i < selectedRows.length; i++) {
-      if (selectedRows[i].status !== 6 && selectedRows[i].status !== 0) {
-        notification.error({ message: "不能选择等待下发和下载失败以外的任务暂停！" });
-        return;
-      }
-    }
-    const param = {
-      ids: selectedRowKeys.join(',')
-    }
-    setLoading(true);
-    const res = await taskDownloadTaskPause(param);
-    setLoading(false);
-    if (res && res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '暂停任务成功' });
-      customSubmit();
-    } else {
-      notification.error({ message: res && res.msg || '暂停任务失败，请重试' });
-    }
-  }
 
   /**
    * @todo 导出
@@ -198,7 +153,7 @@ function Page(props: Props) {
             ...fetchParams[1]
           }
           setLoading(true);
-          const result = await taskDownloadTaskExport(param);
+          const result = await taskDownloadTaskList(param);
           setLoading(false);
           invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '导出失败，请重试');
           if (result.data) {
@@ -213,8 +168,6 @@ function Page(props: Props) {
   }
 
   const extraButtons = [
-    { title: '启动任务', onClick: onStartTask, icon: <CaretRightOutlined />, type: "primary" as any, },
-    { title: '暂停任务', onClick: onPauseTask, icon: <PauseOutlined /> },
     { title: '刷新状态', onClick: () => { customReset() }, icon: <SyncOutlined />, type: "primary" as any, },
     { title: '导出', onClick: onLogOut, icon: <LogoutOutlined />, type: "primary" as any, },
   ]
@@ -241,13 +194,7 @@ function Page(props: Props) {
         }}
       />
       <div style={{ marginBottom: 10 }}>任务名称：{decodeURIComponent(jobName)}</div>
-      <Table
-        rowKey="id"
-        rowSelection={rowSelection}
-        columns={columns}
-        {...tableProps}
-        pagination={getStandardPagination(tableProps.pagination)}
-      />
+      <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} />
     </Spin>
   );
 }

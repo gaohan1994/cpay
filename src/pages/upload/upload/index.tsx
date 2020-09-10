@@ -2,18 +2,18 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-13 09:36:52 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 14:56:48
+ * @Last Modified time: 2020-09-10 15:49:11
  * 
  * @todo 软件更新任务列表
  */
 import React, { useState } from 'react';
-import { Form, Table, Tag, Divider, notification, Radio, Modal, Input, DatePicker } from 'antd';
+import { Form, Table, Tag, Divider, notification, Radio, Modal, Input, DatePicker, Spin } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import history from '@/common/history-util';
 import { PlusOutlined, CopyOutlined, BarsOutlined, CaretRightOutlined, PauseOutlined, ScheduleOutlined, SyncOutlined } from '@ant-design/icons';
 import { RESPONSE_CODE } from '@/common/config';
@@ -50,6 +50,23 @@ function Page(props: Props) {
   );
   const { submit, reset } = search;
 
+  /**
+   * @todo 自定义查询，把选中列表置空
+   */
+  const customSubmit = () => {
+    setSelectedRowKeys([]);
+    setSelectedRows([]);
+    submit();
+  }
+
+  /**
+   * @todo 自定义重置，把选中列表置空
+   */
+  const customReset = () => {
+    setSelectedRowKeys([]);
+    setSelectedRows([]);
+    reset();
+  }
 
   /**
    * @todo 跳转到应用审核页面
@@ -82,10 +99,12 @@ function Page(props: Props) {
           const param = {
             ids: item.id
           }
+          setLoading(true);
           const result = await taskDownloadJobRemove(param);
+          setLoading(false);
           invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除软件更新任务失败，请重试');
           notification.success({ message: '删除软件更新任务成功!' });
-          submit();
+          customSubmit();
         } catch (error) {
           notification.warn({ message: error.message });
         }
@@ -114,25 +133,25 @@ function Page(props: Props) {
     },
     {
       title: '成功',
-      dataIndex: 'status',
+      dataIndex: 'successCount',
       width: 70,
       render: (item: any) => (<div style={{ color: '#468847' }}>{item}</div>)
     },
     {
       title: '失败',
-      dataIndex: 'status',
+      dataIndex: 'failureCount',
       width: 70,
       render: (item: any) => (<div style={{ color: '#ce3739' }}>{item}</div>)
     },
     {
       title: '待执行',
-      dataIndex: 'status',
+      dataIndex: 'executeCount',
       width: 70,
       render: (item: any) => (<div style={{ color: '#8FBC8F' }}>{item}</div>)
     },
     {
       title: '执行中',
-      dataIndex: 'status',
+      dataIndex: 'executingCount',
       width: 70,
       render: (item: any) => (<div style={{ color: '#32CD32' }}>{item}</div>)
     },
@@ -234,11 +253,13 @@ function Page(props: Props) {
       notification.error({ message: "请选择一条任务" });
       return;
     }
+    setLoading(true);
     const res = await taskDownloadJobPublish(selectedRowKeys[0]);
+    setLoading(false);
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '启动任务成功' });
       setSelectedRowKeys([]);
-      submit();
+      customSubmit();
     } else {
       notification.error({ message: res && res.msg || '启动任务失败，请重试' });
     }
@@ -256,11 +277,13 @@ function Page(props: Props) {
       notification.error({ message: "请选择一条任务" });
       return;
     }
+    setLoading(true);
     const res = await taskDownloadJobPause(selectedRowKeys[0]);
+    setLoading(false);
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '暂停任务成功' });
       setSelectedRowKeys([]);
-      submit();
+      customSubmit();
     } else {
       notification.error({ message: res && res.msg || '暂停任务失败，请重试' });
     }
@@ -307,7 +330,7 @@ function Page(props: Props) {
 
   const renderExtra = () => {
     return (
-      <Radio.Group buttonStyle="solid" style={{ float: 'right' }} value={timeType} onChange={e => { setTimeType(e.target.value); submit(); }}>
+      <Radio.Group buttonStyle="solid" style={{ float: 'right' }} value={timeType} onChange={e => { setTimeType(e.target.value); customSubmit(); }}>
         <Radio.Button value="1" >当日</Radio.Button>
         <Radio.Button value="7" >近7天</Radio.Button>
         <Radio.Button value="30" >近30天</Radio.Button>
@@ -345,7 +368,7 @@ function Page(props: Props) {
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: "任务延时成功" });
       handleCancel();
-      submit();
+      customSubmit();
     } else {
       notification.error({ message: res && res.msg || "任务延时失败" });
       handleCancel();
@@ -357,27 +380,33 @@ function Page(props: Props) {
    */
   const handleCancel = () => {
     setModalVisible(false);
-    submit();
+    customSubmit();
     setSelectedRowKeys([]);
     setSelectedRows([]);
     modalForm.resetFields();
   };
 
-
   return (
-    <div>
+    <Spin spinning={loading}>
       <Forms
         form={form}
         forms={forms}
         formButtonProps={{
-          submit,
-          reset,
+          submit: customSubmit,
+          reset: customReset,
           extraButtons,
           renderExtra,
           resetExtra: resetExtraParam
         }}
       />
-      <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} scroll={{ x: 1500 }}/>
+      <Table
+        rowKey="id"
+        rowSelection={rowSelection}
+        columns={columns}
+        {...tableProps}
+        scroll={{ x: 1500 }}
+        pagination={getStandardPagination(tableProps.pagination)}
+      />
       <Modal
         title={'任务延时'}
         cancelText="取消"
@@ -408,7 +437,7 @@ function Page(props: Props) {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </Spin>
   );
 }
 export default Page;

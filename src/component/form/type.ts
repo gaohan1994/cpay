@@ -36,6 +36,7 @@ export type FormBaseProps = {
   formType: FormItmeType;
   span?: number;
   formProps?: any;
+  render?: any;
 };
 
 /**
@@ -71,6 +72,7 @@ export interface IComponentFormSelectForm
     value: string;
     title: string;
   }>;
+  render?: any;
 }
 
 /**
@@ -92,6 +94,7 @@ export interface IComponentFormCommonSelectForm extends SelectProps<any> {
   formName: string[] | string;
   formType: FormItmeType.SelectCommon;
   dictList: string[] | string;
+  render?: any;
 }
 
 /**

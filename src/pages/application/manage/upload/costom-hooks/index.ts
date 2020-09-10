@@ -22,10 +22,6 @@ export function useFormSelectData(props: any, form: FormInstance) {
   const [appInfo, setAppInfo] = useState({} as IUploadAppInfo)
 
   useEffect(() => {
-
-  }, []);
-
-  useEffect(() => {
     if (appTypeList.length > 0 && appTypeValue !== '') {
       let flag = false;
       for (let i = 0; i < appTypeList.length; i++) {

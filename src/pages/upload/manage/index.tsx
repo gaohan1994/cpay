@@ -2,18 +2,18 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-13 09:32:54 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 14:12:42
+ * @Last Modified time: 2020-09-10 16:04:07
  * 
  * @todo 软件管理列表
  */
-import React from 'react';
-import { Form, Table, Divider, notification, Modal } from 'antd';
+import React, { useState } from 'react';
+import { Form, Table, Divider, notification, Modal, Spin } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import history from '@/common/history-util';
 import { taskSoftList, softInfoRemove } from '../constants/api';
 import { PlusOutlined } from '@ant-design/icons';
@@ -25,6 +25,8 @@ type Props = {};
 function Page(props: Props) {
   // 请求dept数据
   useStore(['driver_type', 'unionpay_connection', 'is_dcc_sup']);
+
+  const [loading, setLoading] = useState(false);
 
   const [form] = Form.useForm();
   const { tableProps, search }: any = useAntdTable(
@@ -68,7 +70,9 @@ function Page(props: Props) {
           const param = {
             ids: item.id
           }
+          setLoading(true);
           const result = await softInfoRemove(param);
+          setLoading(false);
           invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除软件信息失败，请重试');
           notification.success({ message: '删除软件信息成功!' });
           submit();
@@ -172,7 +176,7 @@ function Page(props: Props) {
   ]
 
   return (
-    <div>
+    <Spin spinning={loading}>
       <Forms
         form={form}
         forms={forms}
@@ -182,8 +186,13 @@ function Page(props: Props) {
           extraButtons
         }}
       />
-      <Table rowKey="id" columns={columns}  {...tableProps} />
-    </div>
+      <Table
+        rowKey="id"
+        columns={columns}
+        {...tableProps}
+        pagination={getStandardPagination(tableProps.pagination)}
+      />
+    </Spin>
   );
 }
 export default Page;

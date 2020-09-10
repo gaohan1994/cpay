@@ -118,7 +118,7 @@ export function renderTreeSelectForm(
   const { formName, span, treeSelectData, formProps, ...rest } = data;
   if (isFrom !== false) {
     return (
-      <ComponentContainer {...data}>
+      <ComponentContainer {...data} key={formName}>
         {renderTreeSelect(data)}
       </ComponentContainer>
     );

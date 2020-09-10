@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-12 15:51:52 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 16:15:34
+ * @Last Modified time: 2020-09-10 15:33:38
  * 
  * @todo 软件信息详情页
  */
@@ -13,7 +13,7 @@ import Forms from '@/component/form';
 import { useAntdTable } from 'ahooks';
 import { taskSoftVersionList, softVersionRemove, taskSoftDetail, softVersionEdit } from '../../constants/api';
 import { formatListResult, formatSearch, useQueryParam } from '@/common/request-util';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { ITerminalFirmItem, ITerminalType } from '@/pages/terminal/types';
 import {
@@ -206,7 +206,9 @@ function Page() {
           const param = {
             ids: item.id
           }
+          setLoading(true);
           const res = await softVersionRemove(param);
+          setLoading(false);
           invariant(res && res.code === RESPONSE_CODE.success, res && res.msg || '删除软件版本失败，请重试');
           notification.success({ message: '删除软件版本成功!' });
           submit();
@@ -441,7 +443,12 @@ function Page() {
             reset,
           }}
         />
-        <Table rowKey="id" columns={columns}  {...tableProps} />
+        <Table
+          rowKey="id"
+          columns={columns}
+          {...tableProps}
+          pagination={getStandardPagination(tableProps.pagination)}
+        />
       </Card>
       <Modal
         title={"版本信息编辑"}

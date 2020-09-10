@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 13:52:44 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-03 17:44:24
+ * @Last Modified time: 2020-09-10 15:27:29
  * 
  * @todo 软件新增页面
  */
@@ -318,11 +318,6 @@ export default function Page() {
           style={{ backgroundColor: 'white' }}
         >
           <CustomFormItems items={forms} singleCol={true} />
-          {/* <Form.Item {...ButtonLayout} >
-            <Button type="primary" onClick={onSubmit}>
-              保存
-            </Button>
-          </Form.Item> */}
         </Form>
       </div>
       <FixedFoot errors={error} fieldLabels={fieldLabels}>

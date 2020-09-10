@@ -2,20 +2,19 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-17 16:20:07 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-01 13:50:23
+ * @Last Modified time: 2020-09-10 15:24:25
  * 
  * @todo 执行情况详情
  */
 import React, { useState } from 'react';
-import { Form, Table, notification } from 'antd';
+import { Form, Table, notification, Spin } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { formatListResult, formatSearch, useQueryParam } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { CheckOutlined, CloseOutlined, DownloadOutlined, SyncOutlined } from '@ant-design/icons';
-import { useRedux } from '@/common/redux-util';
 import { RESPONSE_CODE } from '@/common/config';
 import { taskUploadTaskList, taskUploadTaskReset, taskUploadTaskCancel } from '../../constants/api';
 import { useHistory } from 'react-router-dom';
@@ -31,6 +30,7 @@ function Page(props: Props) {
   const [form] = Form.useForm();
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);  // 选中的列的key值列表
   const [selectedRows, setSelectedRows] = useState([] as any[]);
+  const [loading, setLoading] = useState(false);
 
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) =>
@@ -41,6 +41,24 @@ function Page(props: Props) {
     }
   );
   const { submit, reset } = search;
+
+  /**
+   * @todo 自定义查询，把选中列表置空
+   */
+  const customSubmit = () => {
+    setSelectedRowKeys([]);
+    setSelectedRows([]);
+    submit();
+  }
+
+  /**
+   * @todo 自定义重置，把选中列表置空
+   */
+  const customReset = () => {
+    setSelectedRowKeys([]);
+    setSelectedRows([]);
+    reset();
+  }
 
   /**
    * @todo 创建table的列
@@ -100,12 +118,12 @@ function Page(props: Props) {
     const param = {
       ids: selectedRowKeys.join(',')
     }
+    setLoading(true);
     const res = await taskUploadTaskReset(param);
+    setLoading(false);
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '重置任务成功' });
-      submit();
-      setSelectedRowKeys([]);
-      setSelectedRows([]);
+      customSubmit();
     } else {
       notification.error({ message: res && res.msg || '重置任务失败，请重试' });
     }
@@ -122,12 +140,12 @@ function Page(props: Props) {
     const param = {
       ids: selectedRowKeys.join(',')
     }
+    setLoading(true);
     const res = await taskUploadTaskCancel(param);
+    setLoading(false);
     if (res && res.code === RESPONSE_CODE.success) {
       notification.success({ message: '取消任务成功' });
-      submit();
-      setSelectedRowKeys([]);
-      setSelectedRows([]);
+      customSubmit();
     } else {
       notification.error({ message: res && res.msg || '取消任务失败，请重试' });
     }
@@ -156,7 +174,7 @@ function Page(props: Props) {
     { title: '重置任务', onClick: onResetTask, icon: <CheckOutlined /> },
     { title: '取消任务', onClick: onCancelTask, icon: <CloseOutlined /> },
     { title: '日志下载', onClick: onLogDownload, icon: <DownloadOutlined /> },
-    { title: '刷新状态', onClick: () => reset(), icon: <SyncOutlined />, type: "primary" as any, },
+    { title: '刷新状态', onClick: () => customReset(), icon: <SyncOutlined />, type: "primary" as any, },
   ]
 
   const onChangeSelectedRows = (selectedRowKeys: any[], selectedRows: any[]) => {
@@ -171,18 +189,24 @@ function Page(props: Props) {
 
 
   return (
-    <div>
+    <Spin spinning={loading}>
       <Forms
         form={form}
         forms={forms}
         formButtonProps={{
-          submit,
-          reset,
+          submit: customSubmit,
+          reset: customReset,
           extraButtons
         }}
       />
-      <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} />
-    </div>
+      <Table
+        rowKey="id"
+        rowSelection={rowSelection}
+        columns={columns}
+        {...tableProps}
+        pagination={getStandardPagination(tableProps.pagination)}
+      />
+    </Spin>
   );
 }
 export default Page;

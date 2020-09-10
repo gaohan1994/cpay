@@ -2,76 +2,46 @@
  * @Author: centerm.gaozhiying
  * @Date: 2020-08-12 09:13:05
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-12 10:47:30
+ * @Last Modified time: 2020-09-10 11:52:16
  *
  * @todo 应用管理的详情页
  */
 import React, { useEffect, useState } from 'react';
 import { Descriptions, notification, Col, Row, Rate, Spin } from 'antd';
-import { useHistory } from 'react-router-dom';
-import { formatSearch } from '@/common/request-util';
+import { useQueryParam } from '@/common/request-util';
 import { appInfoDetail } from '../../constants/api';
 import { RESPONSE_CODE } from '../../../../common/config';
 import { IAppInfoDetail } from '../../types';
 import { useStore } from '@/pages/common/costom-hooks';
-import { useSelectorHook } from '@/common/redux-util';
-import numeral from 'numeral';
+import { getDictText } from '../../../common/util/index';
 
 function Page() {
   // 请求dept数据
-  useStore(['app_status']);
-  const common = useSelectorHook((state) => state.common);
-
-  const history = useHistory();
+  const res = useStore(['app_status']);
+  const id = useQueryParam('id');
   const [detailArr, setDetailArr] = useState([] as any[]);
   const [loading, setLoading] = useState(false);
 
+  /**
+   * @todo 初始页面数据
+   */
   useEffect(() => {
-    const { search } = history.location;
-    const field = formatSearch(search);
+    getDetailCallback({ code: RESPONSE_CODE.success, data: {} });
+  }, []);
+
+  /**
+  * @todo 获取完相应字典数据，设置详情值
+  */
+  useEffect(() => {
     setLoading(true);
-    if (field.id) {
-      appInfoDetail(field.id, getDetailCallback);
-    }
-  }, [history.location.search]);
-
-  /**
-   * @todo 监听应用状态对应的字典列表的改变，获取相应状态对应的 文字
-   */
-  useEffect(() => {
-    for (let i = 0; i < detailArr.length; i++) {
-      if (
-        detailArr[i].label === '应用状态' &&
-        typeof detailArr[i].value === 'number'
-      ) {
-        let newDetailArr = [...detailArr];
-        newDetailArr[i] = {
-          label: '应用状态',
-          value: getStatusText(detailArr[i].value),
-        };
-        setDetailArr(newDetailArr);
+    if (!res.loading) {
+      if (id) {
+        appInfoDetail(id, getDetailCallback);
+      } else {
+        setLoading(false);
       }
     }
-  }, [common.dictList]);
-
-  /**
-   * @todo 获取应用状态对应的文字
-   * @param status 应用状态
-   */
-  const getStatusText = (status: number) => {
-    let data: any =
-      common.dictList &&
-      common.dictList.app_status &&
-      common.dictList.app_status.data
-        ? common.dictList.app_status.data
-        : [];
-    for (let i = 0; i < data.length; i++) {
-      if (status === numeral(data[i].dictValue).value()) {
-        return data[i].dictLabel || status;
-      }
-    }
-    return status;
-  };
+  }, [id, res.loading]);
 
   /**
    * @todo 从接口拿到应用详情后的回调方法
@@ -85,7 +55,7 @@ function Page() {
       let permissions: string[] = [];
       let permissionsStr: string = '';
       let images: string[] = [];
-      if (typeof detail.permissions && detail.permissions.length > 0) {
+      if (typeof detail.permissions === 'string' && detail.permissions.length > 0) {
         permissions = detail.permissions.split(';');
         let str = '';
         for (let i = 0; i < permissions.length; i++) {
@@ -99,14 +69,13 @@ function Page() {
       }
       arr.push({
         label: '是否可卸载',
-        value: detail.isUninstall === 1 ? '可卸载' : '不可卸载',
+        value: detail.isUninstall === 1 ? '可卸载' : detail.isUninstall === 0 ? '不可卸载' : undefined,
       });
-      // arr.push({ label: "是否强制更新", value: detail.groupName });
-      arr.push({ label: '所属组', value: detail.groupName || '--' });
-      arr.push({ label: '所属机构', value: detail.deptName || '--' });
-      arr.push({ label: '应用分类', value: detail.typeName || '--' });
-      arr.push({ label: '终端厂商', value: detail.firmName || '--' });
-      arr.push({ label: '终端型号', value: detail.terminalTypes || '--' });
+      arr.push({ label: '所属组', value: detail.groupName });
+      arr.push({ label: '所属机构', value: detail.deptName });
+      arr.push({ label: '应用分类', value: detail.typeName });
+      arr.push({ label: '终端厂商', value: detail.firmName });
+      arr.push({ label: '终端型号', value: detail.terminalTypes });
       arr.push({
         label: '应用推荐度',
         value: detail.reDegree,
@@ -121,7 +90,7 @@ function Page() {
         value: detail.iconPath,
         render: (path: string) => renderIcon(path),
       });
-      arr.push({ label: '应用状态', value: getStatusText(detail.status) });
+      arr.push({ label: '应用状态', value: getDictText(`${detail.status}`, 'app_status') });
       arr.push({ label: '关键词', value: detail.keyWord });
       arr.push({ label: '权限', value: permissionsStr });
       arr.push({ label: '应用简介', value: detail.apkDescription });
@@ -188,7 +157,7 @@ function Page() {
                   label={<div style={{ width: '100px' }}>{item.label}</div>}
                 >
                   <div style={{ width: 'calc(60vw - 200px)' }}>
-                    {item.render ? item.render(item.value) : item.value}
+                    {item.render ? item.render(item.value) : item.value || '--'}
                   </div>
                 </Descriptions.Item>
               );

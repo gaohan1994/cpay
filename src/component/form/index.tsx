@@ -50,6 +50,9 @@ function CommonForm(props: Props) {
           {forms && (
             <>
               {forms.map((item) => {
+                if (item.render) {
+                  return item.render();
+                }
                 if (!!isCommonTreeSelectForm(item)) {
                   return renderCommonTreeSelectForm(item);
                 }
