@@ -12,10 +12,12 @@ import Terminalmessage from '@/pages/terminal/message';
 import TerminalmessageDetail from '@/pages/terminal/message/detail';
 import Terminalapplication from '@/pages/terminal/application';
 import Terminalfactory from '@/pages/terminal/factory';
+import TerminalfactoryDetail from '@/pages/terminal/factory/detail';
 import Terminalgroup from '@/pages/terminal/group';
 import Terminalgrouping from '@/pages/terminal/grouping';
 import Terminalmerchant from '@/pages/terminal/merchant';
 import Terminalmodel from '@/pages/terminal/model';
+import TerminalmodelAdd from '@/pages/terminal/model/add';
 import Terminalparams from '@/pages/terminal/params';
 import TerminalparamsDetail from '@/pages/terminal/params/detail';
 import Terminalquery from '@/pages/terminal/query';
@@ -80,11 +82,34 @@ const routerConfig: any[] = [
     component: Terminalfactory,
     exact: true,
   },
+
+  {
+    // 终端厂商管理
+    name: '终端厂商管理',
+    path: '/terminal/factory-edit',
+    component: TerminalfactoryDetail,
+    exact: true,
+    inMenu: false,
+  },
   {
     // 终端型号管理
     name: '终端型号管理',
     path: '/terminal/model',
     component: Terminalmodel,
+    exact: true,
+  },
+  {
+    name: '型号新增',
+    path: '/terminal/model-add',
+    component: TerminalmodelAdd,
+    inMenu: false,
+    exact: true,
+  },
+  {
+    name: '型号修改',
+    path: '/terminal/model-edit',
+    component: TerminalmodelAdd,
+    inMenu: false,
     exact: true,
   },
   {

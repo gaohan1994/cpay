@@ -1,23 +1,43 @@
 /*
- * @Author: centerm.gaozhiying 
- * @Date: 2020-09-01 13:37:29 
+ * @Author: centerm.gaozhiying
+ * @Date: 2020-09-01 13:37:29
  * @Last Modified by: centerm.gaozhiying
  * @Last Modified time: 2020-09-07 14:39:10
- * 
+ *
  * @todo 提取日志新增页面
  */
 import React, { useState, useEffect } from 'react';
-import { Spin, Form, Button, DatePicker, message, notification, Row, Col, Input, Modal, Table } from 'antd';
+import {
+  Spin,
+  Form,
+  Button,
+  DatePicker,
+  message,
+  notification,
+  Row,
+  Col,
+  Input,
+  Modal,
+  Table,
+} from 'antd';
 import { useStore } from '@/pages/common/costom-hooks';
 import { useFormSelectData } from './costom-hooks';
 import { useForm } from 'antd/lib/form/Form';
-import { CustomFormItems, getCustomSelectFromItemData } from '@/component/custom-form';
+import {
+  CustomFormItems,
+  getCustomSelectFromItemData,
+} from '@/component/custom-form';
 import { CustomFromItem } from '@/common/type';
 import moment from 'moment';
 import { FormTusns } from '../../component/form-tusns';
 import { useQueryParam, formatListResult } from '@/common/request-util';
 import { useDetail } from '@/pages/common/costom-hooks/use-detail';
-import { taskUploadJobDetail, taskUploadJobEdit, taskUploadJobAdd, taskLogSetList } from '../../constants/api';
+import {
+  taskUploadJobDetail,
+  taskUploadJobEdit,
+  taskUploadJobAdd,
+  taskLogSetList,
+} from '../../constants/api';
 import { merge } from 'lodash';
 import { RESPONSE_CODE } from '@/common/config';
 import { useHistory } from 'react-router-dom';
@@ -33,7 +53,7 @@ const customFormLayout = {
   wrapperCol: {
     span: 16,
   },
-}
+};
 
 const fieldLabels = {
   jobName: '任务名称',
@@ -48,7 +68,7 @@ const fieldLabels = {
   logEndTime: '日志结束日期',
   tusns: '终端集合',
   fialedTusns: '导入失败集合',
-}
+};
 
 export default function Page() {
   const id = useQueryParam('id');
@@ -65,16 +85,23 @@ export default function Page() {
 
   const {
     terminalFirmList,
-    terminalFirmValue, setTerminalFirmValue,
+    terminalFirmValue,
+    setTerminalFirmValue,
     terminalTypeList,
-    terminalTypeValue, setTerminalTypeValue,
+    terminalTypeValue,
+    setTerminalTypeValue,
     logUploadTypeList,
-    logUploadTypeValue, setLogUploadTypeValue
+    logUploadTypeValue,
+    setLogUploadTypeValue,
   } = useFormSelectData({ ...form.getFieldsValue() }, form);
 
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) =>
-      taskLogSetList({ pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
+      taskLogSetList({
+        pageSize: paginatedParams.pageSize,
+        pageNum: paginatedParams.current,
+        ...tableProps,
+      }),
     {
       form,
       formatResult: formatListResult,
@@ -86,16 +113,13 @@ export default function Page() {
    */
   const { detail } = useDetail(id, taskUploadJobDetail, setLoading);
 
-  const initialValues = merge(
-    {},
-    (detail && detail) || {}
-  );
+  const initialValues = merge({}, (detail && detail) || {});
 
   /**
    * @todo 监听终端集合的改变，设置表单值
    */
   useEffect(() => {
-    form.setFieldsValue({ 'tusns': tusnsOptions.join(';') });
+    form.setFieldsValue({ tusns: tusnsOptions.join(';') });
   }, [tusnsOptions]);
 
   /**
@@ -104,7 +128,7 @@ export default function Page() {
   useEffect(() => {
     form.setFieldsValue(initialValues);
     if (typeof detail.type === 'number') {
-      form.setFieldsValue({ type: `${detail.type}` })
+      form.setFieldsValue({ type: `${detail.type}` });
       setLogUploadTypeValue(`${detail.type}`);
     }
     setTerminalFirmValue(detail.firmId);
@@ -128,7 +152,7 @@ export default function Page() {
       // 中监听了这些参数的变化，当参数发生改变时把终端集合置空，如果不在
       // 所有表单设置完成后置空终端集合，会导致终端集合设置以后又被置空
       setTimeout(() => {
-        setTusnsOptions(detail.tusns.split(','))
+        setTusnsOptions(detail.tusns.split(','));
       });
     }
   }, [detail]);
@@ -155,8 +179,8 @@ export default function Page() {
         onChange: (id: any) => {
           setLogUploadTypeValue(id);
           form.setFieldsValue({ appCode: undefined });
-        }
-      })
+        },
+      }),
     },
     {
       show: logUploadTypeValue === '0',
@@ -185,9 +209,9 @@ export default function Page() {
         required: true,
         onChange: (id: any) => {
           setTerminalFirmValue(id);
-          form.setFieldsValue({ 'terminalType': undefined });
-        }
-      })
+          form.setFieldsValue({ terminalType: undefined });
+        },
+      }),
     },
     {
       ...getCustomSelectFromItemData({
@@ -198,58 +222,61 @@ export default function Page() {
         nameKey: 'typeName',
         required: true,
         value: terminalTypeValue,
-        setValue: setTerminalTypeValue
-      })
+        setValue: setTerminalTypeValue,
+      }),
     },
     {
       label: fieldLabels.validStartTime,
       key: 'validStartTime',
       render: () => renderDate('请选择有效起始日期', true),
-      requiredType: 'select' as any
+      requiredType: 'select' as any,
     },
     {
       label: fieldLabels.validEndTime,
       key: 'validEndTime',
       render: () => renderDate('请选择有效截止日期', true),
-      requiredType: 'select' as any
+      requiredType: 'select' as any,
     },
     {
       label: fieldLabels.logBeginTime,
       key: 'logBeginTime',
       render: () => renderDate('请选择日志起始日期', false),
-      requiredType: 'select' as any
+      requiredType: 'select' as any,
     },
     {
       label: fieldLabels.logEndTime,
       key: 'logEndTime',
       render: () => renderDate('请选择日志结束日期', false),
-      requiredType: 'select' as any
+      requiredType: 'select' as any,
     },
     {
       label: fieldLabels.tusns,
       key: 'tusns',
       requiredType: 'select',
-      render: () =>
+      render: () => (
         <FormTusns
           options={tusnsOptions}
           setOptions={setTusnsOptions}
-          fetchParam={{ firmId: terminalFirmValue, terminalTypeCodes: terminalTypeValue }}
+          fetchParam={{
+            firmId: terminalFirmValue,
+            terminalTypeCodes: terminalTypeValue,
+          }}
           setFailedOptions={setFailedTusnsOptions}
         />
+      ),
     },
     {
       label: fieldLabels.fialedTusns,
       key: 'fialedTusns',
       show: failedTusnsOptions.length > 0,
-      render: () =>
-        <FormTusnsFailed options={failedTusnsOptions} />
-    }
-  ]
+      render: () => <FormTusnsFailed options={failedTusnsOptions} />,
+    },
+  ];
 
   /**
    * @todo 渲染日期组件
-   * @param text 
-   * @param time 
+   * @param text
+   * @param time
    */
   function renderDate(text: string, time?: boolean) {
     if (time) {
@@ -260,7 +287,7 @@ export default function Page() {
           showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
           placeholder={text}
         />
-      )
+      );
     } else {
       return (
         <DatePicker
@@ -268,7 +295,7 @@ export default function Page() {
           style={{ width: '100%' }}
           placeholder={text}
         />
-      )
+      );
     }
   }
 
@@ -279,21 +306,21 @@ export default function Page() {
           <Input value={appCode} />
         </Col>
         <Col span={12}>
-          <Button style={{ marginLeft: 10 }} type='primary' onClick={showModal}>
+          <Button style={{ marginLeft: 10 }} type="primary" onClick={showModal}>
             选择
           </Button>
         </Col>
       </Row>
-    )
+    );
   }
 
   const showModal = () => {
     setCodeVisible(true);
-  }
+  };
 
   const hideModal = () => {
     setCodeVisible(false);
-  }
+  };
 
   const handleOk = () => {
     if (selectedRow.length === 0) {
@@ -302,11 +329,18 @@ export default function Page() {
     }
     hideModal();
     form.setFieldsValue({
-      appCode: logUploadTypeValue === '0' ? selectedRow[0].appCode : selectedRow[0].logUrl
+      appCode:
+        logUploadTypeValue === '0'
+          ? selectedRow[0].appCode
+          : selectedRow[0].logUrl,
     });
-    setAppCode(logUploadTypeValue === '0' ? selectedRow[0].appCode : selectedRow[0].logUrl);
+    setAppCode(
+      logUploadTypeValue === '0'
+        ? selectedRow[0].appCode
+        : selectedRow[0].logUrl
+    );
     setSelectedRow([]);
-  }
+  };
 
   /**
    * @todo 提交
@@ -331,51 +365,55 @@ export default function Page() {
         logEndTime: fields.logEndTime.format('YYYY-MM-DD'),
         validStartTime: fields.validStartTime.format('YYYY-MM-DD HH:mm:ss'),
         validEndTime: fields.validEndTime.format('YYYY-MM-DD HH:mm:ss'),
-      }
+      };
 
       if (logUploadTypeValue === '1') {
         param = {
           ...param,
-          appCode: fields.logFile
-        }
-        delete param.logFile
+          appCode: fields.logFile,
+        };
+        delete param.logFile;
       }
       setLoading(true);
       if (id) {
         param = {
           ...param,
-          id
-        }
+          id,
+        };
         const res = await taskUploadJobEdit(param);
         setLoading(false);
         if (res && res.code === RESPONSE_CODE.success) {
           notification.success({ message: '终端提取日志修改成功' });
           history.goBack();
         } else {
-          notification.error({ message: res.msg || '终端提取日志修改失败，请重试' });
+          notification.error({
+            message: res.msg || '终端提取日志修改失败，请重试',
+          });
         }
       } else {
         param = {
           ...param,
-        }
+        };
         const res = await taskUploadJobAdd(param);
         setLoading(false);
         if (res && res.code === RESPONSE_CODE.success) {
           notification.success({ message: '终端提取日志新增成功' });
           history.goBack();
         } else {
-          notification.error({ message: res.msg || '终端提取日志新增失败，请重试' });
+          notification.error({
+            message: res.msg || '终端提取日志新增失败，请重试',
+          });
         }
       }
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
       setError(errorInfo.errorFields);
     }
-  }
+  };
 
   /**
- * @todo 创建table的列
- */
+   * @todo 创建table的列
+   */
   const columns = createTableColumns([
     {
       title: '应用名称',
@@ -391,14 +429,17 @@ export default function Page() {
     },
   ]);
 
-  const onChangeSelectedRows = (selectedRowKeys: any[], selectedRows: any[]) => {
+  const onChangeSelectedRows = (
+    selectedRowKeys: any[],
+    selectedRows: any[]
+  ) => {
     setSelectedRow(selectedRows);
-  }
+  };
 
   const rowSelection = {
     selectedRow,
     onChange: onChangeSelectedRows,
-    type: 'radio'
+    type: 'radio',
   };
 
   return (
@@ -418,7 +459,7 @@ export default function Page() {
         </Form>
       </div>
       <Modal
-        title={"应用包名选择"}
+        title={'应用包名选择'}
         cancelText="取消"
         okText="确定"
         visible={codeVisible}
@@ -428,7 +469,14 @@ export default function Page() {
         bodyStyle={{ padding: 0 }}
         getContainer={false}
       >
-        <div style={{ height: 400, overflow: 'auto', overflowX: 'hidden', padding: '24px 0px 24px 24px' }}>
+        <div
+          style={{
+            height: 400,
+            overflow: 'auto',
+            overflowX: 'hidden',
+            padding: '24px 0px 24px 24px',
+          }}
+        >
           <Table
             rowKey="id"
             rowSelection={rowSelection}
@@ -446,5 +494,5 @@ export default function Page() {
         <Button onClick={() => history.goBack()}>返回</Button>
       </FixedFoot>
     </Spin>
-  )
+  );
 }
