@@ -6,13 +6,19 @@ import { FormItmeType, FormItem } from '@/component/form/type';
 import { renderCommonTreeSelectForm } from '@/component/form/render';
 import './index.scss';
 import invariant from 'invariant';
-import { useMount } from 'ahooks';
+import pic_map_address from '@/assets/map/pic_map_address.png';
+import { TableTusns } from '../component/table';
+import { getAllTerminalPosition } from '../constants';
+import { RESPONSE_CODE } from '@/common/config';
 
 export default () => {
   useStore([]);
   const [form] = Form.useForm();
   const [map, setMap] = useState({} as any);
   const [deptId, setDeptId] = useState('');
+  const [visible, setVisible] = useState(false);
+  const [selectList, setSelectList] = useState([] as any[]);
+  const [merchantIcon, setMerchantIcon] = useState({} as any);
 
   useEffect(() => {
     const mp = new BMap.Map('monitor-map-container');
@@ -21,37 +27,86 @@ export default () => {
     // mp.addControl(new BMap.NavigationControl());
     // mp.addControl(new BMap.ScaleControl());
     // mp.addControl(new BMap.OverviewMapControl());
-    mp.enableScrollWheelZoom(true);
+    mp.addControl(new BMap.NavigationControl());
+    mp.enableScrollWheelZoom(); // 启用滚轮放大缩小。
+    mp.enableKeyboard(); // 启用键盘操作。
+    mp.addControl(
+      new BMap.OverviewMapControl({
+        anchor: 'BMAP_ANCHOR_TOP_RIGHT',
+        isOpen: true,
+      })
+    ); //缩略图控件
     setMap(mp);
+
+    const mIcon = new BMap.Icon(pic_map_address, new BMap.Size(32, 37));
+    console.log('mIcon:', mIcon);
+    setMerchantIcon(mIcon);
   }, []);
 
-  const onSelect = () => {
+  const onSearch = async () => {
     try {
-      const fields = form.getFieldsValue();
-      console.log('fields, ', fields);
-      invariant(!!fields.deptId, '请先选择机构');
+      invariant(selectList && selectList[0], '请先选择终端设备！');
+      const result = await getAllTerminalPosition({ tusn: selectList[0] });
+      invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
+      console.log('result', result);
+
+      /**
+       * 创建终端点坐标
+       */
+      const pointData = {
+        longitude: result.data.terminalInfo.longitude,
+        latitude: result.data.terminalInfo.latitude,
+      };
+      console.log('pointData', pointData);
+      const point = new BMap.Point(pointData.longitude, pointData.latitude);
+      map.centerAndZoom(point, 12);
+
+      /**
+       *
+       */
+      var marker = new BMap.Marker(point, { icon: merchantIcon });
+      map.addOverlay(marker);
+
+      /**
+       * 设置半径
+       */
+      const circle = new BMap.Circle(point, 5000, {
+        fillColor: 'blue',
+        strokeWeight: 1,
+        fillOpacity: 0.3,
+        strokeOpacity: 0.3,
+        enableEditing: true,
+      });
+      map.addOverlay(circle);
     } catch (error) {
       notification.warn({ message: error.message });
     }
-  };
-
-  const onSearch = () => {
-    const pointMap = new BMap.Point(116.404, 39.915);
-    map.centerAndZoom(pointMap, 15);
   };
 
   const deptForm: FormItem = {
     span: 6,
     formName: 'deptId',
     formType: FormItmeType.TreeSelectCommon,
+    onChange: (value) => {
+      setDeptId(value);
+    },
   };
 
   const suffix = (
-    <div onClick={() => onSelect()}>
+    <div
+      onClick={() => {
+        if (!deptId) {
+          notification.warn({ message: '请先选择机构' });
+          return;
+        }
+        setVisible(true);
+      }}
+    >
       <UnorderedListOutlined />
       <span style={{ marginLeft: 4 }}>选择</span>
     </div>
   );
+  console.log('selectList:', selectList);
   return (
     <div>
       <Form form={form}>
@@ -60,7 +115,10 @@ export default () => {
 
           <Col span={6}>
             <Form.Item>
-              <Input addonAfter={suffix} />
+              <Input
+                addonAfter={suffix}
+                value={(selectList && selectList[0]) || ''}
+              />
             </Form.Item>
           </Col>
           <Form.Item>
@@ -73,6 +131,14 @@ export default () => {
           </Form.Item>
         </Row>
       </Form>
+
+      <TableTusns
+        visible={visible}
+        hideModal={() => setVisible(false)}
+        fetchParam={{ deptId }}
+        setOptions={setSelectList}
+        options={[]}
+      />
 
       <div id="monitor-map-container" className="monitor-map-container">
         map

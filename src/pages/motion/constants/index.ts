@@ -59,9 +59,7 @@ export const relocationKeyReset = async (
   ids: string,
   callback?: (params: IFormatResult<any>) => void
 ) => {
-  const result = await ApiRequest.post(`/cpay-admin/relocation/key/remove`, {
-    ids,
-  });
+  const result = await ApiRequest.post(`/cpay-admin/relocation/key/reset`, {});
 
   callback && callback(result);
   return result;
@@ -90,5 +88,16 @@ export const relocationKeyEdit = async (
   );
 
   callback && callback(result);
+  return result;
+};
+
+export const getAllTerminalPosition = async (
+  params: any
+): Promise<IResponseResult<any>> => {
+  const result = await ApiRequest.get(
+    `/cpay-admin/relocation/monitor/getAllTerminalPosition${jsonToQueryString(
+      params
+    )}`
+  );
   return result;
 };

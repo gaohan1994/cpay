@@ -9,6 +9,7 @@ import {
   relocationKeyRemove,
   relocationKeyAdd,
   relocationKeyEdit,
+  relocationKeyReset,
 } from '../constants';
 import { formatListResult, formatPaginate } from '@/common/request-util';
 import invariant from 'invariant';
@@ -48,7 +49,7 @@ export default () => {
     //   title: '确认要导出终端信息？',
     //   onOk: async () => {
     //     try {
-    //       const result = await terminalShiftExport({});
+    //       const result = await relocationKeyReset('');
     //       invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
     //       const href = getDownloadPath(result.data);
     //       window.open(href, '_blank');
@@ -62,14 +63,19 @@ export default () => {
     // });
   };
 
+  const onImport = () => {
+    console.log('onImport');
+  };
+
   const onReset = () => {
     Modal.confirm({
       title: '确认重置地图次数吗？',
       onOk: async () => {
         try {
-          // const result = await relocationKeyRemove(item.id);
-          // invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
-          // notification.success({ message: '删除成功' });
+          const result = await relocationKeyReset('');
+          invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
+          notification.success({ message: '重置成功！' });
+          submit();
         } catch (error) {
           notification.warn({ message: error.message });
         }
@@ -98,6 +104,7 @@ export default () => {
   };
 
   const onAdd = () => {
+    setEditItem({});
     setModalTitle('新增');
     setVisible(true);
   };
@@ -189,10 +196,10 @@ export default () => {
       onClick: onReset,
     },
     {
-      title: '导出',
+      title: '导入',
       icon: <LogoutOutlined />,
       type: 'primary',
-      onClick: onExport,
+      onClick: onImport,
     },
   ];
 
