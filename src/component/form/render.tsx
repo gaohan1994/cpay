@@ -224,7 +224,7 @@ export function renderCommonSelectForm(
  */
 export function renderCommonTreeSelectForm(
   data: IComponentFormCommonTreeSelectForm,
-  isFrom?: boolean
+  isForm?: boolean
 ) {
   const UseCommonTreeSelectData = (): IComponentFormTreeSelectForm => {
     const state = useSelectorHook((state) => state.common.deptTreeData);
@@ -238,7 +238,7 @@ export function renderCommonTreeSelectForm(
     };
   };
 
-  return renderTreeSelectForm(UseCommonTreeSelectData(), isFrom);
+  return renderTreeSelectForm(UseCommonTreeSelectData(), isForm);
 }
 
 export function renderCascader(data: IComponentFormCascader) {

@@ -479,11 +479,11 @@ export default function Page() {
           style={{ backgroundColor: 'white' }}
         >
           <CustomFormItems items={forms} singleCol={true} />
-          <Form.Item {...ButtonLayout} >
+          {/* <Form.Item {...ButtonLayout} >
             <Button type="primary" onClick={onSubmit}>
               保存
             </Button>
-          </Form.Item>
+          </Form.Item> */}
         </Form>
         <Modal
           visible={previewVisible}

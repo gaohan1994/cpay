@@ -16,13 +16,14 @@ import { IResponseResult, IResponseListResult } from '@/common/type';
  * @param deptData
  */
 function formatDeptTreeData(deptData: DeptItem[]): DeptTreeData[] {
+  let rootPrefix = '0-0';
   function parseArrayToTree(array: DeptItem[]) {
     let tree: DeptTreeData[] = [];
     let root = getRootObj(deptData);
 
     if (root) {
       tree.push(root);
-      setChild(root, deptData);
+      setChild(root, deptData, rootPrefix);
     }
     return tree;
   }
@@ -33,22 +34,27 @@ function formatDeptTreeData(deptData: DeptItem[]): DeptTreeData[] {
       array.forEach((item) => {
         if (item.pId === 0) {
           root = item;
+          root.key = rootPrefix;
         }
       });
     }
     return root;
   }
 
-  function setChild(root: DeptTreeData, array: DeptItem[]) {
+  function setChild(root: DeptTreeData, array: DeptItem[], prefix: string) {
+    let index = 0;
     array.forEach((item) => {
       if (item.pId === root.id) {
+        const itemWithKey = { ...item, key: `${prefix}-${index}` };
         if (root.children) {
-          root.children.push(item);
+          root.children.push(itemWithKey);
+          index++;
         } else {
-          root.children = [item];
+          root.children = [itemWithKey];
+          index++;
         }
 
-        setChild(item, array);
+        setChild(itemWithKey, array, `${prefix}-${index}`);
       }
     });
   }

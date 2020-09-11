@@ -6,6 +6,7 @@ export interface DeptItem {
   id: number;
   name: string;
   title: string;
+  key: string;
 }
 
 export interface DeptTreeData extends DeptItem {

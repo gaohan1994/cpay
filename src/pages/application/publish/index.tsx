@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-12 09:27:59 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-10 15:13:25
+ * @Last Modified time: 2020-09-10 17:32:39
  * 
  * @todo 应用发布列表页面
  */
@@ -161,7 +161,7 @@ function Page(props: Props) {
         return (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <img src={item.iconPath} style={{ width: 50, height: 50 }} />
-            <div style={{ paddingTop: 5 }}>{item.apkName}</div>
+            <div style={{ paddingTop: 5, wordBreak: 'break-all' }}>{item.apkName}</div>
           </div>
         )
       }

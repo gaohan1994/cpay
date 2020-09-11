@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-26 11:27:53 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-10 16:13:09
+ * @Last Modified time: 2020-09-10 16:42:20
  * 
  * @todo 软件更新执行情况查询
  */
@@ -87,27 +87,32 @@ function Page(props: Props) {
     },
     {
       title: '终端号',
-      dataIndex: 'terminal',
+      dataIndex: 'terminalCode',
     },
     {
       title: '商户号',
-      dataIndex: 'merchantId',
+      dataIndex: 'terminalMerchant',
+      render: (merchant) => merchant.merchantCode,
     },
     {
       title: '商户名称',
-      dataIndex: 'merchantName',
+      dataIndex: 'terminalMerchant',
+      render: (merchant) => merchant.merchantName,
     },
     {
       title: '商家姓名',
-      dataIndex: 'name',
+      dataIndex: 'terminalMerchant',
+      render: (merchant) => merchant.legalPerson,
     },
     {
       title: '商家手机号',
-      dataIndex: 'phone',
+      dataIndex: 'terminalMerchant',
+      render: (merchant) => merchant.applyPhone,
     },
     {
       title: '商家地址',
-      dataIndex: 'address',
+      dataIndex: 'terminalMerchant',
+      render: (merchant) => `${merchant.province || ''}${merchant.city || ''}${merchant.county || ''}`,
     },
   ]);
 
