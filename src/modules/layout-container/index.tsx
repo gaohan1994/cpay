@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Layout, ConfigProvider, Menu, Divider } from 'antd';
 import './index.scss';
-import LayoutHeader from './component/header';
 import LayoutMenu from './component/menu';
 import LayoutBread from './component/bread';
 import { ILayoutSiderMenu, ILayoutSiderSubMenu } from './types';
@@ -9,11 +8,10 @@ import logo from '../../assets/logo.png';
 import { useSelectorHook, useRedux } from '@/common/redux-util';
 import { getUserDept } from '@/common/api';
 import './index.less';
-import { useMount } from 'ahooks';
 
 const prefix = 'component-layout';
 
-const { Content, Footer, Header } = Layout;
+const { Header } = Layout;
 
 type Props = {
   menus: ILayoutSiderMenu[];

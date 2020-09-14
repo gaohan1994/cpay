@@ -4,7 +4,7 @@ import { useAntdTable, useBoolean } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { PlusOutlined } from '@ant-design/icons';
 import { formatListResult } from '@/common/request-util';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import Forms from '@/component/form';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -157,7 +157,12 @@ export default () => {
           extraButtons,
         }}
       />
-      <Table rowKey="id" columns={columns} {...tableProps} />
+      <Table
+        rowKey="id"
+        columns={columns}
+        {...tableProps}
+        pagination={getStandardPagination(tableProps.pagination)}
+      />
     </div>
   );
 };

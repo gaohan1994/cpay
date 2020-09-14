@@ -6,7 +6,7 @@ import { LogoutOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd/lib/button';
 import { terminalAppList, terminalAppExport } from './constants';
 import { formatListResult, formatPaginate } from '@/common/request-util';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import Forms from '@/component/form';
 import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
@@ -127,7 +127,12 @@ export default () => {
           extraButtons,
         }}
       />
-      <Table style={{ overflowX: 'auto' }} columns={columns} {...tableProps} />
+      <Table
+        style={{ overflowX: 'auto' }}
+        columns={columns}
+        {...tableProps}
+        pagination={getStandardPagination(tableProps.pagination)}
+      />
     </div>
   );
 };

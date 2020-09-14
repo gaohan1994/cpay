@@ -6,7 +6,7 @@ import { LogoutOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd/lib/button';
 import { terminalSysdetailList, terminalSysdetailExport } from './constants';
 import { formatListResult, formatPaginate } from '@/common/request-util';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import Forms from '@/component/form';
 import { RESPONSE_CODE, BASE_URL, getDownloadPath } from '@/common/config';
@@ -263,6 +263,7 @@ export default () => {
         style={{ overflowX: 'auto' }}
         columns={columns}
         {...tableProps}
+        pagination={getStandardPagination(tableProps.pagination)}
         scroll={{ x: 3200 }}
       />
     </div>

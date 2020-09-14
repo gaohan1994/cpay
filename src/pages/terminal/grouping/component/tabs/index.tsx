@@ -13,7 +13,7 @@ import {
 } from '../../constants';
 import Forms from '@/component/form';
 import { formatListResult, formatPaginate } from '@/common/request-util';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { RESPONSE_CODE } from '@/common/config';
 import { useModal } from '../../costom-hooks';
 import ImportModal from '../modal';
@@ -226,6 +226,7 @@ export default (props: Props) => {
                   style={{ overflowX: 'auto' }}
                   columns={columns}
                   {...tableProps}
+                  pagination={getStandardPagination(tableProps.pagination)}
                   // scroll={{ x: 800 }}
                 />
               </TabPane>

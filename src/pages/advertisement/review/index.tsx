@@ -7,7 +7,7 @@ import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import history from '@/common/history-util';
 
 type Props = {};
@@ -100,7 +100,12 @@ function Page(props: Props) {
           reset,
         }}
       />
-      <Table rowKey="id" columns={columns} {...tableProps} />
+      <Table
+        rowKey="id"
+        columns={columns}
+        {...tableProps}
+        pagination={getStandardPagination(tableProps.pagination)}
+      />
     </div>
   );
 }

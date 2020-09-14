@@ -13,7 +13,7 @@ import {
 } from '../constants';
 import { formatListResult, formatPaginate } from '@/common/request-util';
 import invariant from 'invariant';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import Forms from '@/component/form';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -219,6 +219,7 @@ export default () => {
         style={{ overflowX: 'auto' }}
         columns={columns}
         {...tableProps}
+        pagination={getStandardPagination(tableProps.pagination)}
       />
       <Modal
         visible={visible}

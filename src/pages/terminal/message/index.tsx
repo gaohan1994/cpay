@@ -11,7 +11,7 @@ import {
 } from './constants/api';
 import { formatListResult, formatPaginate } from '@/common/request-util';
 import invariant from 'invariant';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import Forms from '@/component/form';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -372,6 +372,7 @@ export default () => {
         columns={columns}
         rowKey="id"
         {...tableProps}
+        pagination={getStandardPagination(tableProps.pagination)}
         scroll={{ x: 2200 }}
       />
     </div>
