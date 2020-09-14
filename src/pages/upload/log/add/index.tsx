@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying
  * @Date: 2020-09-01 13:37:29
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-10 16:25:02
+ * @Last Modified time: 2020-09-11 17:05:27
  *
  * @todo 提取日志新增页面
  */
@@ -162,7 +162,7 @@ export default function Page() {
    */
   const forms: CustomFromItem[] = [
     {
-      label: fieldLabels.appCode,
+      label: fieldLabels.jobName,
       key: 'jobName',
       requiredType: 'input' as any,
     },

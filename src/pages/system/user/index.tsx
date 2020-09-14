@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-11 14:21:23 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-11 16:13:14
+ * @Last Modified time: 2020-09-14 11:57:12
  * 
  * @todo 用户管理
  */
@@ -16,11 +16,11 @@ import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns, getStandardPagination } from '@/component/table';
 import history from '@/common/history-util';
 import { PlusOutlined, LogoutOutlined } from '@ant-design/icons';
-import { systemUserList, systemUserChangeStatus } from './constants/api';
+import { systemUserList, systemUserChangeStatus, systemUserRemove, systemUserExport, systemUserResetPwd } from './constants/api';
 import { renderSelectForm } from '@/component/form/render';
 import { systemRoleList } from '../role/constants/api';
 import invariant from 'invariant';
-import { RESPONSE_CODE } from '@/common/config';
+import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
 
 type Props = {};
 
@@ -31,17 +31,38 @@ function Page(props: Props) {
   const [loading, setLoading] = useState(false);
   const [roleList, setRoleList] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [fetchField, setFetchField] = useState({} as any);
 
   const [form] = Form.useForm();
   const { tableProps, search }: any = useAntdTable(
-    (paginatedParams: any, tableProps: any) =>
-      systemUserList({ pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
+    (paginatedParams: any, tableProps: any) => {
+      setFetchField(tableProps);
+      return systemUserList({
+        pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps
+      });
+    },
     {
       form,
       formatResult: formatListResult,
     }
   );
   const { submit, reset } = search;
+
+  /**
+   * @todo 自定义查询，把选中列表置空
+   */
+  const customSubmit = () => {
+    setSelectedRowKeys([]);
+    submit();
+  }
+
+  /**
+   * @todo 自定义重置，把选中列表置空
+   */
+  const customReset = () => {
+    setSelectedRowKeys([]);
+    reset();
+  }
 
   useEffect(() => {
     systemRoleList({}, (result: any) => {
@@ -51,12 +72,16 @@ function Page(props: Props) {
     });
   }, []);
 
+  /**
+   * @todo 修改用户信息
+   * @param item 
+   */
   const onEdit = (item: any) => {
-
+    history.push(`/system/user-add?id=${item.userId}`);
   }
 
   /**
-   * @todo 删除软件信息
+   * @todo 删除用户
    * @param item 
    */
   const onRemove = async (item: any) => {
@@ -68,21 +93,25 @@ function Page(props: Props) {
       onOk: async () => {
         try {
           const param = {
-            ids: item.id
+            ids: item.userId
           }
           setLoading(true);
-          // const result = await softInfoRemove(param);
+          const result = await systemUserRemove(param);
           setLoading(false);
-          // invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除软件信息失败，请重试');
-          notification.success({ message: '删除软件信息成功!' });
-          submit();
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除用户失败，请重试');
+          notification.success({ message: '删除用户成功!' });
+          customSubmit();
         } catch (error) {
-          notification.warn({ message: error.message });
+          notification.error({ message: error.message });
         }
       },
     });
   }
 
+  /**
+   * @todo 切换用户启用/停用状态
+   * @param item 
+   */
   const onChangeStatus = (item: any) => {
     const operateText = item.status === 0 ? '停用' : '启用'
     Modal.confirm({
@@ -101,7 +130,7 @@ function Page(props: Props) {
           setLoading(false);
           invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || `${operateText}用户失败！`);
           notification.success({ message: `${operateText}用户成功!` });
-          submit();
+          customSubmit();
         } catch (error) {
           notification.warn({ message: error.message });
         }
@@ -148,7 +177,7 @@ function Page(props: Props) {
     {
       title: '机构名称',
       dataIndex: 'dept',
-      render: (dept: any) => dept.deptName
+      render: (dept: any) => dept && dept.deptName || '--'
     },
     {
       title: '电话号码',
@@ -202,24 +231,51 @@ function Page(props: Props) {
     history.push('/system/user-add');
   }
 
+  /**
+   * @todo 重置密码
+   */
   const onResetPassword = () => {
     if (selectedRowKeys.length === 0) {
       notification.error({ message: '请选择用户！' });
       return;
     }
-  }
-
-  const onExport = () => {
     Modal.confirm({
-      title: '确认要导出终端信息？',
+      title: '提示',
+      content: `确认要重置选中用户的密码吗?`,
+      okText: '确定',
+      cancelText: '取消',
       onOk: async () => {
         try {
-          // const result = await terminalShiftExport({});
-          // invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
+          const param = {
+            ids: selectedRowKeys.join(',')
+          }
+          setLoading(true);
+          const result = await systemUserResetPwd(param);
+          setLoading(false);
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '重置密码失败，请重试');
+          notification.success({ message: '重置密码成功!' });
+          customSubmit();
+        } catch (error) {
+          notification.error({ message: error.message });
+        }
+      },
+    });
+  }
 
-          // const href = getDownloadPath(result.data);
-          // window.open(href, '_blank');
-          // notification.success({ message: '导出成功' });
+  /**
+   * @todo 导出用户信息
+   */
+  const onExport = () => {
+    Modal.confirm({
+      title: '确认要导出用户信息吗？',
+      onOk: async () => {
+        try {
+          const result = await systemUserExport(fetchField);
+          invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
+
+          const href = getDownloadPath(result.data);
+          window.open(href, '_blank');
+          notification.success({ message: '导出成功' });
         } catch (error) {
           notification.warn({ message: error.message });
         }
@@ -246,8 +302,8 @@ function Page(props: Props) {
         form={form}
         forms={forms}
         formButtonProps={{
-          submit,
-          reset,
+          submit: customSubmit,
+          reset: customReset,
           extraButtons
         }}
       />

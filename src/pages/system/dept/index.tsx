@@ -307,7 +307,7 @@ export default function Page() {
               <CustomFormItems items={editForms} singleCol={true} customFormLayout={customFormLayout} />
             </Form>
             <Form.Item {...customButtonLayout} >
-              <Button type="primary" onClick={onSave}>
+              <Button type="primary" onClick={onSave} htmlType='submit'>
                 保存
             </Button>
             </Form.Item>

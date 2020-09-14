@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-12 14:49:27 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-20 16:13:18
+ * @Last Modified time: 2020-09-11 17:26:04
  * 
  * @todo 远程更新模块的类型文件
  */
@@ -119,6 +119,7 @@ export interface ITaskOperationJobDetail {
   id: string;               // 主键id
   jobName: string;          // 任务名称
   groupIds: string;         // 组别id集合
+  groupNames: string;
   operatorCommand: string;  // 操作指令
   releaseType: number;      // 发布类型
   status: number;           // 发布状态

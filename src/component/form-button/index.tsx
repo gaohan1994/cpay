@@ -50,6 +50,7 @@ const FormButton = React.memo((props: FormButtonProps) => {
           onClick={submit}
           icon={submitIcon || <SearchOutlined />}
           style={buttonCss}
+          htmlType={'submit'}
         >
           {submitTitle}
         </Button>

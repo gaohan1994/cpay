@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-13 11:15:48 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-08-20 11:28:51
+ * @Last Modified time: 2020-09-11 17:26:18
  * 
  * @todo 日志提取任务详情页
  */
@@ -61,7 +61,7 @@ function Page() {
       } else {
         arr.push({ label: "机构名称", value: detail.deptName });
         arr.push({ label: "组别过滤方式", value: detail.isGroupUpdate === 0 ? '无' : detail.isGroupUpdate === 1 ? '指定' : '排除' });
-        arr.push({ label: "终端组别", value: detail.groupIds });
+        arr.push({ label: "终端组别", value: detail.groupNames });
       }
       setDetailArr(arr);
     } else {

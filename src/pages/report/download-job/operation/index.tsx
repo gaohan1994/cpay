@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-26 11:27:53 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-10 16:42:20
+ * @Last Modified time: 2020-09-11 16:35:06
  * 
  * @todo 软件更新执行情况查询
  */
@@ -13,7 +13,7 @@ import { formatListResult, useQueryParam } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { SyncOutlined, PauseOutlined, CaretRightOutlined, LogoutOutlined } from '@ant-design/icons';
 import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
 import invariant from 'invariant';
@@ -199,7 +199,13 @@ function Page(props: Props) {
         }}
       />
       <div style={{ marginBottom: 10 }}>任务名称：{decodeURIComponent(jobName)}</div>
-      <Table rowKey="id" rowSelection={rowSelection} columns={columns}  {...tableProps} />
+      <Table
+        rowKey="id"
+        rowSelection={rowSelection}
+        columns={columns}
+        {...tableProps}
+        pagination={getStandardPagination(tableProps.pagination)}
+      />
     </Spin>
   );
 }

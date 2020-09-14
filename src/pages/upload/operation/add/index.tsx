@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 14:13:46 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-07 14:44:13
+ * @Last Modified time: 2020-09-11 17:10:37
  * 
  * @todo 远程运维新增页面
  */
@@ -320,11 +320,6 @@ export default function Page() {
           style={{ backgroundColor: 'white' }}
         >
           <CustomFormItems items={forms.concat(getReleaseTypeFormsByDept()).concat(getReleaseTypeFormsByCondition())} singleCol={true} />
-          {/* <Form.Item {...ButtonLayout} >
-            <Button type="primary" onClick={onSubmit}>
-              保存
-           </Button>
-          </Form.Item> */}
         </Form>
       </div>
       <FixedFoot errors={error} fieldLabels={fieldLabels}>

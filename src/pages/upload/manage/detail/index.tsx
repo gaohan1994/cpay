@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-12 15:51:52 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-10 15:33:38
+ * @Last Modified time: 2020-09-14 11:02:04
  * 
  * @todo 软件信息详情页
  */
@@ -271,6 +271,7 @@ function Page() {
     {
       title: '上传文件名称',
       dataIndex: 'uploadFileName',
+      width: 100
     },
   ]);
 
@@ -315,10 +316,7 @@ function Page() {
   const showModal = (item: ISoftVersionInfo) => {
     setEditItem(item);
     editFrom.setFieldsValue({
-      versionCode: item.versionCode,
-      versionName: item.versionName,
-      firmId: item.firmId,
-      terminalTypes: item.terminalTypes
+      ...item
     });
     setTerminalFirmValue(`${item.firmId}`);
     setTimeout(() => {
@@ -342,10 +340,7 @@ function Page() {
     const fields = editFrom.getFieldsValue();
     const param = {
       id: editItem.id,
-      versionCode: fields.versionCode,
-      versionName: fields.versionName,
-      firmId: fields.firmId,
-      terminalTypes: fields.terminalTypes
+      ...fields,
     }
     const res = await softVersionEdit(param);
     setConfirmLoading(false);
