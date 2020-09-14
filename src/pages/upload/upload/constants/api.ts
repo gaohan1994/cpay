@@ -98,7 +98,7 @@ export const taskSoftListByType = async (
   const result = await ApiRequest.get(
     `/cpay-admin/task/soft/getSoftListByType${jsonToQueryString(params)}`
   );
-  callback &&
+  callback && result && 
     result.code === RESPONSE_CODE.success &&
     callback(result.data);
   return result;

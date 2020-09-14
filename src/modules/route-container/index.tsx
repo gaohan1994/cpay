@@ -5,12 +5,14 @@ import {
   Switch,
   Route,
   RouteProps,
+  Redirect,
 } from 'react-router-dom';
 import { AnimatedSwitch, spring } from 'react-router-transition';
 import { routerConfig } from '@/common/route-config';
 import { menuConfig } from '@/common/menu-config';
 import LayouContainer from '@/modules/layout-container';
 import { history } from '@/common/history-util';
+import ErrorComponent from '@/pages/exception/error';
 
 export type WebNavigator = { child?: any[] } & RouteProps;
 
@@ -34,6 +36,8 @@ function createWebNavigation(params: CreateWebNavigationParams): any {
                   const { ...rest } = item;
                   return <Route key={index} {...rest} />;
                 })}
+                {/* <Route path="/notFound" component={ErrorComponent} />
+                <Redirect to="/notFound" /> */}
               </LayouContainer>
             </Switch>
           </Router>

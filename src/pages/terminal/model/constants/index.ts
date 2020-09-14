@@ -12,7 +12,7 @@ export const terminalTypeList = async (
   const result = await ApiRequest.get(
     `/cpay-admin/terminal/type/list${jsonToQueryString(params)}`
   );
-  callback &&
+  callback && result && 
     result.code === RESPONSE_CODE.success &&
     callback(result.data.rows);
   return result;

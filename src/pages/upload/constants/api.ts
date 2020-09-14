@@ -70,7 +70,7 @@ export const taskSoftVersionListByType = async (
   const result = await ApiRequest.get(
     `/cpay-admin/task/softVersion/listByType${jsonToQueryString(parma)}`
   );
-  callback && result.code === RESPONSE_CODE.success && callback(result.data);
+  callback && result && result.code === RESPONSE_CODE.success && callback(result.data);
   return result;
 };
 

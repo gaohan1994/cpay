@@ -13,23 +13,31 @@ import 'moment/locale/zh-cn';
  * 使用antd  findDOMNode is deprecated in StrictMode 报错生产环境再用StrictMode吧
  * 但是不推荐这么做
  */
-const RenderComponent = function () {
-  return process.env.NODE_ENV === 'production' ? (
-    <React.StrictMode>
-      <ConfigProvider locale={locale}>
-        <Provider store={store}>
-          <AppRouter />
-        </Provider>
-      </ConfigProvider>
-    </React.StrictMode>
-  ) : (
+
+class RenderComponent extends React.Component {
+  componentDidCatch(error: any, errorInfo: any) {
+    console.log('error', error);
+    console.log('errorInfo', errorInfo);
+  }
+
+  render() {
+    return process.env.NODE_ENV === 'production' ? (
+      <React.StrictMode>
+        <ConfigProvider locale={locale}>
+          <Provider store={store}>
+            <AppRouter />
+          </Provider>
+        </ConfigProvider>
+      </React.StrictMode>
+    ) : (
       <ConfigProvider locale={locale}>
         <Provider store={store}>
           <AppRouter />
         </Provider>
       </ConfigProvider>
     );
-};
+  }
+}
 
 ReactDOM.render(<RenderComponent />, document.getElementById('root'));
 

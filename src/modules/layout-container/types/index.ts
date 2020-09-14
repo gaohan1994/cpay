@@ -16,3 +16,9 @@ export interface IAdminInfo {
   name: string;
   phone: string;
 }
+
+export function isSiderMenu(
+  data: ILayoutSiderMenu | ILayoutSiderSubMenu
+): data is ILayoutSiderMenu {
+  return !!(<ILayoutSiderMenu>data)?.subMenus;
+}
