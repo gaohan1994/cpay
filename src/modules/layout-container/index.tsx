@@ -28,12 +28,8 @@ function LayoutContainer(props: Props) {
   const [breadHeight, setBreadHeight] = useState(0);
 
   useEffect(() => {
-    console.log(
-      'breadContainerRef.current?.offsetHeight',
-      breadContainerRef.current?.clientHeight
-    );
     setBreadHeight(breadContainerRef.current?.offsetHeight);
-  }, []);
+  }, [breadContainerRef.current?.clientHeight]);
 
   /**
    * @todo 获取机构数据
@@ -53,19 +49,25 @@ function LayoutContainer(props: Props) {
       </Header>
       <Layout>
         <LayoutMenu menus={menus} />
-        <Layout className="site-layout">
-          <Content style={{ padding: 12, position: 'relative' }}>
-            <div className={`${prefix}-bread`} ref={breadContainerRef}>
-              <LayoutBread />
-            </div>
-
+        <Layout className="site-layout" style={{ position: 'relative' }}>
+          <div className={`${prefix}-bread`} ref={breadContainerRef}>
+            <LayoutBread />
+          </div>
+          <div
+            style={{
+              padding: '0px 12px 12px 12px',
+              position: 'relative',
+              marginTop: `${breadHeight + 12}px`,
+              overflow: 'auto',
+            }}
+          >
             <div
               className="site-layout-background"
               style={{ padding: 12, marginTop: 8, marginBottom: 100 }}
             >
               {props.children}
             </div>
-          </Content>
+          </div>
         </Layout>
       </Layout>
     </Layout>

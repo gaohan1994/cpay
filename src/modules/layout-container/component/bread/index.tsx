@@ -62,7 +62,6 @@ function Bread(props: Props) {
   return (
     <Breadcrumb>
       {breadData.map((breadItem) => {
-        console.log('breadItem', breadItem);
         if (isSiderMenu(breadItem)) {
           return <Item key={breadItem.name}>{breadItem.name}</Item>;
         } else {
