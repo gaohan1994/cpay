@@ -17,7 +17,7 @@ export const terminalGetGroupSet = async (
   const result = await ApiRequest.get(
     `/cpay-admin/terminal/groupSet/getGroupSet`
   );
-  callback && result.code === RESPONSE_CODE.success && callback(result.data);
+  callback && result && result.code === RESPONSE_CODE.success && callback(result.data);
   return result;
 };
 
@@ -58,7 +58,7 @@ export const terminalInfoListByIsGroup = async (
       params
     )}`
   );
-  callback &&
+  callback && result && 
     result.code === RESPONSE_CODE.success &&
     callback(result.data.rows);
   return result;

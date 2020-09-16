@@ -14,8 +14,8 @@ export const terminalFirmList = async (
   const result = await ApiRequest.get(
     `/cpay-admin/terminal/firm/listAll${jsonToQueryString(params)}`
   );
-  callback &&
-    result.code === RESPONSE_CODE.success &&
+  callback && result && 
+    result.code === RESPONSE_CODE.success && result &&
     callback(result.data.rows);
   return result;
 };
@@ -32,6 +32,6 @@ export const terminalTypeListByFirm = async (
   const result = await ApiRequest.get(
     `/cpay-admin/terminal/type/listByFirm${jsonToQueryString(params)}`
   );
-  callback && result.code === RESPONSE_CODE.success && callback(result.data);
+  callback && result && result.code === RESPONSE_CODE.success && callback(result.data);
   return result;
 };

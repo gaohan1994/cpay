@@ -10,7 +10,7 @@ import {
   terminalGroupEdit,
 } from './constants';
 import { formatListResult } from '@/common/request-util';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import Forms from '@/component/form';
 import { renderCommonTreeSelectForm } from '@/component/form/render';
@@ -149,7 +149,12 @@ export default () => {
           extraButtons,
         }}
       />
-      <Table rowKey="id" columns={columns} {...tableProps} />
+      <Table
+        rowKey="id"
+        columns={columns}
+        {...tableProps}
+        pagination={getStandardPagination(tableProps.pagination)}
+      />
       <Modal
         title={`终端组别${modalTitle}`}
         cancelText="取消"

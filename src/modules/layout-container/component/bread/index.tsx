@@ -5,8 +5,10 @@ import { withRouter } from 'react-router';
 import { menuConfig } from '@/common/menu-config';
 import {
   ILayoutSiderMenu,
-  ILayoutSiderSubMenu
+  ILayoutSiderSubMenu,
+  isSiderMenu,
 } from '@/modules/layout-container/types';
+import { Link } from 'react-router-dom';
 
 const { Item } = Breadcrumb;
 
@@ -22,23 +24,23 @@ function Bread(props: Props) {
     /**
      * isFirstLevel === 1时是一级目录
      */
-    const pathNames = path.split('/').filter(item => !!item);
+    const pathNames = path.split('/').filter((item) => !!item);
     const isFirstLevel = pathNames.length === 1;
 
     if (!!isFirstLevel) {
       const currentBreadData = menuConfig.find(
-        menu => menu.path === pathNames[0]
+        (menu) => menu.path === pathNames[0]
       );
       currentBreadData && setBreadData([currentBreadData]);
     } else {
       const firstBreadData = menuConfig.find(
-        menu => menu.path === pathNames[0]
+        (menu) => menu.path === pathNames[0]
       );
       const secondBreadData =
         firstBreadData &&
         firstBreadData.subMenus &&
         firstBreadData.subMenus.find(
-          firstBreadDataSubMenuItem =>
+          (firstBreadDataSubMenuItem) =>
             firstBreadDataSubMenuItem.path.indexOf(pathNames[1]) !== -1
         );
       firstBreadData &&
@@ -59,8 +61,20 @@ function Bread(props: Props) {
 
   return (
     <Breadcrumb>
-      {breadData.map(breadItem => {
-        return <Item key={breadItem.name}>{breadItem.name}</Item>;
+      {breadData.map((breadItem) => {
+        if (isSiderMenu(breadItem)) {
+          return <Item key={breadItem.name}>{breadItem.name}</Item>;
+        } else {
+          return (
+            <Link
+              to={`/${breadItem.path}`}
+              key={breadItem.name}
+              // style={{ color: '#1890ff !important' }}
+            >
+              {breadItem.name}
+            </Link>
+          );
+        }
       })}
     </Breadcrumb>
   );

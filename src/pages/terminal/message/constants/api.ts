@@ -52,7 +52,7 @@ export const terminalGroupListByDept = async (
   const result = await ApiRequest.get(
     `/cpay-admin/terminal/group/listByDepts${jsonToQueryString({ deptId })}`
   );
-  callback && result.code === RESPONSE_CODE.success && callback(result.data);
+  callback && result && result.code === RESPONSE_CODE.success && callback(result.data);
   return result;
 };
 

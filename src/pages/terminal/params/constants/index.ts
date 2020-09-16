@@ -14,7 +14,7 @@ export const terminalParamList = async (
   const result = await ApiRequest.get(
     `/cpay-admin/terminal/param/list${jsonToQueryString(params)}`
   );
-  callback &&
+  callback && result && 
     result.code === RESPONSE_CODE.success &&
     callback(result.data.rows);
   return result;

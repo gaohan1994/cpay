@@ -7,7 +7,7 @@ import { PlusOutlined, CopyOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd/lib/button';
 import { terminalParamList, terminalParamRemove } from './constants';
 import { formatListResult } from '@/common/request-util';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import Forms from '@/component/form';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -149,6 +149,7 @@ export default () => {
         rowSelection={rowSelection}
         columns={columns}
         {...tableProps}
+        pagination={getStandardPagination(tableProps.pagination)}
       />
     </div>
   );

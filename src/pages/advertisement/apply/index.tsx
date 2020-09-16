@@ -7,7 +7,7 @@ import { advertInfoList, advertInfoRemove } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
 import Forms from '@/component/form';
 import { FormItmeType, FormItem } from '@/component/form/type';
-import { createTableColumns } from '@/component/table';
+import { createTableColumns, getStandardPagination } from '@/component/table';
 import { useStore } from '@/pages/common/costom-hooks';
 import { RESPONSE_CODE } from '@/common/config';
 import invariant from 'invariant';
@@ -125,7 +125,11 @@ export default () => {
           reset,
         }}
       />
-      <Table columns={columns} {...tableProps} />
+      <Table
+        columns={columns}
+        {...tableProps}
+        pagination={getStandardPagination(tableProps.pagination)}
+      />
     </div>
   );
 };
