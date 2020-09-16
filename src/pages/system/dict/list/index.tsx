@@ -6,23 +6,25 @@
  * 
  * @todo 字典管理
  */
-import React, { useState } from 'react';
-import { Form, Table, Divider, notification, Modal, Spin, Tag, Radio } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Table, Divider, notification, Modal, Spin, Tag, Radio, Input } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { formatListResult } from '@/common/request-util';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns, getStandardPagination } from '@/component/table';
-import history from '@/common/history-util';
 import { PlusOutlined, LogoutOutlined, CloseOutlined } from '@ant-design/icons';
 import invariant from 'invariant';
 import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
-import { systemDictList, systemDictRemove, systemDictExport, systemDictAdd, systemDictEdit, checkDictTypeUnique } from './constants/api';
 import { CustomFormItems } from '@/component/custom-form';
 import TextArea from 'antd/lib/input/TextArea';
-import { useSelectorHook } from '@/common/redux-util';
+import { systemDictDataList, systemDictDataExport, systemDictDataRemove, systemDictDataEdit, systemDictDataAdd, checkKeyUniqueByType } from './constants/api';
+import { useQueryParam } from '@/common/request-util';
+import { systemDictListCallback } from '../constants/api';
+import { renderSelectForm } from '@/component/form/render';
 import { useStore } from '@/pages/common/costom-hooks';
-import { getStatusColor } from '../common';
+import { useSelectorHook } from '@/common/redux-util';
+import { getStatusColor } from '../../common';
 
 const customFormLayout = {
   labelCol: {
@@ -35,15 +37,18 @@ const customFormLayout = {
 
 
 const fieldLabels = {
-  dictName: '字典名称',
+  dictLabel: '字典标签',
+  dictValue: '字典键值',
   dictType: '字典类型',
+  dictSort: '字典排序',
   status: '状态',
-  remark: '备注'
+  remark: '备注',
 }
 
 type Props = {};
 
 function Page(props: Props) {
+  const type = useQueryParam('type');
   useStore(['sys_normal_disable']);
   const dictList = useSelectorHook(state => state.common.dictList);
 
@@ -52,15 +57,21 @@ function Page(props: Props) {
   const [fetchField, setFetchField] = useState({} as any);
   const [modalVisible, setModalVisible] = useState(false);
   const [editItem, setEditItem] = useState({} as any);
+  const [dictTypeList, setDictTypeList] = useState([] as any);
+  const [dictType, setDictType] = useState('');
 
   const [addForm] = Form.useForm();
   const [form] = Form.useForm();
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) => {
-      setFetchField(tableProps);
-      return systemDictList({
-        pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps,
-        orderByColumn: 'createTime', isAsc: 'desc'
+      setFetchField({ ...tableProps, dictType: dictType.length > 0 ? dictType : type });
+      return systemDictDataList({
+        pageSize: paginatedParams.pageSize,
+        pageNum: paginatedParams.current,
+        ...tableProps,
+        dictType: dictType.length > 0 ? dictType : type,
+        orderByColumn: 'createTime',
+        isAsc: 'desc',
       });
     },
     {
@@ -84,10 +95,26 @@ function Page(props: Props) {
   const customReset = () => {
     setSelectedRowKeys([]);
     reset();
+    form.setFieldsValue({ dictType: dictType });
   }
 
   /**
-   * @todo 修改字典信息
+   * @todo 获取字典列表
+   */
+  useEffect(() => {
+    setLoading(true);
+    systemDictListCallback({}, (res: any) => {
+      setLoading(false);
+      if (res && res.code === RESPONSE_CODE.success) {
+        setDictTypeList(res.data.rows);
+        setDictType(type);
+        form.setFieldsValue({ dictType: type });
+      }
+    });
+  }, []);
+
+  /**
+   * @todo 修改字典数据
    * @param item 
    */
   const onEdit = (item: any) => {
@@ -97,25 +124,25 @@ function Page(props: Props) {
   }
 
   /**
-   * @todo 删除字典
+   * @todo 删除字典数据
    * @param item 
    */
   const onRemove = async (item: any) => {
     Modal.confirm({
       title: '提示',
-      content: `确认要删除当前字典吗?`,
+      content: `确认要删除当前字典数据吗?`,
       okText: '确定',
       cancelText: '取消',
       onOk: async () => {
         try {
           const param = {
-            ids: item.userId
+            ids: item.dictCode
           }
           setLoading(true);
-          const result = await systemDictRemove(param);
+          const result = await systemDictDataRemove(param);
           setLoading(false);
-          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除字典失败，请重试');
-          notification.success({ message: '删除字典成功!' });
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除字典数据失败，请重试');
+          notification.success({ message: '删除字典数据成功!' });
           customSubmit();
         } catch (error) {
           notification.error({ message: error.message });
@@ -125,16 +152,16 @@ function Page(props: Props) {
   }
 
   /**
-   * @todo 批量删除字典
+   * @todo 批量删除字典数据
    */
   const onRemoveBatch = () => {
     if (selectedRowKeys.length === 0) {
-      notification.error({ message: '请选择用字典！' });
+      notification.error({ message: '请选择用字典数据！' });
       return;
     }
     Modal.confirm({
       title: '提示',
-      content: `确认要删除选中的字典吗?`,
+      content: `确认要删除选中的字典数据吗?`,
       okText: '确定',
       cancelText: '取消',
       onOk: async () => {
@@ -143,24 +170,16 @@ function Page(props: Props) {
             ids: selectedRowKeys.join(','),
           }
           setLoading(true);
-          const result = await systemDictRemove(param);
+          const result = await systemDictDataRemove(param);
           setLoading(false);
-          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除字典失败，请重试');
-          notification.success({ message: '删除字典成功!' });
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除字典数据失败，请重试');
+          notification.success({ message: '删除字典数据成功!' });
           customSubmit();
         } catch (error) {
           notification.error({ message: error.message });
         }
       },
     });
-  }
-
-  /**
-   * @todo 跳转到字典数据列表
-   * @param item 
-   */
-  const navToList = (item: any) => {
-    history.push(`/system/dict-list?type=${item.dictType}`)
   }
 
   /**
@@ -173,22 +192,24 @@ function Page(props: Props) {
         <div>
           <a onClick={() => onEdit(item)}>修改</a>
           <Divider type="vertical" />
-          <a onClick={() => navToList(item)}>列表</a>
-          <Divider type="vertical" />
           <a onClick={() => onRemove(item)}>删除</a>
         </div>
       ),
       fixed: 'left',
       align: 'center',
-      width: 150,
+      width: 120,
     },
     {
-      title: '字典名称',
-      dataIndex: 'dictName',
+      title: '字典标签',
+      dataIndex: 'dictLabel',
     },
     {
-      title: '字典类型',
-      dataIndex: 'dictType',
+      title: '字典键值',
+      dataIndex: 'dictValue',
+    },
+    {
+      title: '字典排序',
+      dataIndex: 'dictSort',
     },
     {
       title: '状态',
@@ -212,17 +233,33 @@ function Page(props: Props) {
    */
   const forms: FormItem[] = [
     {
-      formName: 'dictName',
-      placeholder: '字典名称',
-      formType: FormItmeType.Normal,
-    },
-    {
       formName: 'dictType',
-      placeholder: '字典类型',
+      formType: FormItmeType.Normal,
+      render: () =>
+        renderSelectForm({
+          formName: 'dictType',
+          placeholder: '字典名称',
+          selectData:
+            (dictTypeList &&
+              dictTypeList.map((item: any) => {
+                return {
+                  title: item.dictName,
+                  value: item.dictType,
+                } as any;
+              })) ||
+            [],
+          formType: FormItmeType.Select,
+          value: dictType,
+          onChange: (type: string) => setDictType(type)
+        }),
+    },
+    {
+      formName: 'dictLabel',
+      placeholder: '字典标签',
       formType: FormItmeType.Normal,
     },
     {
-      placeholder: '字典状态',
+      placeholder: '数据状态',
       formName: 'status',
       formType: FormItmeType.Select,
       selectData:
@@ -245,14 +282,14 @@ function Page(props: Props) {
   }
 
   /**
-   * @todo 导出字典信息
+   * @todo 导出用户信息
    */
   const onExport = () => {
     Modal.confirm({
-      title: '确认要导出字典信息吗？',
+      title: '确认要导出字典数据吗？',
       onOk: async () => {
         try {
-          const result = await systemDictExport(fetchField);
+          const result = await systemDictDataExport(fetchField);
           invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
 
           const href = getDownloadPath(result.data);
@@ -282,6 +319,7 @@ function Page(props: Props) {
    * @todo 显示弹窗
    */
   const showModal = () => {
+    addForm.setFieldsValue({ dictType });
     setModalVisible(true);
   }
 
@@ -295,7 +333,7 @@ function Page(props: Props) {
   }
 
   /**
-   * @todo 弹窗点击确定新增/修改字典
+   * @todo 弹窗点击确定新增机构
    */
   const handleOk = async () => {
     try {
@@ -306,17 +344,17 @@ function Page(props: Props) {
         status: fields.status !== undefined ? fields.status : 0
       }
       setLoading(true);
-      if (editItem.dictId) {
+      if (editItem.dictCode) {
         param = {
           ...param,
-          dictId: editItem.dictId,
+          dictCode: editItem.dictCode,
         }
-        const result = await systemDictEdit(param);
+        const result = await systemDictDataEdit(param);
         setLoading(false);
         invariant(result.code === RESPONSE_CODE.success, result.msg || '修改失败！');
         notification.success({ message: '修改成功！' });
       } else {
-        const result = await systemDictAdd(param);
+        const result = await systemDictDataAdd(param);
         setLoading(false);
         invariant(result.code === RESPONSE_CODE.success, result.msg || '新增失败！');
         notification.success({ message: '新增成功！' });
@@ -331,56 +369,55 @@ function Page(props: Props) {
     }
   }
 
-  /**
-   * @todo 判断输入的字典类型是否符合要求
-   * @param rule 
-   * @param value 
-   * @param callback 
-   */
-  const checkDictType = (rule: any, value: any, callback: any) => {
-    if (value.length < 5) {
-      callback('最少5个字符');
-    }
+  const checkDictValue = (rule: any, value: any, callback: any) => {
     let flag = false;
     const param = {
-      dictType: value
+      dictType: dictType,
+      dictValue: value,
     }
-    checkDictTypeUnique(param)
+    checkKeyUniqueByType(param)
       .then(function (res) {
         if (res && res.code === RESPONSE_CODE.success) {
-          flag = res.data === '1';
+          flag = res.data === false;
         }
-
         if (!flag) {
           callback();
         } else {
-          callback('该字典已经存在');
+          callback('该字典键值已经存在');
         }
       }, function (error) {
-        callback('字典类型校验失败')
+        callback('字典键值校验失败')
       });
   }
 
-  /**
-   * @todo 新增表单内容
-   */
+
   const addForms = [
     {
-      label: fieldLabels.dictName,
-      key: 'dictName',
+      label: fieldLabels.dictLabel,
+      key: 'dictLabel',
       requiredType: 'input' as any,
+    },
+    {
+      label: fieldLabels.dictValue,
+      key: 'dictValue',
+      requiredType: 'input' as any,
+      rules: [
+        { validator: checkDictValue },
+        {
+          required: true,
+          message: '请输入字典键值',
+        },
+      ]
     },
     {
       label: fieldLabels.dictType,
       key: 'dictType',
+      render: () => <Input disabled />
+    },
+    {
+      label: fieldLabels.dictSort,
+      key: 'dictSort',
       requiredType: 'input' as any,
-      rules: [
-        { validator: checkDictType },
-        {
-          required: true,
-          message: '请输入字典类型',
-        },
-      ]
     },
     {
       label: fieldLabels.status,
@@ -414,7 +451,7 @@ function Page(props: Props) {
         }}
       />
       <Table
-        rowKey="dictId"
+        rowKey="dictCode"
         columns={columns}
         rowSelection={rowSelection}
         {...tableProps}

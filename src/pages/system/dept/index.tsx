@@ -7,7 +7,7 @@ import { CustomFormItems } from '@/component/custom-form';
 import { useForm } from 'antd/lib/form/Form';
 import { renderCommonTreeSelectForm } from '@/component/form/render';
 import { FormItmeType } from '@/component/form/type';
-import { systemDeptEdits, systemDeptEdit, systemDeptaAdd } from './constants/api';
+import { systemDeptEdits, systemDeptEdit, systemDeptAdd } from './constants/api';
 import invariant from 'invariant';
 import { RESPONSE_CODE } from '@/common/config';
 import { getDeptTreeData, GetDeptTreeDataCallback } from '@/pages/common/constants';
@@ -264,7 +264,7 @@ export default function Page() {
         ...fields,
       }
       setLoading(true);
-      const result = await systemDeptaAdd(param);
+      const result = await systemDeptAdd(param);
       invariant(result.code === RESPONSE_CODE.success, result.msg || '新增机构失败！');
       notification.success({ message: '新增机构成功！' });
       await getDeptTreeData(getDeptCallback);

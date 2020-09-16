@@ -8,6 +8,20 @@ import { RESPONSE_CODE } from '@/common/config';
  * @param param 
  */
 export const systemRoleList = async (param: any, callback?: any) => {
+  // const jsonToQueryString = (json: any) => {
+  //   const field = Object.keys(json)
+  //     .map(function (key: any) {
+  //       if (key === 'params[beginTime]' || key === 'params[endTime]') {
+  //         return encodeURIComponent(`${key}=${json[key]}`);
+  //       }
+  //       if (json[key] !== undefined) {
+  //         return key + '=' + json[key];
+  //       }
+  //     })
+  //     .filter((item) => !!item)
+  //     .join('&');
+  //   return field.length > 0 ? `?${field}` : '';
+  // };
   const res = await ApiRequest.get(`/cpay-admin/system/role/list/${jsonToQueryString(param)}`);
   if (callback && res && res.code === RESPONSE_CODE.success) {
     callback(res);
@@ -49,3 +63,17 @@ export const systemRoleEdit = (param: any) =>
 */
 export const systemRoleRemove = (param: any) =>
   ApiRequest.post(`/cpay-admin/system/role/remove`, param);
+
+/**
+ * @todo 更改角色状态（0-启用，1-停用）
+ * @param param 
+ */
+export const systemRoleChangeStatus = (param: any) =>
+  ApiRequest.post(`/cpay-admin/system/role/changeStatus`, param);
+
+/**
+* @todo 系统角色导出
+* @param param 
+*/
+export const systemRoleExport = (param: any) =>
+  ApiRequest.post(`/cpay-admin/system/role/export`, param);

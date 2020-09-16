@@ -87,7 +87,7 @@ function Page(props: Props) {
   const onRemove = async (item: any) => {
     Modal.confirm({
       title: '提示',
-      content: `确认要删除当前软件吗?`,
+      content: `确认要删除当前用户吗?`,
       okText: '确定',
       cancelText: '取消',
       onOk: async () => {

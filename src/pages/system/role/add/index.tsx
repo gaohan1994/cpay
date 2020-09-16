@@ -2,12 +2,12 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-14 13:54:26 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-14 14:39:13
+ * @Last Modified time: 2020-09-14 18:01:31
  * 
  * @todo 角色管理新增
  */
 import React, { useState, useEffect } from 'react';
-import { Spin, Form, Button, notification } from 'antd';
+import { Spin, Form, Button, notification, Switch, Tree } from 'antd';
 import { useStore } from '@/pages/common/costom-hooks';
 import { CustomFormItems, getCustomSelectFromItemData } from '@/component/custom-form';
 import { useForm } from 'antd/lib/form/Form';
@@ -21,22 +21,33 @@ import FixedFoot, { ErrorField } from '@/component/fixed-foot';
 import { systemRoleEdits, systemRoleEdit, systemRoleAdd } from '../constants/api';
 import TextArea from 'antd/lib/input/TextArea';
 import { RESPONSE_CODE } from '@/common/config';
+import { systemMenuList } from '../../menu/constants/api';
+import { useRedux } from '@/common/redux-util';
+import { useSelectorHook } from '../../../../common/redux-util';
+import numeral from 'numeral';
 
 const fieldLabels = {
   roleName: '角色名称',
+  roleKey: '权限字符',
+  roleSort: '显示顺序',
+  status: '角色状态',
   remark: '备注',
-  menu: '菜单权限复制对象',
-  function: '功能授权复制对象',
+  menuIds: '菜单权限',
 }
 
 export default function Page() {
   const id = useQueryParam('id');
   const [form] = useForm();
+  const [useSelector, dispatch] = useRedux();
+  const system = useSelectorHook(state => state.system);
   const history = useHistory();
-  const res = useStore([]);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<ErrorField[]>([]);
+  const [checkedKeys, setCheckedKeys] = useState([] as any[]);
+  const [checkedIds, setCheckedIds] = useState([] as any[]);
+  const [menuLoading, setMenuLoading] = useState(false);
+  const [status, setStatus] = useState(true);
 
   const {
     roleList,
@@ -50,16 +61,52 @@ export default function Page() {
   const initialValues = merge({}, (detail && detail) || {});
 
   useEffect(() => {
-    setLoading(res.loading);
-    if (!res.loading) {
-      form.setFieldsValue(initialValues);
+    systemMenuList(dispatch, setMenuLoading);
+  }, []);
+
+  useEffect(() => {
+    if (initialValues.sysRole) {
+      form.setFieldsValue({ ...initialValues.sysRole, status: initialValues.sysRole.status === '0' });
+      setStatus(initialValues.sysRole.status === '0');
     }
-  }, [detail, res.loading]);
+    if (Array.isArray(initialValues.tree) && initialValues.tree.length > 0) {
+      let ids: number[] = [];
+      initialValues.tree.forEach((element: any) => {
+        if (element.checked) {
+          ids.push(element.id);
+        }
+      });
+      setCheckedIds(ids);
+    }
+  }, [detail]);
+
+  useEffect(() => {
+    if (system.menuTreeData.length > 0) {
+      let keys: string[] = [];
+      system.menuTreeData.forEach(element => {
+        getChildKeys(element, keys);
+      });
+      setCheckedKeys(keys);
+    }
+  }, [system.menuTreeData, detail]);
+
+  const getChildKeys = (item: any, keys: string[]) => {
+    checkedIds.forEach(element => {
+      if (numeral(element).value() === item.menuId) {
+        keys.push(item.key);
+      }
+      if (item.children && item.children.length > 0) {
+        item.children.forEach((ele: any) => {
+          getChildKeys(ele, keys);
+        });
+      }
+    });
+  }
 
   const checkRoleName = (rule: any, value: any, callback: any) => {
     let flag = false;
     for (let i = 0; i < roleList.length; i++) {
-      if (roleList[i].roleName === value) {
+      if (roleList[i].roleName === value && roleList[i].roleName !== (initialValues.sysRole && initialValues.sysRole.roleName)) {
         flag = true;
         break;
       }
@@ -71,6 +118,44 @@ export default function Page() {
     }
   }
 
+  const checkRoleKey = (rule: any, value: any, callback: any) => {
+    let flag = false;
+    for (let i = 0; i < roleList.length; i++) {
+      if (roleList[i].roleKey === value && roleList[i].roleKey !== (initialValues.sysRole && initialValues.sysRole.roleKey)) {
+        flag = true;
+        break;
+      }
+    }
+    if (!flag) {
+      callback();
+    } else {
+      callback('角色权限已经存在');
+    }
+  }
+
+
+  const onCheck = (checkedKeys: any, info: any) => {
+    console.log('onCheck', checkedKeys, info);
+    setCheckedKeys(checkedKeys);
+    if (info && Array.isArray(info.checkedNodes)) {
+      let ids: number[] = [];
+      info.checkedNodes.forEach((element: any) => {
+        ids.push(element.menuId);
+      });
+      setCheckedIds(ids);
+    }
+  };
+
+  const renderMenuTree = () => {
+    return (
+      <Tree
+        checkable
+        onCheck={onCheck}
+        treeData={system.menuTreeData}
+        checkedKeys={checkedKeys}
+      />
+    )
+  }
 
   const forms: CustomFromItem[] = [
     {
@@ -85,27 +170,36 @@ export default function Page() {
       ]
     },
     {
+      label: fieldLabels.roleKey,
+      key: 'roleKey',
+      rules: [
+        { validator: checkRoleKey },
+        {
+          required: true,
+          message: '请输入权限字符',
+        },
+      ]
+    },
+    {
+      label: fieldLabels.roleSort,
+      key: 'roleSort',
+      required: 'select' as any
+    },
+    {
+      label: fieldLabels.status,
+      key: 'status',
+      render: () => <Switch checked={status} onChange={(checked) => setStatus(checked)} />
+    },
+    {
       label: fieldLabels.remark,
       key: 'remark',
       render: () => <TextArea />
     },
     {
-      ...getCustomSelectFromItemData({
-        label: fieldLabels.menu,
-        key: 'menu',
-        list: roleList,
-        valueKey: 'roleId',
-        nameKey: 'roleName',
-      })
-    },
-    {
-      ...getCustomSelectFromItemData({
-        label: fieldLabels.function,
-        key: 'function',
-        list: roleList,
-        valueKey: 'roleId',
-        nameKey: 'roleName',
-      })
+      label: fieldLabels.menuIds,
+      key: 'menuIds',
+      render: renderMenuTree,
+      itemSingleCol: true,
     },
   ]
 
@@ -116,6 +210,8 @@ export default function Page() {
       const fields = form.getFieldsValue();
       let param: any = {
         ...fields,
+        menuIds: checkedIds.join(','),
+        status: status ? 0 : 1
       }
       setLoading(true);
       if (id) {
@@ -149,7 +245,7 @@ export default function Page() {
   }
 
   return (
-    <Spin spinning={loading}>
+    <Spin spinning={loading || menuLoading}>
       <div style={{ paddingTop: 10 }}>
         <Form
           form={form}

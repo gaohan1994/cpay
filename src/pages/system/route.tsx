@@ -14,9 +14,10 @@ import SystemRole from '@/pages/system/role';
 import SystemRoleAdd from '@/pages/system/role/add';
 import SystemMenuPage from '@/pages/system/menu';
 import SystemDict from '@/pages/system/dict';
+import SystemDictList from '@/pages/system/dict/list';
 import SystemSetting from '@/pages/system/setting';
-import SystemLog from '@/pages/system/log';
-import SystemOperation from '@/pages/system/operation';
+import SystemLogSetting from '@/pages/system/log-setting';
+import SystemLogManage from '@/pages/system/log-manage';
 
 export const SystemMenu = {
   name: '系统管理',
@@ -60,7 +61,7 @@ const routerConfig: any[] = [
   },
   {
     path: '/system/menu',
-    name: '菜单功能',
+    name: '菜单管理',
     component: SystemMenuPage,
     exact: true
   },
@@ -71,21 +72,28 @@ const routerConfig: any[] = [
     exact: true
   },
   {
+    path: '/system/dict-list',
+    name: '字典数据',
+    component: SystemDictList,
+    exact: true,
+    inMenu: false,
+  },
+  {
     path: '/system/setting',
     name: '系统配置',
     component: SystemSetting,
     exact: true
   },
   {
-    path: '/system/log',
+    path: '/system/log-setting',
     name: '日志配置',
-    component: SystemLog,
+    component: SystemLogSetting,
     exact: true
   },
   {
-    path: '/system/operation',
-    name: '操作日志',
-    component: SystemOperation,
+    path: '/system/log-manage',
+    name: '日志管理',
+    component: SystemLogManage,
     exact: true
   },
 ];

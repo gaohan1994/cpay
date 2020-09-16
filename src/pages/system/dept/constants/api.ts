@@ -18,5 +18,5 @@ export const systemDeptEdit = (param: any) =>
 * @todo 机构信息新增
 * @param param 
 */
-export const systemDeptaAdd = (param: any) =>
+export const systemDeptAdd = (param: any) =>
   ApiRequest.post(`/cpay-admin/system/dept/add`, param);

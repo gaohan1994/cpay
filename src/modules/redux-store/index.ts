@@ -6,13 +6,15 @@ import { common } from '@/pages/common/reducer';
 import { advert } from '@/pages/advertisement/reducers';
 import { app } from '@/pages/application/reducers';
 import { upload } from '@/pages/upload/reducers';
+import { system } from '@/pages/system/reducers';
 
 export const reducer = combineReducers({
   homeReducer,
   common,
   advert,
   app,
-  upload
+  upload,
+  system
 });
 
 const configureStore = () => {
