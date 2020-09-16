@@ -99,11 +99,11 @@ export default () => {
     },
     {
       title: '应用版本',
-      dataIndex: 'versionName',
+      dataIndex: 'versionCode',
     },
     {
-      title: '内部版本',
-      dataIndex: 'versionCode',
+      title: '外部版本',
+      dataIndex: 'versionName',
     },
   ]);
 

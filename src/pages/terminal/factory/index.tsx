@@ -58,7 +58,6 @@ export default () => {
 
   const editFactory = async (type: string) => {
     try {
-      console.log('selectedRowKeys:', selectedRowKeys);
       invariant(
         selectedRowKeys && selectedRowKeys.length === 1,
         '请选择一条记录'
@@ -75,6 +74,14 @@ export default () => {
     } catch (error) {
       notification.warn({ message: error.message });
     }
+  };
+
+  const onAdd = async () => {
+    history.push(`/terminal/factory-add`);
+  };
+
+  const onEdit = async (item: any) => {
+    history.push(`/terminal/factory-edit?id=${item.id}`);
   };
 
   const columns = createTableColumns([
@@ -123,7 +130,7 @@ export default () => {
       title: '新增',
       type: 'primary',
       icon: <PlusOutlined />,
-      onClick: () => {},
+      onClick: onAdd,
     },
     {
       title: '启用',
@@ -138,14 +145,6 @@ export default () => {
       onClick: () => editFactory(''),
     },
   ];
-
-  const onAdd = async (values: any) => {
-    try {
-      submit();
-    } catch (error) {
-      notification.warn({ message: error.message });
-    }
-  };
 
   const rowSelection = {
     type: 'radio',
@@ -169,10 +168,6 @@ export default () => {
     });
   };
 
-  const onEdit = async (item: any) => {
-    console.log('edit');
-    history.push(`/terminal/factory-edit?id=${item.id}`);
-  };
   return (
     <div>
       <Forms

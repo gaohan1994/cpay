@@ -82,7 +82,14 @@ const routerConfig: any[] = [
     component: Terminalfactory,
     exact: true,
   },
-
+  {
+    // 终端厂商管理
+    name: '终端厂商管理',
+    path: '/terminal/factory-add',
+    component: TerminalfactoryDetail,
+    exact: true,
+    inMenu: false,
+  },
   {
     // 终端厂商管理
     name: '终端厂商管理',

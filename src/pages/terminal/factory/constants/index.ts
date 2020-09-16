@@ -29,3 +29,8 @@ export const firmEdit = async (params: any) => {
   );
   return result;
 };
+
+export const firmAdd = async (params: any) => {
+  const result = await ApiRequest.post(`/cpay-admin/terminal/firm/add`, params);
+  return result;
+};
