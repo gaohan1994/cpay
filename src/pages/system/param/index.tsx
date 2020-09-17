@@ -1,30 +1,28 @@
 /*
  * @Author: centerm.gaozhiying 
- * @Date: 2020-09-14 14:46:54 
+ * @Date: 2020-09-17 16:22:12 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-14 15:32:46
+ * @Last Modified time: 2020-09-17 16:39:56
  * 
- * @todo 字典管理
+ * @todo 参数设置
  */
-import React, { useState, useEffect } from 'react';
-import { Form, Table, Divider, notification, Modal, Spin, Tag, Radio, Input } from 'antd';
+import React, { useState } from 'react';
+import { Form, Table, Divider, notification, Modal, Spin, Tag, Radio } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { formatListResult } from '@/common/request-util';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns, getStandardPagination } from '@/component/table';
+import history from '@/common/history-util';
 import { PlusOutlined, LogoutOutlined, CloseOutlined } from '@ant-design/icons';
 import invariant from 'invariant';
 import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
+import { systemConfigList, systemConfigRemove, systemConfigExport, systemConfigAdd, systemConfigEdit, checkConfigKeyUnique } from './constants/api';
 import { CustomFormItems } from '@/component/custom-form';
 import TextArea from 'antd/lib/input/TextArea';
-import { systemDictDataList, systemDictDataExport, systemDictDataRemove, systemDictDataEdit, systemDictDataAdd, checkKeyUniqueByType } from './constants/api';
-import { useQueryParam } from '@/common/request-util';
-import { systemDictListCallback } from '../constants/api';
-import { renderSelectForm } from '@/component/form/render';
-import { useStore } from '@/pages/common/costom-hooks';
 import { useSelectorHook } from '@/common/redux-util';
-import { getStatusColor } from '../../common';
+import { useStore } from '@/pages/common/costom-hooks';
+import { getStatusColor } from '../common';
 
 const customFormLayout = {
   labelCol: {
@@ -37,19 +35,18 @@ const customFormLayout = {
 
 
 const fieldLabels = {
-  dictLabel: '字典标签',
-  dictValue: '字典键值',
-  dictType: '字典类型',
-  dictSort: '字典排序',
-  status: '状态',
+  configName: '参数名称',
+  configKey: '参数键名',
+  valueType: '参数值类型',
+  configValue: '参数键值',
   remark: '备注',
+  configType: '系统内置'
 }
 
 type Props = {};
 
 function Page(props: Props) {
-  const type = useQueryParam('type');
-  useStore(['sys_normal_disable']);
+  useStore(['sys_yes_no', 'config_value_type']);
   const dictList = useSelectorHook(state => state.common.dictList);
 
   const [loading, setLoading] = useState(false);
@@ -57,21 +54,14 @@ function Page(props: Props) {
   const [fetchField, setFetchField] = useState({} as any);
   const [modalVisible, setModalVisible] = useState(false);
   const [editItem, setEditItem] = useState({} as any);
-  const [dictTypeList, setDictTypeList] = useState([] as any);
-  const [dictType, setDictType] = useState('');
 
   const [addForm] = Form.useForm();
   const [form] = Form.useForm();
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) => {
-      setFetchField({ ...tableProps, dictType: dictType.length > 0 ? dictType : type });
-      return systemDictDataList({
-        pageSize: paginatedParams.pageSize,
-        pageNum: paginatedParams.current,
-        ...tableProps,
-        dictType: dictType.length > 0 ? dictType : type,
-        orderByColumn: 'createTime',
-        isAsc: 'desc',
+      setFetchField(tableProps);
+      return systemConfigList({
+        pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps,
       });
     },
     {
@@ -95,54 +85,41 @@ function Page(props: Props) {
   const customReset = () => {
     setSelectedRowKeys([]);
     reset();
-    form.setFieldsValue({ dictType: dictType });
   }
 
   /**
-   * @todo 获取字典列表
-   */
-  useEffect(() => {
-    setLoading(true);
-    systemDictListCallback({}, (res: any) => {
-      setLoading(false);
-      if (res && res.code === RESPONSE_CODE.success) {
-        setDictTypeList(res.data.rows);
-        setDictType(type);
-        form.setFieldsValue({ dictType: type });
-      }
-    });
-  }, []);
-
-  /**
-   * @todo 修改字典数据
+   * @todo 修改参数信息
    * @param item 
    */
   const onEdit = (item: any) => {
     setEditItem(item);
     addForm.setFieldsValue(item);
+    if (item.valueType !== undefined) {
+      addForm.setFieldsValue({ valueType: `${item.valueType}` });
+    }
     showModal();
   }
 
   /**
-   * @todo 删除字典数据
+   * @todo 删除参数信息
    * @param item 
    */
   const onRemove = async (item: any) => {
     Modal.confirm({
       title: '提示',
-      content: `确认要删除当前字典数据吗?`,
+      content: `确认要删除该条参数信息吗?`,
       okText: '确定',
       cancelText: '取消',
       onOk: async () => {
         try {
           const param = {
-            ids: item.dictCode
+            ids: item.configId
           }
           setLoading(true);
-          const result = await systemDictDataRemove(param);
+          const result = await systemConfigRemove(param);
           setLoading(false);
-          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除字典数据失败，请重试');
-          notification.success({ message: '删除字典数据成功!' });
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除参数信息失败，请重试');
+          notification.success({ message: '删除参数信息成功!' });
           customSubmit();
         } catch (error) {
           notification.error({ message: error.message });
@@ -152,16 +129,16 @@ function Page(props: Props) {
   }
 
   /**
-   * @todo 批量删除字典数据
+   * @todo 批量删除参数信息
    */
   const onRemoveBatch = () => {
     if (selectedRowKeys.length === 0) {
-      notification.error({ message: '请选择用字典数据！' });
+      notification.error({ message: '请选择参数信息！' });
       return;
     }
     Modal.confirm({
       title: '提示',
-      content: `确认要删除选中的字典数据吗?`,
+      content: `确认要删除选中的参数信息吗?`,
       okText: '确定',
       cancelText: '取消',
       onOk: async () => {
@@ -170,10 +147,10 @@ function Page(props: Props) {
             ids: selectedRowKeys.join(','),
           }
           setLoading(true);
-          const result = await systemDictDataRemove(param);
+          const result = await systemConfigRemove(param);
           setLoading(false);
-          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除字典数据失败，请重试');
-          notification.success({ message: '删除字典数据成功!' });
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除参数信息失败，请重试');
+          notification.success({ message: '删除参数信息成功!' });
           customSubmit();
         } catch (error) {
           notification.error({ message: error.message });
@@ -200,21 +177,21 @@ function Page(props: Props) {
       width: 120,
     },
     {
-      title: '字典标签',
-      dataIndex: 'dictLabel',
+      title: '参数名称',
+      dataIndex: 'configName',
     },
     {
-      title: '字典键值',
-      dataIndex: 'dictValue',
+      title: '参数键名',
+      dataIndex: 'configKey',
     },
     {
-      title: '字典排序',
-      dataIndex: 'dictSort',
+      title: '参数键值',
+      dataIndex: 'configValue',
     },
     {
-      title: '状态',
-      dataIndex: 'status',
-      dictType: 'sys_normal_disable',
+      title: '系统内置',
+      dataIndex: 'configType',
+      dictType: 'sys_yes_no',
       render: (item) => <Tag color={getStatusColor(item)}>{item}</Tag>
     },
     {
@@ -226,6 +203,11 @@ function Page(props: Props) {
       dataIndex: 'createTime',
       width: 200,
     },
+    {
+      title: '更新时间',
+      dataIndex: 'updateTime',
+      width: 200,
+    },
   ]);
 
   /**
@@ -233,38 +215,22 @@ function Page(props: Props) {
    */
   const forms: FormItem[] = [
     {
-      formName: 'dictType',
-      formType: FormItmeType.Normal,
-      render: () =>
-        renderSelectForm({
-          formName: 'dictType',
-          placeholder: '字典名称',
-          selectData:
-            (dictTypeList &&
-              dictTypeList.map((item: any) => {
-                return {
-                  title: item.dictName,
-                  value: item.dictType,
-                } as any;
-              })) ||
-            [],
-          formType: FormItmeType.Select,
-          value: dictType,
-          onChange: (type: string) => setDictType(type)
-        }),
-    },
-    {
-      formName: 'dictLabel',
-      placeholder: '字典标签',
+      formName: 'configName',
+      placeholder: '参数名称',
       formType: FormItmeType.Normal,
     },
     {
-      placeholder: '数据状态',
-      formName: 'status',
+      formName: 'configKey',
+      placeholder: '参数键名',
+      formType: FormItmeType.Normal,
+    },
+    {
+      placeholder: '系统内置',
+      formName: 'configType',
       formType: FormItmeType.Select,
       selectData:
         (dictList &&
-          dictList.sys_normal_disable && dictList.sys_normal_disable.data.map((item) => {
+          dictList.sys_yes_no && dictList.sys_yes_no.data.map((item) => {
             return {
               value: `${item.dictValue}`,
               title: `${item.dictLabel}`,
@@ -282,14 +248,14 @@ function Page(props: Props) {
   }
 
   /**
-   * @todo 导出用户信息
+   * @todo 导出参数信息
    */
   const onExport = () => {
     Modal.confirm({
-      title: '确认要导出字典数据吗？',
+      title: '确认要导出参数信息吗？',
       onOk: async () => {
         try {
-          const result = await systemDictDataExport(fetchField);
+          const result = await systemConfigExport(fetchField);
           invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
 
           const href = getDownloadPath(result.data);
@@ -319,7 +285,6 @@ function Page(props: Props) {
    * @todo 显示弹窗
    */
   const showModal = () => {
-    addForm.setFieldsValue({ dictType });
     setModalVisible(true);
   }
 
@@ -333,7 +298,7 @@ function Page(props: Props) {
   }
 
   /**
-   * @todo 弹窗点击确定新增机构
+   * @todo 弹窗点击确定新增/修改参数信息
    */
   const handleOk = async () => {
     try {
@@ -341,20 +306,21 @@ function Page(props: Props) {
       const fields = addForm.getFieldsValue();
       let param: any = {
         ...fields,
-        status: fields.status !== undefined ? fields.status : 0
+        configType: fields.configType !== undefined ? fields.configType : '0',
+        valueType: fields.valueType !== undefined ? fields.valueType : '0'
       }
       setLoading(true);
-      if (editItem.dictCode) {
+      if (editItem.configId) {
         param = {
           ...param,
-          dictCode: editItem.dictCode,
+          configId: editItem.configId,
         }
-        const result = await systemDictDataEdit(param);
+        const result = await systemConfigEdit(param);
         setLoading(false);
         invariant(result.code === RESPONSE_CODE.success, result.msg || '修改失败！');
         notification.success({ message: '修改成功！' });
       } else {
-        const result = await systemDictDataAdd(param);
+        const result = await systemConfigAdd(param);
         setLoading(false);
         invariant(result.code === RESPONSE_CODE.success, result.msg || '新增失败！');
         notification.success({ message: '新增成功！' });
@@ -369,62 +335,60 @@ function Page(props: Props) {
     }
   }
 
-  const checkDictValue = (rule: any, value: any, callback: any) => {
+  /**
+   * @todo 判断输入的参数键值是否符合要求
+   * @param rule 
+   * @param value 
+   * @param callback 
+   */
+  const checkConfigKey = (rule: any, value: any, callback: any) => {
     let flag = false;
     const param = {
-      dictType: dictType,
-      dictValue: value,
+      configKey: value
     }
-    checkKeyUniqueByType(param)
+    checkConfigKeyUnique(param)
       .then(function (res) {
         if (res && res.code === RESPONSE_CODE.success) {
-          flag = res.data === false;
+          flag = res.data === '1';
         }
+
         if (!flag) {
           callback();
         } else {
-          callback('该字典键值已经存在');
+          callback('该参数键名已经存在');
         }
       }, function (error) {
-        callback('字典键值校验失败')
+        callback('参数键名校验失败')
       });
   }
 
-
+  /**
+   * @todo 新增表单内容
+   */
   const addForms = [
     {
-      label: fieldLabels.dictLabel,
-      key: 'dictLabel',
+      label: fieldLabels.configName,
+      key: 'configName',
       requiredType: 'input' as any,
     },
     {
-      label: fieldLabels.dictValue,
-      key: 'dictValue',
+      label: fieldLabels.configKey,
+      key: 'configKey',
       requiredType: 'input' as any,
       rules: [
-        { validator: checkDictValue },
+        { validator: checkConfigKey },
         {
           required: true,
-          message: '请输入字典键值',
+          message: '请输入参数键名',
         },
       ]
     },
     {
-      label: fieldLabels.dictType,
-      key: 'dictType',
-      render: () => <Input disabled />
-    },
-    {
-      label: fieldLabels.dictSort,
-      key: 'dictSort',
-      requiredType: 'input' as any,
-    },
-    {
-      label: fieldLabels.status,
-      key: 'status',
+      label: fieldLabels.valueType,
+      key: 'valueType',
       render: () => <Radio.Group defaultValue={'0'}>
         {
-          dictList && dictList.sys_normal_disable && dictList.sys_normal_disable.data.map(item => {
+          dictList && dictList.config_value_type && dictList.config_value_type.data.map(item => {
             return (
               <Radio value={item.dictValue}>{item.dictLabel}</Radio>
             )
@@ -433,9 +397,27 @@ function Page(props: Props) {
       </Radio.Group>
     },
     {
+      label: fieldLabels.configValue,
+      key: 'configValue',
+      requiredType: 'input' as any,
+    },
+    {
       label: fieldLabels.remark,
       key: 'remark',
       render: () => <TextArea />
+    },
+    {
+      label: fieldLabels.configType,
+      key: 'configType',
+      render: () => <Radio.Group defaultValue={'0'}>
+        {
+          dictList && dictList.sys_yes_no && dictList.sys_yes_no.data.map(item => {
+            return (
+              <Radio value={item.dictValue}>{item.dictLabel}</Radio>
+            )
+          })
+        }
+      </Radio.Group>
     },
   ];
 
@@ -451,15 +433,16 @@ function Page(props: Props) {
         }}
       />
       <Table
-        rowKey="dictCode"
+        rowKey="configId"
         columns={columns}
         rowSelection={rowSelection}
         {...tableProps}
         pagination={getStandardPagination(tableProps.pagination)}
+        scroll={{ x: 1200 }}
       />
       <Modal
         visible={modalVisible}
-        title={editItem.dictId ? "新增字典数据" : "修改字典数据"}
+        title={editItem.configId ? "新增参数" : "修改参数"}
         onCancel={hideModal}
         onOk={handleOk}
       >

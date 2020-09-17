@@ -44,9 +44,11 @@ export function getStatusColor(text: string) {
   switch (text) {
     case '成功':
     case '正常':
+    case '是':
       return '#3D7DE9'
     case '失败':
     case '停用':
+    case '否':
       return '#ed5565'
   }
 }

@@ -4,7 +4,7 @@
  * @Last Modified by: centerm.gaozhiying
  * @Last Modified time: 2020-09-14 16:27:28
  * 
- * @todo 系统日志
+ * @todo 登录日志
  */
 import React, { useState } from 'react';
 import { Form, Table, Tag, Modal, notification, Spin } from 'antd';
@@ -13,11 +13,11 @@ import { formatListResult } from '@/common/request-util';
 import Forms from '@/component/form';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns, getStandardPagination } from '@/component/table';
-import { monitorOperLogList, monitorOperLogExport, monitorOperLogRemove, monitorOperLogClean } from './constants/api';
+import { monitorOperLogExport, monitorOperLogRemove, monitorOperLogClean, monitorLoginInfoList } from './constants/api';
 import { DeleteOutlined, LogoutOutlined, CloseOutlined } from '@ant-design/icons';
 import invariant from 'invariant';
 import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
-import { useSelectorHook } from '@/common/redux-util';
+import { useSelectorHook } from '../../../common/redux-util';
 import { getStatusColor } from '../common';
 
 type Props = {};
@@ -33,7 +33,7 @@ function SystemLog(props: Props) {
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) => {
       setFetchField(tableProps);
-      return monitorOperLogList({
+      return monitorLoginInfoList({
         pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps
       });
     },
@@ -65,28 +65,24 @@ function SystemLog(props: Props) {
    */
   const columns = createTableColumns([
     {
-      title: '系统模块',
-      dataIndex: 'title',
+      title: '登录名',
+      dataIndex: 'loginName',
     },
     {
-      title: '操作类型',
-      dataIndex: 'type',
+      title: '登录地址',
+      dataIndex: 'ipaddr',
     },
     {
-      title: '操作人员',
-      dataIndex: 'operName',
+      title: '登录地点',
+      dataIndex: 'loginLocation',
     },
     {
-      title: '机构名称',
-      dataIndex: 'deptName',
+      title: '浏览器',
+      dataIndex: 'browser',
     },
     {
-      title: '主机',
-      dataIndex: 'operIp',
-    },
-    {
-      title: '操作地点',
-      dataIndex: 'operLocation',
+      title: '操作系统',
+      dataIndex: 'os',
     },
     {
       title: '登录状态',
@@ -95,8 +91,12 @@ function SystemLog(props: Props) {
       render: (item) => <Tag color={getStatusColor(item)}>{item}</Tag>
     },
     {
-      title: '操作时间',
-      dataIndex: 'operTime',
+      title: '操作信息',
+      dataIndex: 'msg',
+    },
+    {
+      title: '登录时间',
+      dataIndex: 'loginTime',
     },
   ]);
 
@@ -105,17 +105,17 @@ function SystemLog(props: Props) {
    */
   const forms: FormItem[] = [
     {
-      formName: 'title',
-      placeholder: '系统模块',
+      formName: 'ipaddr',
+      placeholder: '登录地址',
       formType: FormItmeType.Normal,
     },
     {
-      formName: 'operName',
-      placeholder: '操作人员',
+      formName: 'loginName',
+      placeholder: '登录名',
       formType: FormItmeType.Normal,
     },
     {
-      placeholder: '操作状态',
+      placeholder: '登录状态',
       formName: 'status',
       formType: FormItmeType.Select,
       selectData:
