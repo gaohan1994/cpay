@@ -55,8 +55,6 @@ export default (props: Props) => {
   const [form] = Form.useForm();
 
   const getFields = () => {
-    console.log('detail:', detail);
-    console.log('dictList:', dictList);
     const detailArr: any[] = [];
     detailArr.push({
       label: '名称',
@@ -116,7 +114,6 @@ export default (props: Props) => {
         );
       },
     });
-    console.log('detailArr:', detailArr);
 
     const secondArr = [
       {
@@ -140,7 +137,6 @@ export default (props: Props) => {
                 {array.length > 0 &&
                   array.map((item: any) => {
                     const { label, render, value, ...rest } = item;
-                    console.log('rest:', rest);
                     return (
                       <Descriptions.Item
                         label={<div style={{ width: '100px' }}>{label}</div>}
@@ -159,7 +155,6 @@ export default (props: Props) => {
 
   const onFinish = async (values: any) => {
     try {
-      console.log('Received values of form: ', values);
       const { search } = history.location;
       const field = formatSearch(search);
       if (pass === true) {
@@ -170,7 +165,6 @@ export default (props: Props) => {
           reviewMsg: values.reviewMsg || '审核通过',
         };
         const result = await advertInfoAudit(payload);
-        console.log('result:', result);
         invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
         notification.success({ message: '审核通过！' });
         history.goBack();

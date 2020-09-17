@@ -32,7 +32,7 @@ const routerConfig: any[] = [
     exact: true,
   },
   {
-    path: '/advertisement/review-detail',
+    path: '/advertisement/review/detail',
     name: '广告审核详情',
     component: Advertisementreviewdetail,
     exact: true,

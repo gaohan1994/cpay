@@ -69,7 +69,7 @@ const menuConfig: ILayoutSiderMenu[] = [
   {
     ...SystemMenu,
     subMenus: formartRouteToMenu(SystemRoute),
-  }
+  },
 ];
 
 export { menuConfig };

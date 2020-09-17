@@ -28,7 +28,7 @@ function Page(props: Props) {
   const { submit, reset } = search;
 
   const onClick = (item: any) => {
-    history.push(`/advertisement/review-detail?id=${item.id}`);
+    history.push(`/advertisement/review/detail?id=${item.id}`);
   };
 
   const columns = createTableColumns([
