@@ -1,4 +1,4 @@
-import { FormItemProps } from "antd/lib/form";
+import { FormItemProps } from 'antd/lib/form';
 
 /**
  * 列表请求接口field的范型
@@ -36,12 +36,12 @@ export interface IFormatResult<T> {
 }
 
 export type UserDept = {
-  deptId: number;     // 所属机构id
-  deptName: string;   // 所属机构名称
+  deptId: number; // 所属机构id
+  deptName: string; // 所属机构名称
   leader: string;
   phone: string;
   email: string;
-}
+};
 
 export interface CustomFromItem extends FormItemProps {
   label: string;
@@ -52,3 +52,25 @@ export interface CustomFromItem extends FormItemProps {
   show?: boolean; // default: true
   itemSingleCol?: boolean;
 }
+
+export type CommonProps<T = {}> = {
+  location: {
+    hash: string;
+    pathname: string;
+    search: string;
+    state: any;
+  };
+  history: {
+    push: (params: string) => void;
+    replace: () => void;
+    goBack: () => void;
+    go: () => void;
+    goForward: () => void;
+  };
+  match: {
+    isExact: boolean;
+    params: T;
+    path: string;
+    url: string;
+  };
+};

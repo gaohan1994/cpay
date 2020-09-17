@@ -10,8 +10,8 @@ import {
 } from 'antd';
 import './index.scss';
 import { advertInfoDetail } from '@/pages/advertisement/constants/api';
-import { useHistory } from 'react-router-dom';
 import { formatSearch } from '@/common/request-util';
+import { useHistory } from 'react-router-dom';
 import { renderColumns } from '@/pages/terminal/message/detail/components/content';
 import { AdvertisementDetail } from '../../types';
 import { advertInfoAudit } from '../../constants/api';
@@ -21,10 +21,11 @@ import { merge } from 'lodash';
 import moment from 'moment';
 import invariant from 'invariant';
 import { useSelectorHook } from '@/common/redux-util';
+import { CommonProps } from '@/common/type';
 
 const { TextArea } = Input;
 
-type Props = {};
+type Props = {} & CommonProps<{ id: any }>;
 
 type State = {
   detail: AdvertisementDetail;
@@ -32,9 +33,9 @@ type State = {
 };
 
 export default (props: Props) => {
+  const history = useHistory();
   useStore(['advert_file_type', 'advert_type']);
   const dictList = useSelectorHook((state) => state.common.dictList);
-  const history = useHistory();
   const state: State = {
     detail: {} as any,
     pass: false,
@@ -42,16 +43,15 @@ export default (props: Props) => {
   const [detail, setDetail] = useState(state.detail);
   const [pass, setPass] = useState(true);
   useEffect(() => {
-    const { search } = history.location;
-    const field = formatSearch(search);
-    if (field.id) {
-      advertInfoDetail(field.id).then((response) => {
+    const { id } = props.match.params;
+    if (id) {
+      advertInfoDetail(id).then((response) => {
         if (response.code === RESPONSE_CODE.success) {
           setDetail(response.data);
         }
       });
     }
-  }, [history.location.search]);
+  }, [props.match.params]);
   const [form] = Form.useForm();
 
   const getFields = () => {
