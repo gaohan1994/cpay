@@ -10,7 +10,7 @@ import { AppstoreAddOutlined } from '@ant-design/icons';
 
 import Applicationmanage from '@/pages/application/manage';
 import Applicationupload from '@/pages/application/manage/upload';
-import Applicationdelete from '@/pages/application/manage/delete';
+import ApplicationRecycle from '@/pages/application/manage/delete';
 import Applicationdetail from '@/pages/application/manage/detail';
 import Applicationpublish from '@/pages/application/publish';
 import ApplicationPublishForm from '@/pages/application/publish/publish';
@@ -33,21 +33,28 @@ const routerConfig: any[] = [
     exact: true
   },
   {
-    path: '/application/manage-upload',
+    path: '/application/manage/upload',
     name: '应用上传',
     component: Applicationupload,
     exact: true,
     inMenu: false,
   },
   {
-    path: '/application/manage-delete',
-    name: '应用回收站',
-    component: Applicationdelete,
+    path: '/application/manage/edit',
+    name: '应用修改',
+    component: Applicationupload,
     exact: true,
     inMenu: false,
   },
   {
-    path: '/application/manage-detail',
+    path: '/application/manage/recycle',
+    name: '应用回收站',
+    component: ApplicationRecycle,
+    exact: true,
+    inMenu: false,
+  },
+  {
+    path: '/application/manage/detail',
     name: '应用详情',
     component: Applicationdetail,
     exact: true,
@@ -60,8 +67,15 @@ const routerConfig: any[] = [
     exact: true
   },
   {
-    path: '/application/publish-publish',
-    name: '应用发布表单',
+    path: '/application/publish/detail',
+    name: '应用详情',
+    component: Applicationdetail,
+    exact: true,
+    inMenu: false,
+  },
+  {
+    path: '/application/publish/publish',
+    name: '发布',
     component: ApplicationPublishForm,
     exact: true,
     inMenu: false,
@@ -73,8 +87,8 @@ const routerConfig: any[] = [
     exact: true
   },
   {
-    path: '/application/review-review',
-    name: '应用审核表单',
+    path: '/application/review/review',
+    name: '审核',
     component: ApplicationReviewForm,
     exact: true,
     inMenu: false,

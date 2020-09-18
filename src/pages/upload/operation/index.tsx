@@ -108,7 +108,7 @@ function Page(props: Props) {
    * @param item 
    */
   const onDetail = (item: any) => {
-    history.push(`/upload/operation-detail?id=${item.id}`);
+    history.push(`/upload/operation/detail?id=${item.id}`);
   }
 
   /**
@@ -116,7 +116,15 @@ function Page(props: Props) {
    * @param item 
    */
   const onEdit = (item: any) => {
-    history.push(`/upload/operation-add?id=${item.id}&type=1`);
+    if (item.status === 7) {
+      notification.error({ message: "任务已经结束，不允许修改！" });
+      return;
+    }
+    if (item.status === 5 || item.status === 6) {
+      notification.error({ message: "任务正在进行中，不允许修改！" });
+      return;
+    }
+    history.push(`/upload/operation/edit?id=${item.id}&type=1`);
   }
 
   const onRemove = async (item: any) => {
@@ -238,13 +246,18 @@ function Page(props: Props) {
         setTerminalTypeValue(`${id}`);
       },
     },
+    {
+      formName: ['operatorCommand',],
+      formType: FormItmeType.SelectCommon,
+      dictList: ['terminal_operator_command'],
+    },
   ];
 
   /**
    * @todo 新增
    */
   const onAdd = () => {
-    history.push('/upload/operation-add');
+    history.push('/upload/operation/add');
   }
 
   /**
@@ -259,7 +272,7 @@ function Page(props: Props) {
       notification.error({ message: "请选择一条任务" });
       return;
     }
-    history.push(`/upload/operation-add?id=${selectedRowKeys[0]}&type=0`);
+    history.push(`/upload/operation/copy?id=${selectedRowKeys[0]}&type=0`);
   }
 
   /**
@@ -278,7 +291,7 @@ function Page(props: Props) {
       notification.error({ message: "请先启动当前任务" });
       return;
     }
-    history.push(`/upload/operation-operation?id=${selectedRowKeys[0]}`);
+    history.push(`/upload/operation/operation?id=${selectedRowKeys[0]}`);
   }
 
   /**

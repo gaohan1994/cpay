@@ -80,7 +80,7 @@ function Page(props: Props) {
    * @param item 
    */
   const onDetail = (item: any) => {
-    history.push(`/application/manage-detail?id=${item.id}`);
+    history.push(`/application/publish/detail?id=${item.id}`);
   }
 
   /**
@@ -120,7 +120,7 @@ function Page(props: Props) {
    * @param item 
    */
   const onPublish = (item: any) => {
-    history.push(`/application/publish-publish?id=${item.id}`);
+    history.push(`/application/publish/publish?id=${item.id}`);
   }
 
   /**

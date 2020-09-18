@@ -58,7 +58,7 @@ function Page(props: Props) {
    * @param item 
    */
   const onAudit = (item: any) => {
-    history.push(`/application/review-review?id=${item.id}`);
+    history.push(`/application/review/review?id=${item.id}`);
   }
 
   /**

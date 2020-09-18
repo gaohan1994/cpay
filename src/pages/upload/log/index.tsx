@@ -64,7 +64,7 @@ function Page(props: Props) {
    * @param item 
    */
   const onDetail = (item: any) => {
-    history.push(`/upload/log-detail?id=${item.id}`);
+    history.push(`/upload/log/detail?id=${item.id}`);
   }
 
   /**
@@ -72,7 +72,7 @@ function Page(props: Props) {
    * @param item 
    */
   const onEdit = (item: any) => {
-    history.push(`/upload/log-add?id=${item.id}`);
+    history.push(`/upload/log/edit?id=${item.id}`);
   }
 
   /**
@@ -173,7 +173,7 @@ function Page(props: Props) {
       notification.error({ message: "请先执行当前任务" });
       return;
     }
-    history.push(`/upload/log-operation?id=${selectedRowKeys[0]}`);
+    history.push(`/upload/log/operation?id=${selectedRowKeys[0]}`);
   }
 
   /**
@@ -186,7 +186,7 @@ function Page(props: Props) {
         <div>
           <a onClick={() => onDetail(item)}>详情</a>
           {
-            item.status === 1 || item.status === 3 && (
+            (item.status === 1 || item.status === 3) && (
               <>
                 <Divider type="vertical" />
                 <a onClick={() => onEdit(item)}>修改</a>
@@ -194,7 +194,7 @@ function Page(props: Props) {
             )
           }
           {
-            item.status === 1 || item.status === 3 && (
+            (item.status === 1 || item.status === 3) && (
               <>
                 <Divider type="vertical" />
                 <a onClick={() => onRemoveItem(item)}>删除</a>
@@ -245,7 +245,7 @@ function Page(props: Props) {
    * @todo 跳转到新增页面
    */
   const onAdd = () => {
-    history.push('/upload/log-add');
+    history.push('/upload/log/add');
   }
 
   const extraButtons = [

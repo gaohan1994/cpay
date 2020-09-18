@@ -77,7 +77,7 @@ function Page(props: Props) {
    * @param item 
    */
   const onEdit = (item: any) => {
-    history.push(`/system/user-add?id=${item.userId}`);
+    history.push(`/system/user/edit?id=${item.userId}`);
   }
 
   /**
@@ -228,7 +228,7 @@ function Page(props: Props) {
    * @todo 跳转到新增页面
    */
   const onAdd = () => {
-    history.push('/system/user-add');
+    history.push('/system/user/add');
   }
 
   /**

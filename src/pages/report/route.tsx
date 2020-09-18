@@ -39,7 +39,7 @@ const routerConfig: any[] = [
     exact: true
   },
   {
-    path: '/report/downloadJob-operation',
+    path: '/report/downloadJob/operation',
     name: '执行情况',
     component: ReportDownloadJobOperation,
     exact: true,

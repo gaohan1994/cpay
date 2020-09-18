@@ -185,7 +185,7 @@ function Page(props: Props) {
    * @param jobName 
    */
   const onDetail = (id: number, jobName: string) => {
-    history.push(`/report/downloadJob-operation?id=${id}&jobName=${jobName}`);
+    history.push(`/report/downloadJob/operation?id=${id}&jobName=${jobName}`);
   }
 
   /**

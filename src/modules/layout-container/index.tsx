@@ -55,7 +55,7 @@ function LayoutContainer(props: Props) {
             style={{
               padding: '0px 12px 12px 12px',
               position: 'relative',
-              marginTop: `${breadHeight + 12}px`,
+              marginTop: `${breadHeight + 6}px`,
               overflow: 'auto',
             }}
           >

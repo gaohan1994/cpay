@@ -44,7 +44,7 @@ function Page(props: Props) {
    * @param item 
    */
   const onDetail = (item: any) => {
-    history.push(`/upload/manage-detail?id=${item.id}`);
+    history.push(`/upload/manage/detail?id=${item.id}`);
   }
 
   /**
@@ -52,7 +52,7 @@ function Page(props: Props) {
    * @param item 
    */
   const onEdit = (item: any) => {
-    history.push(`/upload/manage-edit?id=${item.id}`);
+    history.push(`/upload/manage/edit?id=${item.id}`);
   }
 
   /**
@@ -168,7 +168,7 @@ function Page(props: Props) {
    * @todo 跳转到新增页面
    */
   const onAdd = () => {
-    history.push('/upload/manage-add');
+    history.push('/upload/manage/add');
   }
 
   const extraButtons = [

@@ -40,8 +40,15 @@ const routerConfig: any[] = [
     exact: true
   },
   {
-    path: '/system/user-add',
-    name: '新增用户',
+    path: '/system/user/add',
+    name: '用户新增',
+    component: SystemUserAdd,
+    exact: true,
+    inMenu: false,
+  },
+  {
+    path: '/system/user/edit',
+    name: '用户修改',
     component: SystemUserAdd,
     exact: true,
     inMenu: false,
@@ -53,8 +60,15 @@ const routerConfig: any[] = [
     exact: true
   },
   {
-    path: '/system/role-add',
-    name: '新增角色',
+    path: '/system/role/add',
+    name: '角色新增',
+    component: SystemRoleAdd,
+    exact: true,
+    inMenu: false,
+  },
+  {
+    path: '/system/role/edit',
+    name: '角色修改',
     component: SystemRoleAdd,
     exact: true,
     inMenu: false,
@@ -78,7 +92,7 @@ const routerConfig: any[] = [
     exact: true
   },
   {
-    path: '/system/dict-list',
+    path: '/system/dict/list',
     name: '字典数据',
     component: SystemDictList,
     exact: true,

@@ -83,26 +83,23 @@ export default function Page() {
   useEffect(() => {
     if (system.menuTreeData.length > 0) {
       let keys: string[] = [];
-      system.menuTreeData.forEach(element => {
-        getChildKeys(element, keys);
+      checkedIds.forEach(element => {
+        getChildKeys(element, system.menuTreeData, keys);
       });
       setCheckedKeys(keys);
     }
-  }, [system.menuTreeData, detail]);
+  }, [system.menuTreeData, detail, checkedIds]);
 
-  const getChildKeys = (item: any, keys: string[]) => {
-    checkedIds.forEach(element => {
-      if (numeral(element).value() === item.menuId) {
-        keys.push(item.key);
-      }
-      if (item.children && item.children.length > 0) {
-        item.children.forEach((ele: any) => {
-          getChildKeys(ele, keys);
-        });
+  const getChildKeys = (id: string, list: any[], keys: string[]) => {
+    list.forEach(element => {
+      if (numeral(id).value() === numeral(element.menuId).value()) {
+        keys.push(element.key);
+        return;
+      } else if (Array.isArray(element.children) && element.children.length > 0) {
+        getChildKeys(id, element.children, keys);
       }
     });
   }
-
   const checkRoleName = (rule: any, value: any, callback: any) => {
     let flag = false;
     for (let i = 0; i < roleList.length; i++) {

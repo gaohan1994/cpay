@@ -160,7 +160,7 @@ function Page(props: Props) {
    * @param item 
    */
   const navToList = (item: any) => {
-    history.push(`/system/dict-list?type=${item.dictType}`)
+    history.push(`/system/dict/list?type=${item.dictType}`)
   }
 
   /**

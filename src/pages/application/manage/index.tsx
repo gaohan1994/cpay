@@ -97,7 +97,7 @@ function Page(props: Props) {
    * @todo 跳转上传页面
    */
   const onUpload = () => {
-    history.push(`/application/manage-upload`);
+    history.push(`/application/manage/upload`);
   }
 
   /**
@@ -105,7 +105,7 @@ function Page(props: Props) {
    * @param item 
    */
   const onDetail = (item: any) => {
-    history.push(`/application/manage-detail?id=${item.id}`);
+    history.push(`/application/manage/detail?id=${item.id}`);
   }
 
   /**
@@ -113,14 +113,14 @@ function Page(props: Props) {
    * @param item 
    */
   const onEdit = (item: any) => {
-    history.push(`/application/manage-upload?id=${item.id}`);
+    history.push(`/application/manage/edit?id=${item.id}`);
   }
 
   /**
    * @todo 跳转回收站列表页面
    */
-  const onDelete = () => {
-    history.push(`/application/manage-delete`);
+  const onRecycleList = () => {
+    history.push(`/application/manage/recycle`);
   }
 
   /**
@@ -347,7 +347,7 @@ function Page(props: Props) {
   const extraButtons = [
     { title: '上传', onClick: onUpload, icon: <UploadOutlined /> },
     { title: '提交审核', onClick: onAuditSubmit, type: "primary" as any },
-    { title: '回收站', onClick: onDelete, icon: <DeleteOutlined /> }
+    { title: '回收站', onClick: onRecycleList, icon: <DeleteOutlined /> }
   ]
 
   const rowSelection = {

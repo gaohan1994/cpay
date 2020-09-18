@@ -7,7 +7,7 @@
  * @todo 软件更新任务列表
  */
 import React, { useState } from 'react';
-import { Form, Table, Tag, Divider, notification, Radio, Modal, Input, DatePicker, Spin } from 'antd';
+import { Form, Table, Tag, Divider, notification, Radio, Modal, Input, DatePicker, Spin, message } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -73,7 +73,7 @@ function Page(props: Props) {
    * @param item 
    */
   const onDetail = (item: any) => {
-    history.push(`/upload/update-detail?id=${item.id}`);
+    history.push(`/upload/update/detail?id=${item.id}`);
   }
 
   /**
@@ -81,7 +81,15 @@ function Page(props: Props) {
    * @param item 
    */
   const onEdit = (item: any) => {
-    history.push(`/upload/update-add?id=${item.id}&type=1`);
+    if (item.status === 7) {
+      notification.error({ message: "任务已经结束，不允许修改！" });
+      return;
+    }
+    if (item.status === 2 || item.status === 5 || item.status === 6) {
+      notification.error({ message: "任务正在进行中，不允许修改！" });
+      return;
+    }
+    history.push(`/upload/update/edit?id=${item.id}&type=1`);
   }
 
   /**
@@ -208,7 +216,7 @@ function Page(props: Props) {
    * @todo 新增
    */
   const onAdd = () => {
-    history.push('/upload/update-add');
+    history.push('/upload/update/add');
   }
 
   /**
@@ -223,7 +231,7 @@ function Page(props: Props) {
       notification.error({ message: "请选择一条任务" });
       return;
     }
-    history.push(`/upload/update-add?id=${selectedRowKeys[0]}&type=0`);
+    history.push(`/upload/update/copy?id=${selectedRowKeys[0]}&type=0`);
   }
 
   /**
@@ -238,7 +246,7 @@ function Page(props: Props) {
       notification.error({ message: "请选择一条任务" });
       return;
     }
-    history.push(`/upload/update-operation?id=${selectedRowKeys[0]}&jobName=${selectedRows[0].jobName}`);
+    history.push(`/upload/update/operation?id=${selectedRowKeys[0]}&jobName=${selectedRows[0].jobName}`);
   }
 
   /**

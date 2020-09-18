@@ -83,7 +83,7 @@ function Page(props: Props) {
    * @param item 
    */
   const onEdit = (item: any) => {
-    history.push(`/system/role-add?id=${item.roleId}`);
+    history.push(`/system/role/edit?id=${item.roleId}`);
   }
 
   /**
@@ -266,7 +266,7 @@ function Page(props: Props) {
   ]);
 
   const onAdd = () => {
-    history.push(`/system/role-add`);
+    history.push(`/system/role/add`);
   }
 
   /**
@@ -302,7 +302,7 @@ function Page(props: Props) {
     selectedRowKeys,
     onChange: setSelectedRowKeys,
   };
-  
+
   return (
     <Spin spinning={loading}>
       <Forms

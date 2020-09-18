@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-17 16:23:37 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-17 17:15:46
+ * @Last Modified time: 2020-09-17 17:24:51
  * 
  * @todo 通知公告
  */
@@ -221,7 +221,7 @@ function Page(props: Props) {
       formType: FormItmeType.Select,
       selectData:
         (dictList &&
-          dictList.sys_yes_no && dictList.sys_yes_no.data.map((item) => {
+          dictList.sys_notice_type && dictList.sys_notice_type.data.map((item) => {
             return {
               value: `${item.dictValue}`,
               title: `${item.dictLabel}`,
@@ -372,7 +372,7 @@ function Page(props: Props) {
         {...tableProps}
         pagination={getStandardPagination(tableProps.pagination)}
       />
-      <Modal
+      {/* <Modal
         visible={modalVisible}
         title={editItem.noticeId ? "添加公告" : "修改公告"}
         onCancel={hideModal}
@@ -384,7 +384,7 @@ function Page(props: Props) {
         >
           <CustomFormItems items={addForms} singleCol={true} customFormLayout={customFormLayout} />
         </Form>
-      </Modal>
+      </Modal> */}
     </Spin>
   );
 }
