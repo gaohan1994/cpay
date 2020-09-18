@@ -28,11 +28,9 @@ const { TreeNode } = TreeSelect;
 export function ComponentContainer(props: any) {
   const { span, formName, formProps } = props;
   return (
-    <Col span={span || 6}>
-      <Item name={formName} {...formProps}>
-        {props.children}
-      </Item>
-    </Col>
+    <Item name={formName} {...formProps}>
+      {props.children}
+    </Item>
   );
 }
 

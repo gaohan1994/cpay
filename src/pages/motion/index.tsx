@@ -64,7 +64,6 @@ export default () => {
       formType: FormItmeType.Normal,
     },
     {
-      span: 4,
       formName: 'deptId',
       formType: FormItmeType.TreeSelectCommon,
     },

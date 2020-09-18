@@ -37,6 +37,7 @@ export type FormBaseProps = {
   span?: number;
   formProps?: any;
   render?: any;
+  defaultSpan?: number;
 };
 
 /**

@@ -134,7 +134,6 @@ export default () => {
       formType: FormItmeType.Normal,
     },
     {
-      span: 6,
       formName: 'deptId',
       formType: FormItmeType.TreeSelectCommon,
       onChange: onChange,
@@ -142,7 +141,6 @@ export default () => {
     {
       placeholder: '所属组',
       formName: 'groupId',
-      span: 6,
       formType: FormItmeType.Select,
       selectData:
         (terminalGroup &&

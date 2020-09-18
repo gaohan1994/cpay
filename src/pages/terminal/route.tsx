@@ -71,7 +71,7 @@ const routerConfig: any[] = [
   {
     // 终端分组管理
     name: '终端分组管理',
-    path: '/terminal/grouping',
+    path: '/terminal/makeGroup',
     component: Terminalgrouping,
     exact: true,
   },

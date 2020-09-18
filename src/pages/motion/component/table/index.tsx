@@ -123,12 +123,7 @@ export function TableTusns(props: Props) {
       formName: 'merchantCode',
       formType: FormItmeType.Normal,
     },
-  ].map((item) => {
-    return {
-      ...item,
-      span: 4,
-    } as any;
-  });
+  ];
 
   /**
    * @todo 创建table的列

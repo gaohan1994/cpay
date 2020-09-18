@@ -121,12 +121,7 @@ export default () => {
       placeholder: '网络类型',
       formName: 'networkType',
     },
-  ].map((item): any => {
-    return {
-      ...item,
-      span: 3,
-    };
-  });
+  ];
 
   const columns = createTableColumns([
     {

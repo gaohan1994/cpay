@@ -1,5 +1,5 @@
-import React from 'react';
-import { Form, Row } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Row, Col } from 'antd';
 import FormButton, { FormButtonProps } from '@/component/form-button';
 import {
   FormItem,
@@ -20,6 +20,8 @@ import {
   renderCascaderForm,
   renderDatePickerForm,
 } from './render';
+import { useWindowSize } from './hooks';
+import { merge } from 'lodash';
 
 export type Props = {
   form: any; // antd 创建的form对象
@@ -40,9 +42,57 @@ export type Props = {
  */
 function CommonForm(props: Props) {
   const { forms, form, formButtonProps } = props;
-  // 渲染表单按钮
   const { reset, submit, ...rest } = formButtonProps;
+  /**
+   * @param count 表单每行表格的数量
+   */
+  const [count, setCount] = useState(4);
+  const { height, width } = useWindowSize();
 
+  useEffect(() => {
+    console.log('width', width);
+    if (width <= 768) {
+      setCount(3);
+      return;
+    }
+    if (width <= 1200) {
+      setCount(4);
+      return;
+    }
+    if (width <= 1600) {
+      setCount(6);
+      return;
+    }
+    if (width <= 2000) {
+      setCount(8);
+      return;
+    }
+  }, [height, width]);
+
+  const renderItem = (item: FormItem) => {
+    if (!!isCommonTreeSelectForm(item)) {
+      return renderCommonTreeSelectForm(item);
+    }
+    if (!!isCommonSelectForm(item)) {
+      return renderCommonSelectForm(item);
+    }
+    if (!!isNormalForm(item)) {
+      return renderNormalForm(item);
+    }
+    if (!!isSelectForm(item)) {
+      return renderSelectForm(item);
+    }
+    if (!!isCascaderFrom(item)) {
+      return renderCascaderForm(item);
+    }
+    if (!!isTreeSelectForm(item)) {
+      return renderTreeSelectForm(item);
+    }
+    if (!!isDatePickerForm(item)) {
+      return renderDatePickerForm(item);
+    }
+  };
+  console.log('count', count);
   return (
     <div>
       <Form form={form}>
@@ -50,29 +100,26 @@ function CommonForm(props: Props) {
           {forms && (
             <>
               {forms.map((item) => {
+                const mergeItem: any = merge({}, item);
+
                 if (item.render) {
                   return item.render();
-                }
-                if (!!isCommonTreeSelectForm(item)) {
-                  return renderCommonTreeSelectForm(item);
-                }
-                if (!!isCommonSelectForm(item)) {
-                  return renderCommonSelectForm(item);
-                }
-                if (!!isNormalForm(item)) {
-                  return renderNormalForm(item);
-                }
-                if (!!isSelectForm(item)) {
-                  return renderSelectForm(item);
-                }
-                if (!!isCascaderFrom(item)) {
-                  return renderCascaderForm(item);
-                }
-                if (!!isTreeSelectForm(item)) {
-                  return renderTreeSelectForm(item);
-                }
-                if (!!isDatePickerForm(item)) {
-                  return renderDatePickerForm(item);
+                } else {
+                  const { span } = mergeItem;
+                  const defaultSpan = 24 / count;
+                  return (
+                    <Col
+                      span={
+                        typeof span === 'number'
+                          ? span > defaultSpan
+                            ? span
+                            : defaultSpan
+                          : defaultSpan || 6
+                      }
+                    >
+                      {renderItem(item)}
+                    </Col>
+                  );
                 }
               })}
             </>

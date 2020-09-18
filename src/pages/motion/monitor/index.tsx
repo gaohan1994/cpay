@@ -62,7 +62,7 @@ export default () => {
        * @param {merchantPoint} 商户坐标点
        * @param {terminalPoint} 终端坐标点
        */
-      const radius = result.data.radius || 5000;
+      const radius = 5000;
       const currentTerminalData = result.data.terminalPosition;
       const currentMerchantData = result.data.terminalInfo;
 
@@ -112,6 +112,7 @@ export default () => {
         map.openInfoWindow(terminalInfoWindow, terminalPoint); //开启信息窗口
       });
     } catch (error) {
+      console.log('error', error);
       notification.warn({ message: error.message });
     }
   };

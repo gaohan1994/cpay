@@ -29,7 +29,6 @@ type Props = {
 
 export default (props: Props) => {
   const { visible, setTrue, setFalse } = useModal();
-  console.log('setTrue:', setTrue);
   const [currentTab, setCurrentTab] = useState('1');
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);
   const { currentGroupSet } = props;
@@ -111,7 +110,6 @@ export default (props: Props) => {
     {
       formName: 'deptId',
       formType: FormItmeType.TreeSelectCommon,
-      span: 6,
     },
     {
       formName: 'tusn',

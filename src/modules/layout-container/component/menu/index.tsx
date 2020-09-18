@@ -58,7 +58,6 @@ function LayoutMenu(props: Props) {
   };
 
   const onOpenChange = (keys: any) => {
-    console.log('keys', keys);
     const latestOpenKey: any = keys.find(
       (key: any) => openKeys.indexOf(key) === -1
     );
@@ -82,7 +81,7 @@ function LayoutMenu(props: Props) {
     const event = document.createEvent('HTMLEvents');
     event.initEvent('resize', true, false);
     window.dispatchEvent(event);
-  }
+  };
   const toggle = (e: any) => {
     triggerResizeEvent();
   };
@@ -91,18 +90,11 @@ function LayoutMenu(props: Props) {
     return (
       <div style={{ textAlign: 'left', zIndex: 999 }}>
         <span className={'trigger'} onClick={toggle}>
-          {
-            collapsed ? (
-              <MenuUnfoldOutlined />
-            ) : (
-                <MenuFoldOutlined />
-              )
-          }
+          {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
         </span>
       </div>
-
-    )
-  }
+    );
+  };
 
   const onSelect = (keys: any) => {
     setSelectedKeys(keys.key);
@@ -133,11 +125,13 @@ function LayoutMenu(props: Props) {
                     key={menuItem.value}
                     icon={<menuItem.icon />}
                     title={menuItem.name}
-                    style={{ paddingBottom: index === menus.length - 1 ? 50 : 0 }}
+                    style={{
+                      paddingBottom: index === menus.length - 1 ? 50 : 0,
+                    }}
                   >
                     {menuItem.subMenus.map((subMenuItem, subIndex) => {
                       return (
-                        <Menu.Item key={subMenuItem.value} >
+                        <Menu.Item key={subMenuItem.value}>
                           {subMenuItem.name}
                         </Menu.Item>
                       );
@@ -146,7 +140,11 @@ function LayoutMenu(props: Props) {
                 );
               }
               return (
-                <Menu.Item key={menuItem.value} icon={<menuItem.icon />} style={{ paddingBottom: index === menus.length - 1 ? 50 : 0 }}>
+                <Menu.Item
+                  key={menuItem.value}
+                  icon={<menuItem.icon />}
+                  style={{ paddingBottom: index === menus.length - 1 ? 50 : 0 }}
+                >
                   {menuItem.name}
                 </Menu.Item>
               );
