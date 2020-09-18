@@ -35,7 +35,7 @@ export default () => {
     try {
       invariant(selectedRowKeys.length === 1, '请选择一条记录');
       history.push(
-        `/terminal/params-detail?id=${selectedRowKeys[0]}&type=${DetailType.COPY}`
+        `/terminal/params/detail?id=${selectedRowKeys[0]}&type=${DetailType.COPY}`
       );
     } catch (error) {
       notification.warn({ message: error.message });
@@ -43,12 +43,12 @@ export default () => {
   };
 
   const onAdd = () => {
-    history.push(`/terminal/params-detail?type=${DetailType.ADD}`);
+    history.push(`/terminal/params/detail?type=${DetailType.ADD}`);
   };
 
   const onEdit = (item: any) => {
     history.push(
-      `/terminal/params-detail?id=${item.id}&type=${DetailType.EDIT}`
+      `/terminal/params/detail?id=${item.id}&type=${DetailType.EDIT}`
     );
   };
 

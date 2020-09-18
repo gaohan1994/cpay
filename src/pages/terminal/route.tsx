@@ -62,6 +62,14 @@ const routerConfig: any[] = [
     inMenu: false,
   },
   {
+    // 终端参数查询
+    name: '终端参数管理',
+    path: '/terminal/params/detail',
+    component: TerminalparamsDetail,
+    exact: true,
+    inMenu: false,
+  },
+  {
     // 终端组别管理
     name: '终端组别管理',
     path: '/terminal/group',
