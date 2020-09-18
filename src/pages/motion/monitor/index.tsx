@@ -7,6 +7,7 @@ import { renderCommonTreeSelectForm } from '@/component/form/render';
 import './index.scss';
 import invariant from 'invariant';
 import pic_map_address from '@/assets/map/pic_map_address.png';
+import pic_map_position from '@/assets/map/pic_map_position.png';
 import { TableTusns } from '../component/table';
 import { getAllTerminalPosition } from '../constants';
 import { RESPONSE_CODE } from '@/common/config';
@@ -19,6 +20,7 @@ export default () => {
   const [visible, setVisible] = useState(false);
   const [selectList, setSelectList] = useState([] as any[]);
   const [merchantIcon, setMerchantIcon] = useState({} as any);
+  const [terminalIcon, setTerminalIcon] = useState({} as any);
 
   useEffect(() => {
     const mp = new BMap.Map('monitor-map-container');
@@ -38,8 +40,10 @@ export default () => {
     ); //缩略图控件
     setMap(mp);
 
+    const terminalIcon = new BMap.Icon(pic_map_position, new BMap.Size(32, 37));
+    setTerminalIcon(terminalIcon);
+
     const mIcon = new BMap.Icon(pic_map_address, new BMap.Size(32, 37));
-    console.log('mIcon:', mIcon);
     setMerchantIcon(mIcon);
   }, []);
 
@@ -51,26 +55,29 @@ export default () => {
       console.log('result', result);
 
       /**
-       * 创建终端点坐标
-       */
-      const pointData = {
-        longitude: result.data.terminalInfo.longitude,
-        latitude: result.data.terminalInfo.latitude,
-      };
-      console.log('pointData', pointData);
-      const point = new BMap.Point(pointData.longitude, pointData.latitude);
-      map.centerAndZoom(point, 12);
-
-      /**
+       * @param {radius} 半径
+       * @param {currentTerminalData} 终端数据
+       * @param {currentMerchantData} 商户数据
        *
+       * @param {merchantPoint} 商户坐标点
+       * @param {terminalPoint} 终端坐标点
        */
-      var marker = new BMap.Marker(point, { icon: merchantIcon });
-      map.addOverlay(marker);
+      const radius = result.data.radius || 5000;
+      const currentTerminalData = result.data.terminalPosition;
+      const currentMerchantData = result.data.terminalInfo;
 
-      /**
-       * 设置半径
-       */
-      const circle = new BMap.Circle(point, 5000, {
+      const merchantPoint = new BMap.Point(
+        currentMerchantData.longitude,
+        currentMerchantData.latitude
+      );
+      map.centerAndZoom(merchantPoint, 12);
+
+      const merchantMarker = new BMap.Marker(merchantPoint, {
+        icon: merchantIcon,
+      });
+      map.addOverlay(merchantMarker);
+
+      const circle = new BMap.Circle(merchantPoint, radius, {
         fillColor: 'blue',
         strokeWeight: 1,
         fillOpacity: 0.3,
@@ -78,6 +85,32 @@ export default () => {
         enableEditing: true,
       });
       map.addOverlay(circle);
+
+      const merchantInfoWindow = new BMap.InfoWindow(
+        `商户地址：` + currentMerchantData.address,
+        { width: 300, height: 100, title: '商户地址' }
+      );
+      merchantMarker.addEventListener('click', () => {
+        map.openInfoWindow(merchantInfoWindow, merchantPoint);
+      });
+
+      const terminalPoint = new BMap.Point(
+        currentTerminalData.longitude,
+        currentTerminalData.latitude
+      );
+
+      const terminalMarker = new BMap.Marker(terminalPoint, {
+        icon: terminalIcon,
+      });
+      map.addOverlay(terminalMarker);
+
+      const terminalInfoWindow = new BMap.InfoWindow(
+        `终端地址：` + currentTerminalData.address,
+        { width: 300, height: 100, title: '终端地址' }
+      );
+      terminalMarker.addEventListener('click', () => {
+        map.openInfoWindow(terminalInfoWindow, terminalPoint); //开启信息窗口
+      });
     } catch (error) {
       notification.warn({ message: error.message });
     }
