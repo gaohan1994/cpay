@@ -84,9 +84,14 @@ function Page(props: Props) {
       formType: FormItmeType.Normal,
     },
     {
-      formName: ['adFileType', 'adType'],
+      formName: 'adFileType',
       formType: FormItmeType.SelectCommon,
-      dictList: ['advert_file_type', 'advert_type'],
+      dictList: 'advert_file_type',
+    },
+    {
+      formName: 'adType',
+      formType: FormItmeType.SelectCommon,
+      dictList: 'advert_type',
     },
   ];
 

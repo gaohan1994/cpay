@@ -1,9 +1,9 @@
 /*
- * @Author: centerm.gaozhiying 
- * @Date: 2020-08-13 09:32:54 
+ * @Author: centerm.gaozhiying
+ * @Date: 2020-08-13 09:32:54
  * @Last Modified by: centerm.gaozhiying
  * @Last Modified time: 2020-09-10 16:04:07
- * 
+ *
  * @todo 软件管理列表
  */
 import React, { useState } from 'react';
@@ -31,7 +31,11 @@ function Page(props: Props) {
   const [form] = Form.useForm();
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) =>
-      taskSoftList({ pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
+      taskSoftList({
+        pageSize: paginatedParams.pageSize,
+        pageNum: paginatedParams.current,
+        ...tableProps,
+      }),
     {
       form,
       formatResult: formatListResult,
@@ -41,23 +45,23 @@ function Page(props: Props) {
 
   /**
    * @todo 跳转到应用审核页面
-   * @param item 
+   * @param item
    */
   const onDetail = (item: any) => {
     history.push(`/upload/manage/detail?id=${item.id}`);
-  }
+  };
 
   /**
    * @todo 跳转到编辑页面
-   * @param item 
+   * @param item
    */
   const onEdit = (item: any) => {
     history.push(`/upload/manage/edit?id=${item.id}`);
-  }
+  };
 
   /**
    * @todo 删除软件信息
-   * @param item 
+   * @param item
    */
   const onRemove = async (item: any) => {
     Modal.confirm({
@@ -68,12 +72,15 @@ function Page(props: Props) {
       onOk: async () => {
         try {
           const param = {
-            ids: item.id
-          }
+            ids: item.id,
+          };
           setLoading(true);
           const result = await softInfoRemove(param);
           setLoading(false);
-          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除软件信息失败，请重试');
+          invariant(
+            result && result.code === RESPONSE_CODE.success,
+            (result && result.msg) || '删除软件信息失败，请重试'
+          );
           notification.success({ message: '删除软件信息成功!' });
           submit();
         } catch (error) {
@@ -81,7 +88,7 @@ function Page(props: Props) {
         }
       },
     });
-  }
+  };
 
   /**
    * @todo 创建table的列
@@ -107,16 +114,20 @@ function Page(props: Props) {
       align: 'center',
       render: (key, item: any) => {
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            {
-              item.iconPath && (
-                <img src={item.iconPath} style={{ width: 50, height: 50 }} />
-              )
-            }
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            {item.iconPath && (
+              <img src={item.iconPath} style={{ width: 50, height: 50 }} />
+            )}
             <div style={{ paddingTop: 5 }}>{item.appName}</div>
           </div>
-        )
-      }
+        );
+      },
     },
     {
       title: '软件编码',
@@ -129,17 +140,17 @@ function Page(props: Props) {
     {
       title: '软件类型',
       dataIndex: 'type',
-      dictType: 'driver_type'
+      dictType: 'driver_type',
     },
     {
       title: '是否支持DCC',
       dataIndex: 'dccSupFlag',
-      dictType: 'is_dcc_sup'
+      dictType: 'is_dcc_sup',
     },
     {
       title: '银联间直联',
       dataIndex: 'cupConnMode',
-      dictType: 'unionpay_connection'
+      dictType: 'unionpay_connection',
     },
   ]);
 
@@ -158,9 +169,19 @@ function Page(props: Props) {
       formType: FormItmeType.Normal,
     },
     {
-      formName: ['type', 'dccSupFlag', 'cupConnMode'],
+      formName: 'type',
       formType: FormItmeType.SelectCommon,
-      dictList: ['driver_type', 'is_dcc_sup', 'unionpay_connection'],
+      dictList: 'driver_type',
+    },
+    {
+      formName: 'dccSupFlag',
+      formType: FormItmeType.SelectCommon,
+      dictList: 'is_dcc_sup',
+    },
+    {
+      formName: 'cupConnMode',
+      formType: FormItmeType.SelectCommon,
+      dictList: 'unionpay_connection',
     },
   ];
 
@@ -169,11 +190,16 @@ function Page(props: Props) {
    */
   const onAdd = () => {
     history.push('/upload/manage/add');
-  }
+  };
 
   const extraButtons = [
-    { title: '新增', onClick: onAdd, icon: <PlusOutlined />, type: "primary" as any, },
-  ]
+    {
+      title: '新增',
+      onClick: onAdd,
+      icon: <PlusOutlined />,
+      type: 'primary' as any,
+    },
+  ];
 
   return (
     <Spin spinning={loading}>
@@ -183,7 +209,7 @@ function Page(props: Props) {
         formButtonProps={{
           submit,
           reset,
-          extraButtons
+          extraButtons,
         }}
       />
       <Table
@@ -196,4 +222,3 @@ function Page(props: Props) {
   );
 }
 export default Page;
-

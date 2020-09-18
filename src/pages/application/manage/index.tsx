@@ -1,15 +1,31 @@
 /*
- * @Author: centerm.gaozhiying 
- * @Date: 2020-08-10 14:50:24 
+ * @Author: centerm.gaozhiying
+ * @Date: 2020-08-10 14:50:24
  * @Last Modified by: centerm.gaozhiying
  * @Last Modified time: 2020-09-10 17:32:15
- * 
+ *
  * @todo 应用管理列表页
  */
 import React, { useState, useEffect } from 'react';
-import { Form, Table, Row, Popconfirm, Modal, notification, Divider, Tag, Col, Spin } from 'antd';
+import {
+  Form,
+  Table,
+  Row,
+  Popconfirm,
+  Modal,
+  notification,
+  Divider,
+  Tag,
+  Col,
+  Spin,
+} from 'antd';
 import { useAntdTable } from 'ahooks';
-import { appInfoList, getAppTypeList, appInfoRemove, appAuditSubmit } from '../constants/api';
+import {
+  appInfoList,
+  getAppTypeList,
+  appInfoRemove,
+  appAuditSubmit,
+} from '../constants/api';
 import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
@@ -31,16 +47,20 @@ function Page(props: Props) {
   useStore(['app_status']);
 
   const initState = {
-    terminalGroupList: [] as ITerminalGroupByDeptId[],  // 终端组别列表
-    terminalGroupValue: '',                             // 终端组别选中值
-    formTreeValue: -1,                                  // 机构树选中的值
-    appTypeList: [] as IAppType[],                      // 应用类型列表
-    appTypeValue: '',                                   // 应用类型选中的值
+    terminalGroupList: [] as ITerminalGroupByDeptId[], // 终端组别列表
+    terminalGroupValue: '', // 终端组别选中值
+    formTreeValue: -1, // 机构树选中的值
+    appTypeList: [] as IAppType[], // 应用类型列表
+    appTypeValue: '', // 应用类型选中的值
   };
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);  // 选中的列的key值列表
-  const [terminalGroupList, setTerminalGroupList] = useState(initState.terminalGroupList);
-  const [terminalGroupValue, setTerminalGroupValue] = useState(initState.terminalGroupValue);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]); // 选中的列的key值列表
+  const [terminalGroupList, setTerminalGroupList] = useState(
+    initState.terminalGroupList
+  );
+  const [terminalGroupValue, setTerminalGroupValue] = useState(
+    initState.terminalGroupValue
+  );
   const [formTreeValue, setFormTreeValue] = useState(initState.formTreeValue);
   const [appTypeList, setAppTypeList] = useState(initState.appTypeList);
   const [appTypeValue, setAppTypeValue] = useState(initState.appTypeValue);
@@ -68,7 +88,11 @@ function Page(props: Props) {
 
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) =>
-      appInfoList({ pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
+      appInfoList({
+        pageSize: paginatedParams.pageSize,
+        pageNum: paginatedParams.current,
+        ...tableProps,
+      }),
     {
       form,
       formatResult: formatListResult,
@@ -82,7 +106,7 @@ function Page(props: Props) {
   const customSubmit = () => {
     setSelectedRowKeys([]);
     submit();
-  }
+  };
 
   /**
    * @todo 自定义重置，把选中列表置空
@@ -90,42 +114,41 @@ function Page(props: Props) {
   const customReset = () => {
     setSelectedRowKeys([]);
     reset();
-  }
-
+  };
 
   /**
    * @todo 跳转上传页面
    */
   const onUpload = () => {
     history.push(`/application/manage/upload`);
-  }
+  };
 
   /**
    * @todo 跳转详情页面
-   * @param item 
+   * @param item
    */
   const onDetail = (item: any) => {
     history.push(`/application/manage/detail?id=${item.id}`);
-  }
+  };
 
   /**
    * @todo 跳转应用修改页面
-   * @param item 
+   * @param item
    */
   const onEdit = (item: any) => {
     history.push(`/application/manage/edit?id=${item.id}`);
-  }
+  };
 
   /**
    * @todo 跳转回收站列表页面
    */
   const onRecycleList = () => {
     history.push(`/application/manage/recycle`);
-  }
+  };
 
   /**
    * @todo 监听选中机构id的改变
-   * @param deptId 
+   * @param deptId
    */
   const onChangeDept = (deptId: number) => {
     setFormTreeValue(deptId);
@@ -133,7 +156,7 @@ function Page(props: Props) {
 
   /**
    * @todo 删除应用（将应用移入回收站）
-   * @param item 
+   * @param item
    */
   const onRemoveItem = async (item: any) => {
     Modal.confirm({
@@ -146,7 +169,10 @@ function Page(props: Props) {
           setLoading(true);
           const result = await appInfoRemove({ ids: item.id });
           setLoading(false);
-          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除应用失败，请重试');
+          invariant(
+            result && result.code === RESPONSE_CODE.success,
+            (result && result.msg) || '删除应用失败，请重试'
+          );
           notification.success({ message: '删除应用成功!' });
           customSubmit();
         } catch (error) {
@@ -154,7 +180,7 @@ function Page(props: Props) {
         }
       },
     });
-  }
+  };
 
   /**
    * @todo 提交审核
@@ -187,7 +213,7 @@ function Page(props: Props) {
     } catch (error) {
       notification.warn({ message: error.message });
     }
-  }
+  };
 
   /**
    * @todo 创建table的列
@@ -196,24 +222,20 @@ function Page(props: Props) {
     {
       title: '操作',
       render: (key, item) => (
-        <div >
+        <div>
           <a onClick={() => onDetail(item)}>详情</a>
-          {
-            item.status !== 4 && (
-              <>
-                <Divider type="vertical" />
-                <a onClick={() => onEdit(item)}>修改</a>
-              </>
-            )
-          }
-          {
-            item.status !== 4 && (
-              <>
-                <Divider type="vertical" />
-                <a onClick={() => onRemoveItem(item)}>删除</a>
-              </>
-            )
-          }
+          {item.status !== 4 && (
+            <>
+              <Divider type="vertical" />
+              <a onClick={() => onEdit(item)}>修改</a>
+            </>
+          )}
+          {item.status !== 4 && (
+            <>
+              <Divider type="vertical" />
+              <a onClick={() => onRemoveItem(item)}>删除</a>
+            </>
+          )}
         </div>
       ),
       fixed: 'left',
@@ -226,20 +248,28 @@ function Page(props: Props) {
       // dataIndex: 'apkName',
       render: (key, item: any) => {
         return (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
             <img src={item.iconPath} style={{ width: 50, height: 50 }} />
-            <div style={{ paddingTop: 5, wordBreak: 'break-all' }}>{item.apkName}</div>
+            <div style={{ paddingTop: 5, wordBreak: 'break-all' }}>
+              {item.apkName}
+            </div>
           </div>
-        )
-      }
+        );
+      },
     },
     {
       title: '应用状态',
       dataIndex: 'status',
       dictType: 'app_status',
       render: (item: any) => {
-        return <Tag color={getAppStatusColor(item)}>{item}</Tag>
-      }
+        return <Tag color={getAppStatusColor(item)}>{item}</Tag>;
+      },
     },
     {
       title: '应用分类',
@@ -248,7 +278,7 @@ function Page(props: Props) {
     {
       title: '应用包名',
       dataIndex: 'apkCode',
-      width: 200
+      width: 200,
     },
     {
       title: '应用版本',
@@ -278,7 +308,7 @@ function Page(props: Props) {
     {
       title: '上传时间',
       dataIndex: 'createTime',
-      width: 200
+      width: 200,
     },
   ]);
 
@@ -338,17 +368,17 @@ function Page(props: Props) {
       },
     },
     {
-      formName: ['status',],
+      formName: 'status',
       formType: FormItmeType.SelectCommon,
-      dictList: ['app_status'],
+      dictList: 'app_status',
     },
   ];
 
   const extraButtons = [
     { title: '上传', onClick: onUpload, icon: <UploadOutlined /> },
-    { title: '提交审核', onClick: onAuditSubmit, type: "primary" as any },
-    { title: '回收站', onClick: onRecycleList, icon: <DeleteOutlined /> }
-  ]
+    { title: '提交审核', onClick: onAuditSubmit, type: 'primary' as any },
+    { title: '回收站', onClick: onRecycleList, icon: <DeleteOutlined /> },
+  ];
 
   const rowSelection = {
     type: 'radio',
@@ -364,7 +394,7 @@ function Page(props: Props) {
         formButtonProps={{
           submit: customSubmit,
           reset: customReset,
-          extraButtons
+          extraButtons,
         }}
       />
       <Table
@@ -377,9 +407,5 @@ function Page(props: Props) {
       />
     </Spin>
   );
-
-
 }
 export default Page;
-
-

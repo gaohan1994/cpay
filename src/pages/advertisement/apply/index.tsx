@@ -109,9 +109,19 @@ export default () => {
       formType: FormItmeType.Normal,
     },
     {
-      formName: ['adFileType', 'adType', 'status'],
+      formName: 'adFileType',
       formType: FormItmeType.SelectCommon,
-      dictList: ['advert_file_type', 'advert_type', 'advert_status'],
+      dictList: 'advert_file_type',
+    },
+    {
+      formName: 'adType',
+      formType: FormItmeType.SelectCommon,
+      dictList: 'advert_type',
+    },
+    {
+      formName: 'status',
+      formType: FormItmeType.SelectCommon,
+      dictList: 'advert_status',
     },
   ];
 
