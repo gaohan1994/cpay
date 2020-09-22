@@ -22,7 +22,7 @@ export default (props: Props) => {
               type={item.id === currentGroupSet.id ? 'primary' : 'default'}
               onClick={() => setCurrentGroupSet(item)}
             >
-              {item.deptName}
+              {item.name}
             </Button>
           );
         })}

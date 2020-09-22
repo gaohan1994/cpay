@@ -25,17 +25,24 @@ export default () => {
     });
   }, []);
   return (
-    <div style={{ minWidth: '1000px' }}>
-      <Row gutter={24}>
-        <Col span={4}>
-          <Menu
-            groupSet={groupSet}
-            currentGroupSet={currentGroupSet}
-            setCurrentGroupSet={setCurrentGroupSet}
-          />
-        </Col>
+    <div
+      style={{
+        minWidth: '1000px',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'row',
+      }}
+    >
+      <div style={{ flex: 1, maxWidth: 200, height: '100%' }}>
+        <Menu
+          groupSet={groupSet}
+          currentGroupSet={currentGroupSet}
+          setCurrentGroupSet={setCurrentGroupSet}
+        />
+      </div>
+      <div style={{ flex: 4 }}>
         <TabContenet groupSet={groupSet} currentGroupSet={currentGroupSet} />
-      </Row>
+      </div>
     </div>
   );
 };

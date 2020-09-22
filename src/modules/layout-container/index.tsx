@@ -19,15 +19,23 @@ type Props = {
 };
 
 function LayoutContainer(props: Props) {
-  const breadContainerRef: any = useRef(null);
   const { menus } = props;
   const [useSelector, dispatch] = useRedux();
   const common = useSelectorHook((state) => state.common);
+
+  const breadContainerRef: any = useRef(null);
   const [breadHeight, setBreadHeight] = useState(0);
 
+  const contentContainerRef: any = useRef(null);
+  const [contentHeight, setContentHeight] = useState(0);
+
   useEffect(() => {
-    setBreadHeight(breadContainerRef.current?.offsetHeight);
+    setBreadHeight(breadContainerRef.current?.clientHeight);
   }, [breadContainerRef.current?.clientHeight]);
+
+  useEffect(() => {
+    setContentHeight(contentContainerRef.current?.clientHeight);
+  }, [contentContainerRef.current?.clientHeight]);
 
   /**
    * @todo 获取机构数据
@@ -52,16 +60,25 @@ function LayoutContainer(props: Props) {
             <LayoutBread />
           </div>
           <div
+            ref={contentContainerRef}
             style={{
               padding: '0px 12px 12px 12px',
               position: 'relative',
+              display: 'flex',
+              flex: 1,
               marginTop: `${breadHeight + 6}px`,
-              overflow: 'auto',
+              height: `${contentHeight}px`,
             }}
           >
             <div
               className="site-layout-background"
-              style={{ padding: 12, marginTop: 8, marginBottom: 100 }}
+              style={{
+                padding: 12,
+                marginTop: 8,
+                height: `${contentHeight - 24}px`,
+                width: '100%',
+                overflow: 'auto',
+              }}
             >
               {props.children}
             </div>
