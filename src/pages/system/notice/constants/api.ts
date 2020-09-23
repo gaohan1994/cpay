@@ -7,12 +7,26 @@ import ApiRequest, { jsonToQueryString } from '@/common/request-util';
 export const systemNoticeList = (param: any) =>
   ApiRequest.get(`/cpay-admin/system/notice/list/${jsonToQueryString(param)}`);
 
+// /**
+//  * @todo 公告信息修改前获取数据
+//  * @param deptId 
+//  */
+// export const systemNoticeEdits = (id: number) =>
+//   ApiRequest.get(`/cpay-admin/system/notice/details/${id}`);
+
 /**
  * @todo 公告信息修改前获取数据
- * @param deptId 
+ * @param id 
+ * @param callback 
  */
-export const systemNoticeEdits = (id: number) =>
-  ApiRequest.get(`/cpay-admin/system/notice/details/${id}`);
+export const systemNoticeEdits = async (
+  id: number,
+  callback?: (params: any) => void
+): Promise<any> => {
+  const result = await ApiRequest.get(`/cpay-admin/system/notice/edits/${id}`);
+  callback && callback(result);
+  return result;
+};
 
 /**
 * @todo 公告信息修改

@@ -1,320 +1,231 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Spin, Row, Col, Button, Tree, Form, notification, Modal } from 'antd';
+import { Spin, Row, Col, Button, Tree, Form, notification, Modal, Table, Tag, Divider, Radio } from 'antd';
 import { useSelectorHook, useRedux } from '@/common/redux-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import './index.less';
 import { CustomFormItems } from '@/component/custom-form';
 import { useForm } from 'antd/lib/form/Form';
 import { renderCommonTreeSelectForm } from '@/component/form/render';
-import { FormItmeType } from '@/component/form/type';
-import { systemDeptEdits, systemDeptEdit, systemDeptAdd } from './constants/api';
+import { FormItmeType, FormItem } from '@/component/form/type';
+import { systemDeptEdits, systemDeptEdit, systemDeptAdd, systemDeptList, checkDeptNameUnique, checkDeptCodeUnique, systemDeptRemove } from './constants/api';
 import invariant from 'invariant';
 import { RESPONSE_CODE } from '@/common/config';
-import { getDeptTreeData, GetDeptTreeDataCallback } from '@/pages/common/constants';
-import { ACTION_TYPES_COMMON } from '@/pages/common/reducer';
-import { PlusOutlined } from '@ant-design/icons';
-
-const fieldLabels = {
-  code: '机构编号',
-  deptName: '机构名称',
-  parentId: '上级机构',
-  radius: '偏移半径'
-}
-
-const customFormLayout = {
-  labelCol: {
-    span: 6
-  },
-  wrapperCol: {
-    span: 14
-  }
-}
-
-const customButtonLayout = {
-  wrapperCol: {
-    offset: 6,
-    span: 16,
-  }
-}
+import { PlusOutlined, CaretDownOutlined, CaretRightOutlined } from '@ant-design/icons';
+import { useAntdTable } from 'ahooks';
+import { IResponseResult } from '@/common/type';
+import { merge } from 'lodash';
+import { createTableColumns } from '@/component/table';
+import { formatDeptTreeData, getStatusColor } from '../common';
+import Forms from '@/component/form';
+import AddModal from './component/modal.add';
 
 export default function Page() {
-  const fetchStoreRes = useStore([]);
-  const [loading, setLoading] = useState(false);
-  const [useSelector, dispatch] = useRedux();
-  const common = useSelectorHook((state) => state.common);
-  const [editForm] = useForm();
+  useStore(['sys_normal_disable']);
+  const dictList = useSelectorHook(state => state.common.dictList);;
   const [addForm] = useForm();
-  const [selectedKeys, setSelectedKeys] = useState([] as any);
-  const [selectedItem, setSelectedItem] = useState({} as any);
-  const [modalVisible, setModalVisible] = useState(false);
 
-  /**
-   * @todo 获取store数据的时候，设置相应的加载组件状态
-   */
-  useEffect(() => {
-    setLoading(fetchStoreRes.loading);
-  }, [fetchStoreRes.loading]);
+  const [loading, setLoading] = useState(false);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);
+  const [addModalVisible, setAddModalVisible] = useState(false);
+  const [editItem, setEditItem] = useState({} as any);
 
-  /**
-   * @todo 机构树数据改变时，设置树组件选中第一项
-   */
-  useEffect(() => {
-    if (Array.isArray(common.deptTreeData) && common.deptTreeData.length > 0) {
-      setSelectedKeys([common.deptTreeData[0].key]);
-      const seletedRow = common.deptTreeData[0];
-      if (typeof seletedRow.id === 'number') {
-        setSelectedItemInfo(seletedRow.id);
-      }
-    }
-  }, [common.deptTreeData]);
+  const formatDeptListResult = (result: IResponseResult<any>) => {
+    const mergeResult = merge({}, result);
+    const treeData = formatDeptTreeData(mergeResult.data || []);
+    return {
+      list: treeData,
+      total: mergeResult.data.length || 0,
+    };
+  }
 
-  /**
-   * @todo 改变选中机构信息时，设置相应的修改表单数据，判断该机构上级机构id是否为0，
-   * 若是，则相应的上级机构不能更改
-   */
-  useEffect(() => {
-    editForm.setFieldsValue(selectedItem);
-    if (selectedItem && selectedItem.parentId === 0) {
-      editForm.setFieldsValue({
-        parentId: '不可修改'
+  const [form] = Form.useForm();
+  const { tableProps, search }: any = useAntdTable(
+    (paginatedParams: any, tableProps: any) => {
+      return systemDeptList({
+        pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps,
+        orderByColumn: 'createTime', isAsc: 'desc'
       });
+    },
+    {
+      form,
+      formatResult: formatDeptListResult,
     }
-  }, [selectedItem]);
+  );
+  const { submit, reset } = search;
+
+  useEffect(() => {
+    if (!addModalVisible) {
+      setEditItem({});
+      addForm.resetFields();
+    }
+  }, [addModalVisible]);
 
   /**
-   * @todo 设置选中项信息，用以显示修改信息表单
-   * @param id 
-   */
-  const setSelectedItemInfo = async (id: number) => {
-    try {
-      if (typeof id === 'number') {
-        setLoading(true);
-        const result = await systemDeptEdits(id);
-        setLoading(false);
-        invariant(result.code === RESPONSE_CODE.success, result.msg || '获取机构数据失败！');
-        setSelectedItem(result.data);
-      }
-    } catch (error) {
-      notification.warn({ message: error.message });
-    }
+  * @todo 自定义查询，把选中列表置空
+  */
+  const customSubmit = () => {
+    setSelectedRowKeys([]);
+    submit();
   }
 
-  const editForms = [
-    {
-      label: fieldLabels.code,
-      key: 'code',
-      requiredType: 'input' as any,
-    },
-    {
-      label: fieldLabels.deptName,
-      key: 'deptName',
-      requiredType: 'input' as any,
-    },
-    {
-      label: fieldLabels.parentId,
-      key: 'parentId',
-      requiredType: 'select' as any,
-      render: () => renderCommonTreeSelectForm({
-        formName: 'deptId',
-        formType: FormItmeType.TreeSelectCommon,
-        span: 24,
-        disabled: selectedItem && selectedItem.parentId === 0 ? true : false
-      }, false),
-    },
-    {
-      label: fieldLabels.radius,
-      key: 'radius',
-      // requiredType: 'input' as any,
-    },
-  ];
-
-  const addForms = [
-    {
-      label: fieldLabels.code,
-      key: 'code',
-      requiredType: 'input' as any,
-    },
-    {
-      label: fieldLabels.deptName,
-      key: 'deptName',
-      requiredType: 'input' as any,
-    },
-    {
-      label: fieldLabels.parentId,
-      key: 'parentId',
-      requiredType: 'select' as any,
-      render: () => renderCommonTreeSelectForm({
-        formName: 'deptId',
-        formType: FormItmeType.TreeSelectCommon,
-        span: 24,
-      }, false),
-    },
-  ];
+  /**
+   * @todo 自定义重置，把选中列表置空
+   */
+  const customReset = () => {
+    setSelectedRowKeys([]);
+    reset();
+  }
 
   /**
-   * @todo 获取到机构数数据后的回调，设置redux中的数据
+   * @todo 修改
+   * @param item 
    */
-  const getDeptCallback = useCallback((deptData: GetDeptTreeDataCallback) => {
-    const [data, treeData] = deptData;
-    dispatch({
-      type: ACTION_TYPES_COMMON.RECEIVE_DEPT_DATA,
-      payload: data,
-    });
-    dispatch({
-      type: ACTION_TYPES_COMMON.RECEIVE_DEPT_TREE_DATA,
-      payload: treeData,
-    });
-  }, []);
+  const onEdit = (item: any) => {
+    setAddModalVisible(true);
+    addForm.setFieldsValue({ ...item, status: `${item.status}` });
+    setEditItem(item);
+  }
 
   /**
-   * @todo 机构数选中调用：获取机构相应的数据
-   * @param selectedKeys 
-   * @param e 
+   * @todo 删除
+   * @param item 
    */
-  const onSelect = async (selectedKeys: any, e: any) => {
-    try {
-      setSelectedKeys(selectedKeys);
-      const selectedNodes = e.selectedNodes;
-      if (Array.isArray(selectedNodes) && selectedNodes.length > 0) {
-        const seletedRow = selectedNodes[0];
-        if (typeof seletedRow.id === 'number') {
-          setSelectedItemInfo(seletedRow.id);
+  const onRemove = (item: any) => {
+    Modal.confirm({
+      title: '提示',
+      content: `确认要删除当前机构吗?`,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        try {
+          setLoading(true);
+          const result = await systemDeptRemove(item.deptId);
+          setLoading(false);
+          invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '删除机构失败，请重试');
+          notification.success({ message: '删除机构成功!' });
+          customSubmit();
+        } catch (error) {
+          notification.error({ message: error.message });
         }
-      }
-    } catch (error) {
-      notification.warn({ message: error.message });
-    }
+      },
+    });
   }
 
-  /**
-   * @todo 修改用户信息
-   */
-  const onSave = async () => {
-    try {
-      await editForm.validateFields();
-      const fields = editForm.getFieldsValue();
-      let param: any = {
-        ...fields,
-        deptId: selectedItem.deptId,
-      }
-      if (selectedItem.parentId === 0) {
-        param.parentId = 0
-      }
-      setLoading(true);
-      const result = await systemDeptEdit(param);
-      invariant(result.code === RESPONSE_CODE.success, result.msg || '修改机构信息失败！');
-      notification.success({ message: '修改机构信息成功!' });
-      // 重新获取机构数的数据
-      await getDeptTreeData(getDeptCallback);
-      setLoading(false);
-    } catch (errorInfo) {
-      console.log('Failed:', errorInfo);
-      if (errorInfo.message) {
-        notification.error({ message: errorInfo.message });
-      }
-    }
-  }
+  const columns = createTableColumns([
+    {
+      title: '机构名称',
+      dataIndex: 'deptName',
+    },
+    {
+      title: '机构号',
+      dataIndex: 'code',
+    },
+    {
+      title: '排序',
+      dataIndex: 'orderNum',
+    },
+    {
+      title: '机构状态',
+      dataIndex: 'status',
+      dictType: 'sys_normal_disable',
+      render: (item) => <Tag color={getStatusColor(item)}>{item}</Tag>
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      width: 200,
+    },
+    {
+      title: '操作',
+      render: (key, item) => (
+        <div>
+          {
+            item.parentId !== 0 && (
+              <>
+                <a onClick={() => onEdit(item)}>修改</a>
+                <Divider type="vertical" />
+                <a onClick={() => onRemove(item)}>删除</a>
+              </>
+            )
+          }
+        </div>
+      ),
+      fixed: 'right',
+      align: 'center',
+      width: 200,
+    },
+  ]);
 
   /**
-   * @todo 新增弹窗
+   * @todo table查询表单
    */
-  const renderAddModal = () => {
-    return (
-      <Modal
-        visible={modalVisible}
-        title="新增机构"
-        onCancel={hideModal}
-        onOk={handleOk}
-      >
-        <Form
-          form={addForm}
-          className="ant-advanced-search-form"
-          style={{ backgroundColor: 'white' }}
-        >
-          <CustomFormItems items={addForms} singleCol={true} customFormLayout={customFormLayout} />
-        </Form>
-      </Modal>
-    )
+  const forms: FormItem[] = [
+    {
+      formName: 'deptName',
+      placeholder: '机构名称',
+      formType: FormItmeType.Normal,
+    },
+    {
+      formName: 'code',
+      placeholder: '机构号',
+      formType: FormItmeType.Normal,
+    },
+    {
+      placeholder: '机构状态',
+      formName: 'status',
+      formType: FormItmeType.Select,
+      selectData:
+        (dictList &&
+          dictList.sys_normal_disable && dictList.sys_normal_disable.data.map((item) => {
+            return {
+              value: `${item.dictValue}`,
+              title: `${item.dictLabel}`,
+            };
+          })) ||
+        [],
+    },
+  ];
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: setSelectedRowKeys,
+  };
+
+  const onAdd = () => {
+    setAddModalVisible(true);
   }
 
-  /**
-   * @todo 显示弹窗
-   */
-  const showModal = () => {
-    setModalVisible(true);
-    addForm.resetFields();
-  }
-
-  /**
-   * @todo 隐藏弹窗
-   */
-  const hideModal = () => {
-    setModalVisible(false);
-    addForm.resetFields();
-  }
-
-  /**
-   * @todo 弹窗点击确定新增机构
-   */
-  const handleOk = async () => {
-    try {
-      await addForm.validateFields();
-      const fields = addForm.getFieldsValue();
-      let param: any = {
-        ...fields,
-      }
-      setLoading(true);
-      const result = await systemDeptAdd(param);
-      invariant(result.code === RESPONSE_CODE.success, result.msg || '新增机构失败！');
-      notification.success({ message: '新增机构成功！' });
-      await getDeptTreeData(getDeptCallback);
-      setLoading(false);
-      hideModal();
-    } catch (errorInfo) {
-      console.log('Failed:', errorInfo);
-      if (errorInfo.message) {
-        notification.error({ message: errorInfo.message });
-      }
-    }
-  }
+  const extraButtons = [
+    { title: '新增', onClick: onAdd, icon: <PlusOutlined />, type: "primary" as any, },
+  ]
 
   return (
     <Spin spinning={loading}>
-      <Button type='primary' style={{ marginLeft: 10 }} onClick={showModal} icon={<PlusOutlined />}>新增</Button>
-      <Row className='container'>
-        <Col span={8}>
-          <div className='deptTree'>
-            {
-              common.deptTreeData && common.deptTreeData.length > 0 && (
-                <Tree
-                  treeData={common.deptTreeData as any}
-                  defaultExpandAll={true}
-                  defaultExpandedKeys={['0-0']}
-                  onSelect={onSelect}
-                  selectedKeys={selectedKeys}
-                />
-              )
-            }
-          </div>
-        </Col>
-        <Col span={16}>
-          <div className='form'>
-            <Form
-              form={editForm}
-              className="ant-advanced-search-form"
-              style={{ backgroundColor: 'white' }}
-            >
-              <CustomFormItems items={editForms} singleCol={true} customFormLayout={customFormLayout} />
-            </Form>
-            <Form.Item {...customButtonLayout} >
-              <Button type="primary" onClick={onSave} htmlType='submit'>
-                保存
-            </Button>
-            </Form.Item>
-          </div>
-        </Col>
-      </Row>
-      {renderAddModal()}
+      <Forms
+        form={form}
+        forms={forms}
+        formButtonProps={{
+          submit: customSubmit,
+          reset: customReset,
+          extraButtons
+        }}
+      />
+      <Table
+        rowKey="deptId"
+        columns={columns}
+        rowSelection={rowSelection}
+        {...tableProps}
+        pagination={false}
+        defaultExpandedRowKeys={[100]}
+      />
+      <AddModal
+        modalVisible={addModalVisible}
+        setModalVisible={setAddModalVisible}
+        form={addForm}
+        editItem={editItem}
+        setLoading={setLoading}
+        submit={customSubmit}
+      />
     </Spin>
   );
 }

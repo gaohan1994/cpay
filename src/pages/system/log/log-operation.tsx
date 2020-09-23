@@ -19,6 +19,7 @@ import invariant from 'invariant';
 import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
 import { useSelectorHook } from '@/common/redux-util';
 import { getStatusColor } from '../common';
+import history from '@/common/history-util';
 
 type Props = {};
 
@@ -60,10 +61,25 @@ function SystemLog(props: Props) {
     reset();
   }
 
+  const onDetail = (item: any) => {
+    history.push(`/system/log/detail?id=${item.operId}`)
+  }
+
   /**
    * @todo 创建table的列
    */
   const columns = createTableColumns([
+    {
+      title: '操作',
+      render: (key, item) => (
+        <div>
+          <a onClick={() => onDetail(item)}>详情</a>
+        </div>
+      ),
+      width: 60,
+      align: 'center',
+      fixed: 'left'
+    },
     {
       title: '系统模块',
       dataIndex: 'title',
@@ -225,8 +241,8 @@ function SystemLog(props: Props) {
         form={form}
         forms={forms}
         formButtonProps={{
-          submit,
-          reset,
+          submit: customSubmit,
+          reset: customReset,
           extraButtons
         }}
       />

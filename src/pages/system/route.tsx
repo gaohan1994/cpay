@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-07 11:23:39 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-14 14:37:39
+ * @Last Modified time: 2020-09-22 17:11:02
  * 
  * @todo 报表中心模块路由配置
  */
@@ -17,7 +17,9 @@ import SystemDict from '@/pages/system/dict';
 import SystemDictList from '@/pages/system/dict/list';
 import SystemParam from '@/pages/system/param';
 import SystemNotice from '@/pages/system/notice';
+import SystemNoticeAdd from '@/pages/system/notice/add';
 import SystemLog from '@/pages/system/log';
+import SystemLogDetail from '@/pages/system/log/log.operation.detail';
 
 export const SystemMenu = {
   name: '系统管理',
@@ -105,10 +107,31 @@ const routerConfig: any[] = [
     exact: true
   },
   {
+    path: '/system/notice/add',
+    name: '添加公告',
+    component: SystemNoticeAdd,
+    exact: true,
+    inMenu: false,
+  },
+  {
+    path: '/system/notice/edit',
+    name: '修改公告',
+    component: SystemNoticeAdd,
+    exact: true,
+    inMenu: false,
+  },
+  {
     path: '/system/log',
     name: '日志管理',
     component: SystemLog,
     exact: true
+  },
+  {
+    path: '/system/log/detail',
+    name: '操作日志详情',
+    component: SystemLogDetail,
+    exact: true,
+    inMenu: false,
   },
 ];
 

@@ -225,13 +225,13 @@ function SystemLog(props: Props) {
         form={form}
         forms={forms}
         formButtonProps={{
-          submit,
-          reset,
+          submit: customSubmit,
+          reset: customReset,
           extraButtons
         }}
       />
       <Table
-        rowKey="operId"
+        rowKey="infoId"
         columns={columns}
         rowSelection={rowSelection}
         {...tableProps}

@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-17 16:23:37 
  * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-17 17:24:51
+ * @Last Modified time: 2020-09-22 17:24:51
  * 
  * @todo 通知公告
  */
@@ -22,6 +22,7 @@ import TextArea from 'antd/lib/input/TextArea';
 import { useSelectorHook } from '@/common/redux-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import { getStatusColor } from '../common';
+import history from '@/common/history-util';
 
 const customFormLayout = {
   labelCol: {
@@ -50,10 +51,7 @@ function Page(props: Props) {
 
   const [loading, setLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [editItem, setEditItem] = useState({} as any);
 
-  const [addForm] = Form.useForm();
   const [form] = Form.useForm();
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) => {
@@ -89,9 +87,7 @@ function Page(props: Props) {
    * @param item 
    */
   const onEdit = (item: any) => {
-    setEditItem(item);
-    addForm.setFieldsValue(item);
-    showModal();
+    history.push(`/system/notice/edit?id=${item.noticeId}`);
   }
 
   /**
@@ -235,7 +231,7 @@ function Page(props: Props) {
    * @todo 弹出新增弹窗
    */
   const onAdd = () => {
-    showModal();
+    history.push(`/system/notice/add`);
   }
 
   const extraButtons = [
@@ -247,60 +243,6 @@ function Page(props: Props) {
     selectedRowKeys,
     onChange: setSelectedRowKeys,
   };
-
-  /**
-   * @todo 显示弹窗
-   */
-  const showModal = () => {
-    setModalVisible(true);
-  }
-
-  /**
-   * @todo 隐藏弹窗
-   */
-  const hideModal = () => {
-    setModalVisible(false);
-    addForm.resetFields();
-    setEditItem({});
-  }
-
-  /**
-   * @todo 弹窗点击确定新增/修改参数信息
-   */
-  const handleOk = async () => {
-    try {
-      await addForm.validateFields();
-      const fields = addForm.getFieldsValue();
-      let param: any = {
-        ...fields,
-        configType: fields.configType !== undefined ? fields.configType : '0',
-        valueType: fields.valueType !== undefined ? fields.valueType : '0'
-      }
-      setLoading(true);
-      if (editItem.configId) {
-        param = {
-          ...param,
-          configId: editItem.configId,
-        }
-        const result = await systemNoticeEdit(param);
-        setLoading(false);
-        invariant(result.code === RESPONSE_CODE.success, result.msg || '修改失败！');
-        notification.success({ message: '修改成功！' });
-      } else {
-        const result = await systemNoticeAdd(param);
-        setLoading(false);
-        invariant(result.code === RESPONSE_CODE.success, result.msg || '新增失败！');
-        notification.success({ message: '新增成功！' });
-      }
-      customSubmit();
-      hideModal();
-    } catch (errorInfo) {
-      console.log('Failed:', errorInfo);
-      if (errorInfo.message) {
-        notification.error({ message: errorInfo.message });
-      }
-    }
-  }
 
   /**
    * @todo 新增表单内容
@@ -372,19 +314,6 @@ function Page(props: Props) {
         {...tableProps}
         pagination={getStandardPagination(tableProps.pagination)}
       />
-      {/* <Modal
-        visible={modalVisible}
-        title={editItem.noticeId ? "添加公告" : "修改公告"}
-        onCancel={hideModal}
-        onOk={handleOk}
-      >
-        <Form
-          form={addForm}
-          style={{ backgroundColor: 'white' }}
-        >
-          <CustomFormItems items={addForms} singleCol={true} customFormLayout={customFormLayout} />
-        </Form>
-      </Modal> */}
     </Spin>
   );
 }

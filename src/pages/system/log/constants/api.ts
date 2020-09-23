@@ -8,6 +8,18 @@ export const monitorOperLogList = (param: any) =>
   ApiRequest.get(`/cpay-admin/monitor/operlog/list/${jsonToQueryString(param)}`);
 
 /**
+* @todo 请求操作日志详情
+* @param id 
+*/
+export const monitorOperLogDetails = async (
+  id: number,
+  callback?: (params: any) => void
+): Promise<any> => {
+  const result = await ApiRequest.get(`/cpay-admin/monitor/operlog/details/${id}`);
+  callback && callback(result);
+  return result;
+};
+/**
 * @todo 操作日志删除
 * @param param 
 */
