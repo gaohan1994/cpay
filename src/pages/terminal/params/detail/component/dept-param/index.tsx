@@ -10,6 +10,7 @@ import { FormItmeType } from '@/component/form/type';
 import { terminalGroupListByDept } from '@/pages/terminal/message/constants/api';
 import { ITerminalGroupByDeptId } from '@/pages/terminal/message/types';
 import { FormInstance } from 'antd/lib/form';
+import { CustomFromItem } from '@/common/type';
 
 const prefix = 'terminal-params-component-detail';
 
@@ -132,7 +133,7 @@ export default (props: Props) => {
   return (
     <div>
       <Divider orientation="left">【基础参数】</Divider>
-      <Row>
+      <Row gutter={24}>
         <Col style={{ marginBottom: 12 }} span={11}>
           <div className={`${prefix}-item`}>
             <span>所属机构*</span>

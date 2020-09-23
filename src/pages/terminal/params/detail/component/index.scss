@@ -1,5 +1,8 @@
 .terminal-params-component-detail {
   &-item {
+    position: absolute;
+    right: 0;
+    top: 0px;
     display: flex;
     flex-direction: row;
     & > span {
