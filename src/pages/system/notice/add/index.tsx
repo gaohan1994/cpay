@@ -22,6 +22,7 @@ import invariant from 'invariant';
 import { RESPONSE_CODE } from '@/common/config';
 import { useDetail } from '@/pages/common/costom-hooks/use-detail';
 import { merge } from 'lodash';
+import { myUploadFn } from './upload';
 
 const customFormLayout = {
   labelCol: {
@@ -93,6 +94,7 @@ export default function Page() {
         <BraftEditor
           value={editorState}
           onChange={handleChange}
+          media={{ uploadFn: myUploadFn }}
         />
       </div>
     },
