@@ -63,7 +63,7 @@ export default (props: Props) => {
 
   const tabsData = [
     {
-      tab: currentGroupSet.deptName,
+      tab: currentGroupSet.name,
       key: '1',
     },
     {
