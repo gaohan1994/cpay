@@ -22,6 +22,8 @@ import Terminalparams from '@/pages/terminal/params';
 import TerminalparamsDetail from '@/pages/terminal/params/detail';
 import Terminalquery from '@/pages/terminal/query';
 import Terminalsystem from '@/pages/terminal/system';
+import TerminalAcquiring from '@/pages/terminal/acquiring';
+import TerminalAcquiringDetail from '@/pages/terminal/acquiring/detail';
 
 export const TerminalMenu = {
   name: '终端管理',
@@ -155,6 +157,20 @@ const routerConfig: any[] = [
   //   component: Terminalquery,
   //   exact: true,
   // },
+  {
+    path: '/terminal/acquiring',
+    name: '终端收单信息',
+    component: TerminalAcquiring,
+    exact: true,
+  },
+
+  {
+    path: '/terminal/acquiring/detail',
+    name: '终端收单信息详情',
+    component: TerminalAcquiringDetail,
+    exact: true,
+    inMenu: false,
+  },
 ];
 
 export default routerConfig;

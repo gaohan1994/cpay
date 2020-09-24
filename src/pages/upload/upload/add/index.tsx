@@ -1,21 +1,39 @@
 /*
- * @Author: centerm.gaozhiying 
- * @Date: 2020-09-01 14:37:54 
+ * @Author: centerm.gaozhiying
+ * @Date: 2020-09-01 14:37:54
  * @Last Modified by: centerm.gaozhiying
  * @Last Modified time: 2020-09-07 15:34:35
- * 
+ *
  * @todo 软件更新新增页面
  */
 import React, { useRef, useEffect, useState } from 'react';
 import { useQueryParam } from '@/common/request-util';
-import { Form, Divider, Button, Card, Switch, DatePicker, Spin, message, notification } from 'antd';
+import {
+  Form,
+  Divider,
+  Button,
+  Card,
+  Switch,
+  DatePicker,
+  Spin,
+  message,
+  notification,
+} from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { useFormSelectData } from './costom-hooks';
-import { taskDownloadJobDetail, taskDownloadJobAdd, taskDownloadJobEdit } from '../constants/api';
+import {
+  taskDownloadJobDetail,
+  taskDownloadJobAdd,
+  taskDownloadJobEdit,
+} from '../constants/api';
 import { CustomCheckGroup } from '@/component/checkbox-group';
 import { useStore } from '@/pages/common/costom-hooks';
 import { CustomFromItem } from '@/common/type';
-import { getCustomSelectFromItemData, CustomFormItems, ButtonLayout } from '@/component/custom-form';
+import {
+  getCustomSelectFromItemData,
+  CustomFormItems,
+  ButtonLayout,
+} from '@/component/custom-form';
 import { SoftInfoItem } from './component/soft-info-form';
 import { useDetail } from '@/pages/common/costom-hooks/use-detail';
 import { CustomRadioGroup } from '@/component/radio-group';
@@ -50,8 +68,7 @@ const fieldLabels = {
   groupIds: '终端组别',
   tusns: '终端集合',
   fialedTusns: '导入失败集合',
-}
-
+};
 
 export default function Page() {
   const id = useQueryParam('id');
@@ -65,9 +82,18 @@ export default function Page() {
   const [softFrom5] = useForm();
   const softFroms = [softFrom1, softFrom2, softFrom3, softFrom4, softFrom5];
   /** 获取字典数据 */
-  const dictRes = useStore(['terminal_type', 'unionpay_connection', 'buss_type',
-    'dcc_sup_flag', 'zz_flag', 'download_task_type', 'driver_type',
-    'release_type', 'activate_type', 'is_group_update',]);
+  const dictRes = useStore([
+    'terminal_type',
+    'unionpay_connection',
+    'buss_type',
+    'dcc_sup_flag',
+    'zz_flag',
+    'download_task_type',
+    'driver_type',
+    'release_type',
+    'activate_type',
+    'is_group_update',
+  ]);
 
   const [softInfoFormsNum, setSoftInfoFormsNum] = useState(1);
   const [validDateShow, setValidDateShow] = useState(false);
@@ -93,24 +119,31 @@ export default function Page() {
 
   const {
     terminalFirmList,
-    terminalFirmValue, setTerminalFirmValue,
+    terminalFirmValue,
+    setTerminalFirmValue,
     terminalTypeList,
     activateTypesList,
     unionpayConnectionList,
-    cupConnModeValue, setCupConnModeValue,
+    cupConnModeValue,
+    setCupConnModeValue,
     bussTypeList,
-    bussTypeValue, setBussTypeValue,
+    bussTypeValue,
+    setBussTypeValue,
     dccSupFlagList,
-    dccSupFlagValue, setDccSupFlagValue,
+    dccSupFlagValue,
+    setDccSupFlagValue,
     releaseTypeList,
-    releaseTypeValue, setReleaseTypeValue,
+    releaseTypeValue,
+    setReleaseTypeValue,
     deptTreeData,
-    deptId, setDeptId,
+    deptId,
+    setDeptId,
     terminalGroupList,
     activateTypeList,
     isGroupUpdateList,
     zzFlagList,
-    zzFlagValue, setZzFlagValue
+    zzFlagValue,
+    setZzFlagValue,
   } = useFormSelectData(form.getFieldsValue());
 
   useEffect(() => {
@@ -118,8 +151,8 @@ export default function Page() {
   }, [dictRes.loading]);
 
   useEffect(() => {
-    form.setFieldsValue({ 'tusns': tusnsOptions.join(';') });
-  }, [tusnsOptions])
+    form.setFieldsValue({ tusns: tusnsOptions.join(';') });
+  }, [tusnsOptions]);
 
   /**
    * @todo 组别过滤方式改变后，设置相应的组别表单选中值
@@ -127,7 +160,12 @@ export default function Page() {
   useEffect(() => {
     if (!groupIdsInit) {
       const downloadJobOutput = detail.downloadJobOutput || {};
-      if (groupIdsRef && groupIdsRef.current && groupIdsRef.current.setCheckedList && downloadJobOutput.groupIds) {
+      if (
+        groupIdsRef &&
+        groupIdsRef.current &&
+        groupIdsRef.current.setCheckedList &&
+        downloadJobOutput.groupIds
+      ) {
         setGroupIdsInit(true);
         const arr: string[] = downloadJobOutput.groupIds.split(',');
         const numArr: number[] = [];
@@ -164,30 +202,47 @@ export default function Page() {
       setReleaseTypeValue(`${downloadJobOutput.releaseType}`);
       setTerminalFirmValue(downloadJobOutput.firmId);
       setDeptId(downloadJobOutput.deptId);
-      if (terminalTypesRef && terminalTypesRef.current && terminalTypesRef.current.setCheckedList && downloadJobOutput.terminalTypes) {
-        terminalTypesRef.current.setCheckedList(downloadJobOutput.terminalTypes.split(','));
+      if (
+        terminalTypesRef &&
+        terminalTypesRef.current &&
+        terminalTypesRef.current.setCheckedList &&
+        downloadJobOutput.terminalTypes
+      ) {
+        terminalTypesRef.current.setCheckedList(
+          downloadJobOutput.terminalTypes.split(',')
+        );
       }
-      if (activateTypesRef && activateTypesRef.current && activateTypesRef.current.setCheckedList && downloadJobOutput.activateTypes) {
-        activateTypesRef.current.setCheckedList(downloadJobOutput.activateTypes.split(','))
+      if (
+        activateTypesRef &&
+        activateTypesRef.current &&
+        activateTypesRef.current.setCheckedList &&
+        downloadJobOutput.activateTypes
+      ) {
+        activateTypesRef.current.setCheckedList(
+          downloadJobOutput.activateTypes.split(',')
+        );
       }
       setValidDateShow(downloadJobOutput.validDateShow === 1 ? true : false);
       if (downloadJobOutput.validDateShow === 1) {
         form.setFieldsValue({
           validStartTime: moment(downloadJobOutput.validStartTime || 0),
-          validEndTime: moment(downloadJobOutput.validEndTime || 0)
+          validEndTime: moment(downloadJobOutput.validEndTime || 0),
         });
       }
       setTimeout(() => {
         if (downloadJobOutput.downloadJobAppList) {
           const downloadJobAppList = downloadJobOutput.downloadJobAppList;
-          if (Array.isArray(downloadJobAppList) && downloadJobAppList.length > 0) {
+          if (
+            Array.isArray(downloadJobAppList) &&
+            downloadJobAppList.length > 0
+          ) {
             for (let i = 0; i < downloadJobAppList.length; i++) {
               softFroms[i].setFieldsValue(downloadJobAppList[i]);
               softFroms[i].setFieldsValue({
                 appType: `${downloadJobAppList[i].appType}`,
                 actionType: `${downloadJobAppList[i].actionType}`,
                 appCode: downloadJobAppList[i].appCode,
-                appId: downloadJobAppList[i].appId
+                appId: downloadJobAppList[i].appId,
               });
             }
           } else {
@@ -205,7 +260,7 @@ export default function Page() {
       // 所有表单设置完成后置空终端集合，会导致终端集合设置以后又被置空
       setTimeout(() => {
         setTusnsOptions(detail.tusnList);
-      }, 0)
+      }, 0);
     }
   }, [detail, dictLoading]);
 
@@ -217,7 +272,7 @@ export default function Page() {
       softFroms[i].resetFields();
       setSoftInfoFormsNum(1);
     }
-  }
+  };
 
   /**
    * @todo 终端信息表单项
@@ -226,7 +281,7 @@ export default function Page() {
     {
       label: fieldLabels.jobName,
       key: 'jobName',
-      requiredType: 'input'
+      requiredType: 'input',
     },
     {
       ...getCustomSelectFromItemData({
@@ -239,41 +294,45 @@ export default function Page() {
         required: true,
         onChange: (id: any) => {
           setTerminalFirmValue(id);
-          form.setFieldsValue({ 'terminalTypes': undefined });
+          form.setFieldsValue({ terminalTypes: undefined });
           resetSoftInfo();
-        }
-      })
+        },
+      }),
     },
     {
       label: fieldLabels.terminalTypes,
       key: 'terminalTypes',
       requiredType: 'select',
-      render: () =>
+      render: () => (
         <CustomCheckGroup
           ref={terminalTypesRef}
           list={terminalTypeList}
-          valueKey={'typeCode'} nameKey={'typeName'}
+          valueKey={'typeCode'}
+          nameKey={'typeName'}
           setForm={(checkedList: any[]) => {
-            form.setFieldsValue({ 'terminalTypes': checkedList });
+            form.setFieldsValue({ terminalTypes: checkedList });
             setTerminalTypes(checkedList);
             resetSoftInfo();
           }}
         />
+      ),
     },
     {
       label: fieldLabels.activateTypes,
       key: 'activateTypes',
       requiredType: 'select',
-      render: () =>
+      render: () => (
         <CustomCheckGroup
           ref={activateTypesRef}
           list={activateTypesList}
-          valueKey={'dictValue'} nameKey={'dictLabel'}
+          valueKey={'dictValue'}
+          nameKey={'dictLabel'}
           setForm={(value: any[]) => {
-            form.setFieldsValue({ 'activateTypes': value });
+            form.setFieldsValue({ activateTypes: value });
             setActiveTypes(value);
           }}
         />
+      ),
     },
     {
       ...getCustomSelectFromItemData({
@@ -286,8 +345,8 @@ export default function Page() {
         onChange: (id: any) => {
           setCupConnModeValue(id);
           resetSoftInfo();
-        }
-      })
+        },
+      }),
     },
     {
       ...getCustomSelectFromItemData({
@@ -297,22 +356,24 @@ export default function Page() {
         valueKey: 'dictValue',
         nameKey: 'dictLabel',
         setValue: setBussTypeValue,
-      })
+      }),
     },
     {
       label: fieldLabels.dccSupFlag,
       key: 'dccSupFlag',
       requiredType: 'select',
-      render: () =>
+      render: () => (
         <CustomRadioGroup
           list={dccSupFlagList}
-          valueKey={'dictValue'} nameKey={'dictLabel'}
+          valueKey={'dictValue'}
+          nameKey={'dictLabel'}
           setForm={(value: any) => {
-            form.setFieldsValue({ 'dccSupFlag': value });
+            form.setFieldsValue({ dccSupFlag: value });
             setDccSupFlagValue(value);
             resetSoftInfo();
           }}
         />
+      ),
     },
     {
       ...getCustomSelectFromItemData({
@@ -322,10 +383,10 @@ export default function Page() {
         valueKey: 'dictValue',
         nameKey: 'dictLabel',
         required: true,
-        setValue: setZzFlagValue
-      })
+        setValue: setZzFlagValue,
+      }),
     },
-  ]
+  ];
 
   /**
    * @todo 任务时间表单项
@@ -334,12 +395,18 @@ export default function Page() {
     {
       label: fieldLabels.validDateShow,
       key: 'validDateShow',
-      render: () => <Switch defaultChecked={false} checked={validDateShow} onChange={setValidDateShow} />,
+      render: () => (
+        <Switch
+          defaultChecked={false}
+          checked={validDateShow}
+          onChange={setValidDateShow}
+        />
+      ),
       labelCol: {
-        span: 4
+        span: 4,
       },
       wrapperCol: {
-        span: 20
+        span: 20,
       },
       itemSingleCol: true,
     },
@@ -348,26 +415,30 @@ export default function Page() {
       label: fieldLabels.validStartTime,
       key: 'validStartTime',
       requiredType: 'select',
-      render: () => <DatePicker
-        format="YYYY-MM-DD HH:mm:ss"
-        style={{ width: '100%' }}
-        showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
-        placeholder="请选择有效起始日期"
-      />
+      render: () => (
+        <DatePicker
+          format="YYYY-MM-DD HH:mm:ss"
+          style={{ width: '100%' }}
+          showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
+          placeholder="请选择有效起始日期"
+        />
+      ),
     },
     {
       show: validDateShow,
       label: fieldLabels.validEndTime,
       key: 'validEndTime',
       requiredType: 'select',
-      render: () => <DatePicker
-        format="YYYY-MM-DD HH:mm:ss"
-        style={{ width: '100%' }}
-        showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
-        placeholder="请选择有效截止日期"
-      />
-    }
-  ]
+      render: () => (
+        <DatePicker
+          format="YYYY-MM-DD HH:mm:ss"
+          style={{ width: '100%' }}
+          showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
+          placeholder="请选择有效截止日期"
+        />
+      ),
+    },
+  ];
 
   /**
    * @todo 更新方式表单项
@@ -377,25 +448,39 @@ export default function Page() {
       label: fieldLabels.showNotify,
       key: 'showNotify',
       requiredType: 'select',
-      render: () =>
+      render: () => (
         <CustomRadioGroup
-          list={[{ value: 0, label: '静默安装' }, { value: 1, label: '非静默安装' }]}
-          valueKey={'value'} nameKey={'label'}
-          setForm={(value: any[]) => { form.setFieldsValue({ 'showNotify': value }) }}
+          list={[
+            { value: 0, label: '静默安装' },
+            { value: 1, label: '非静默安装' },
+          ]}
+          valueKey={'value'}
+          nameKey={'label'}
+          setForm={(value: any[]) => {
+            form.setFieldsValue({ showNotify: value });
+          }}
         />
+      ),
     },
     {
       label: fieldLabels.isRealTime,
       key: 'isRealTime',
       requiredType: 'select',
-      render: () =>
+      render: () => (
         <CustomRadioGroup
-          list={[{ value: 0, label: '实时更新' }, { value: 1, label: '空闲更新' }]}
-          valueKey={'value'} nameKey={'label'}
-          setForm={(value: any[]) => { form.setFieldsValue({ 'isRealTime': value }) }}
+          list={[
+            { value: 0, label: '实时更新' },
+            { value: 1, label: '空闲更新' },
+          ]}
+          valueKey={'value'}
+          nameKey={'label'}
+          setForm={(value: any[]) => {
+            form.setFieldsValue({ isRealTime: value });
+          }}
         />
+      ),
     },
-  ]
+  ];
 
   /**
    * @todo 发布类型表单项
@@ -411,9 +496,9 @@ export default function Page() {
         value: releaseTypeValue,
         setValue: setReleaseTypeValue,
         required: true,
-      })
+      }),
     },
-  ]
+  ];
 
   /**
    * @todo 获取发布类型表单按机构方式表单项
@@ -425,8 +510,8 @@ export default function Page() {
           label: fieldLabels.deptId,
           key: 'deptId',
           requiredType: 'select',
-          render: () => renderTreeSelect(
-            {
+          render: () =>
+            renderTreeSelect({
               placeholder: '请选择所属机构',
               formName: 'deptId',
               formType: FormItmeType.TreeSelect,
@@ -435,53 +520,60 @@ export default function Page() {
               onChange: (id: number) => {
                 setDeptId(id);
               },
-              span: 24
-            } as any
-          )
+              span: 24,
+            } as any),
         },
         {
           label: fieldLabels.isGroupUpdate,
           key: 'isGroupUpdate',
-          render: () =>
+          render: () => (
             <CustomRadioGroup
               list={isGroupUpdateList}
               valueKey={'dictValue'}
               nameKey={'dictLabel'}
               setForm={(value: any) => {
-                form.setFieldsValue({ 'isGroupUpdate': value });
+                form.setFieldsValue({ isGroupUpdate: value });
                 setGroupFilterTypeValue(numeral(value).value());
               }}
             />
+          ),
         },
         {
           label: fieldLabels.activateType,
           key: 'activateType',
           requiredType: 'select',
-          render: () =>
+          render: () => (
             <CustomRadioGroup
               list={activateTypeList}
               valueKey={'dictValue'}
               nameKey={'dictLabel'}
-              setForm={(value: any[]) => { form.setFieldsValue({ 'activateType': value }) }}
+              setForm={(value: any[]) => {
+                form.setFieldsValue({ activateType: value });
+              }}
             />
+          ),
         },
         {
           label: fieldLabels.groupIds,
           key: 'groupIds',
           itemSingleCol: true,
           show: groupFilterTypeValue !== 0,
-          render: () =>
+          render: () => (
             <CustomCheckGroup
               ref={groupIdsRef}
               list={terminalGroupList}
-              valueKey={'id'} nameKey={'name'}
-              setForm={(value: any[]) => { form.setFieldsValue({ 'groupIds': value }) }}
+              valueKey={'id'}
+              nameKey={'name'}
+              setForm={(value: any[]) => {
+                form.setFieldsValue({ groupIds: value });
+              }}
             />
+          ),
         },
-      ]
+      ];
     }
     return [];
-  }
+  };
 
   /**
    * @todo 获取发布类型表单按条件查询方式表单项
@@ -494,7 +586,7 @@ export default function Page() {
           key: 'tusns',
           itemSingleCol: true,
           requiredType: 'select',
-          render: () =>
+          render: () => (
             <FormTusns
               options={tusnsOptions}
               setOptions={setTusnsOptions}
@@ -506,22 +598,22 @@ export default function Page() {
                 cupConnMode: cupConnModeValue,
                 bussType: bussTypeValue,
                 dccSupFlag: dccSupFlagValue,
-                zzFlag: zzFlagValue
+                zzFlag: zzFlagValue,
               }}
             />
+          ),
         },
         {
           label: fieldLabels.fialedTusns,
           key: 'fialedTusns',
           itemSingleCol: true,
           show: failedTusnsOptions.length > 0,
-          render: () =>
-            <FormTusnsFailed options={failedTusnsOptions} />
-        }
-      ]
+          render: () => <FormTusnsFailed options={failedTusnsOptions} />,
+        },
+      ];
     }
     return [];
-  }
+  };
 
   /**
    * @todo 新增软件表单项
@@ -530,13 +622,13 @@ export default function Page() {
     if (softInfoFormsNum < 5) {
       setSoftInfoFormsNum(softInfoFormsNum + 1);
     } else {
-      message.error('单个任务最大支持5个软件')
+      message.error('单个任务最大支持5个软件');
     }
-  }
+  };
 
   /**
    * @todo 删除软件表单项
-   * @param index 
+   * @param index
    */
   const onDeleteSoftInfoFormsItem = (index: number) => {
     if (softInfoFormsNum > 1) {
@@ -546,7 +638,7 @@ export default function Page() {
     }
     softFroms[softInfoFormsNum - 1].resetFields();
     setSoftInfoFormsNum(softInfoFormsNum - 1);
-  }
+  };
 
   /**
    * @todo 提交
@@ -563,7 +655,7 @@ export default function Page() {
       let param: any = {
         ...form.getFieldsValue(),
         validDateShow: validDateShow ? 1 : 0,
-      }
+      };
       // 组别过滤方式为0（无）时，没有组别集合
       if (groupFilterTypeValue === 0 && param.groupIds) {
         delete param.groupIds;
@@ -573,7 +665,7 @@ export default function Page() {
           ...param,
           validStartTime: fields.validStartTime.format('YYYY-MM-DD HH:mm:ss'),
           validEndTime: fields.validEndTime.format('YYYY-MM-DD HH:mm:ss'),
-        }
+        };
       }
       for (let i = 0; i < arr.length; i++) {
         const item = arr[i];
@@ -588,15 +680,17 @@ export default function Page() {
       if (id && type === '1') {
         param = {
           ...param,
-          id
-        }
+          id,
+        };
         const res = await taskDownloadJobEdit(param);
         setLoading(false);
         if (res && res.code === RESPONSE_CODE.success) {
           notification.success({ message: '修改软件更新任务成功' });
           history.goBack();
         } else {
-          notification.error({ message: res.msg || '修改软件更新任务失败，请重试' });
+          notification.error({
+            message: res.msg || '修改软件更新任务失败，请重试',
+          });
         }
       } else {
         const res = await taskDownloadJobAdd(param);
@@ -605,15 +699,16 @@ export default function Page() {
           notification.success({ message: '添加软件更新任务成功' });
           history.goBack();
         } else {
-          notification.error({ message: res.msg || '添加软件更新任务失败，请重试' });
+          notification.error({
+            message: res.msg || '添加软件更新任务失败，请重试',
+          });
         }
       }
-
     } catch (errorInfo) {
       console.log('Failed:', errorInfo);
       setError(errorInfo.errorFields);
     }
-  }
+  };
 
   /**
    * @todo 获取软件信息选中的软件的appid以及依赖的软件的appid的集合（用以控制不重复选择软件以及依赖软件可选列表）
@@ -621,39 +716,57 @@ export default function Page() {
   const getSoftAppIds = () => {
     let appIds: any[] = [];
     for (let i = 0; i < softFroms.length; i++) {
-      appIds.push({ appId: softFroms[i].getFieldValue('appId'), dependAppIds: softFroms[i].getFieldValue('dependAppIds') });
+      appIds.push({
+        appId: softFroms[i].getFieldValue('appId'),
+        dependAppIds: softFroms[i].getFieldValue('dependAppIds'),
+      });
     }
     return appIds;
-  }
+  };
 
   return (
     <Spin spinning={loading || dictLoading}>
-      <Form
-        form={form}
-      >
+      <Form form={form}>
         <Divider orientation="left">【终端信息】</Divider>
         <CustomFormItems items={terminalInfoForms} />
         <Divider orientation="left">【软件信息】</Divider>
-        <Button type="primary" onClick={onAddSoftInfoFormsItem}>新增软件</Button>
-        {
-          softInfoFormsNum > 0 && new Array(softInfoFormsNum).fill({}).map((item: any, index: number) => {
-            return (
-              <Card key={`softInfo${index}`} title={`软件${index + 1}`} bordered={true} style={{ marginTop: 10 }} extra={<Button onClick={() => onDeleteSoftInfoFormsItem(index)}>删除</Button>}>
-                <SoftInfoItem
-                  form={softFroms[index]}
-                  commonValue={{ ...form.getFieldsValue() }}
-                  appIds={getSoftAppIds()}
-                />
-              </Card>
-            )
-          })
-        }
+        <Button type="primary" onClick={onAddSoftInfoFormsItem}>
+          新增软件
+        </Button>
+        {softInfoFormsNum > 0 &&
+          new Array(softInfoFormsNum)
+            .fill({})
+            .map((item: any, index: number) => {
+              return (
+                <Card
+                  key={`softInfo${index}`}
+                  title={`软件${index + 1}`}
+                  bordered={true}
+                  style={{ marginTop: 10 }}
+                  extra={
+                    <Button onClick={() => onDeleteSoftInfoFormsItem(index)}>
+                      删除
+                    </Button>
+                  }
+                >
+                  <SoftInfoItem
+                    form={softFroms[index]}
+                    commonValue={{ ...form.getFieldsValue() }}
+                    appIds={getSoftAppIds()}
+                  />
+                </Card>
+              );
+            })}
         <Divider orientation="left">【任务时间】</Divider>
         <CustomFormItems items={taskTimeForms} />
         <Divider orientation="left">【更新方式】</Divider>
         <CustomFormItems items={updateModeForms} />
         <Divider orientation="left">【发布类型】</Divider>
-        <CustomFormItems items={releaseTypeForms.concat(getReleaseTypeFormsByDept()).concat(getReleaseTypeFormsByCondition())} />
+        <CustomFormItems
+          items={releaseTypeForms
+            .concat(getReleaseTypeFormsByDept())
+            .concat(getReleaseTypeFormsByCondition())}
+        />
         {/* <Form.Item {...ButtonLayout} >
           <Button type="primary" onClick={onSubmit}>
             保存
@@ -667,6 +780,5 @@ export default function Page() {
         <Button onClick={() => history.goBack()}>返回</Button>
       </FixedFoot>
     </Spin>
-
-  )
+  );
 }
