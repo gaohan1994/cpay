@@ -156,7 +156,7 @@ export default function Page() {
       <div style={{ paddingTop: 10 }}>
         <Form
           form={form}
-          className="ant-advanced-search-form"
+          className="common-form-add"
           style={{ backgroundColor: 'white' }}
         >
           <CustomFormItems items={forms} singleCol={true} customFormLayout={customFormLayout} />

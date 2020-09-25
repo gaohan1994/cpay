@@ -44,3 +44,8 @@
 .ant-breadcrumb a {
   color: #1890ff !important;
 }
+
+.common-form-add {
+  padding: 24px;
+  padding-bottom: 56px;
+}
