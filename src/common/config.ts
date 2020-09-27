@@ -1,14 +1,25 @@
-export const isDevelopment = () => process.env.NODE_ENV === 'development';
+export const isDevelopment = () => process.env.PROJECT_ENV === 'development';
+
+export const isProduction = () => {
+  switch (process.env.PROJECT_ENV) {
+    case 'production':
+      return true;
+    case 'development':
+      return false;
+    default:
+      return false;
+  }
+}
 
 /**
  * 陈金燕本地   http://172.30.200.11:8082
  * 测试环境     http://172.30.20.100:8089
- *
  */
-export const BASE_URL = isDevelopment()
+export const BASE_URL = !isProduction()
   ? 'http://172.30.20.100:48089'
   : 'http://172.30.20.100:48089';
 
+console.log('process.env.PROJECT_ENV', process.env.PROJECT_ENV);
 export const SOURCE_URL = 'http://172.30.20.100:9200';
 
 /**

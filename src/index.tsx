@@ -15,6 +15,11 @@ import 'moment/locale/zh-cn';
  */
 
 class RenderComponent extends React.Component {
+
+  componentDidMount() {
+    console.log('process.env', process.env);
+  }
+
   componentDidCatch(error: any, errorInfo: any) {
     console.log('error', error);
     console.log('errorInfo', errorInfo);
@@ -30,12 +35,12 @@ class RenderComponent extends React.Component {
         </ConfigProvider>
       </React.StrictMode>
     ) : (
-      <ConfigProvider locale={locale}>
-        <Provider store={store}>
-          <AppRouter />
-        </Provider>
-      </ConfigProvider>
-    );
+        <ConfigProvider locale={locale}>
+          <Provider store={store}>
+            <AppRouter />
+          </Provider>
+        </ConfigProvider>
+      );
   }
 }
 

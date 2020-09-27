@@ -31,6 +31,7 @@
     "classnames": "^2.2.6",
     "css-loader": "3.4.2",
     "dotenv": "8.2.0",
+    "dotenv-cli": "^4.0.0",
     "dotenv-expand": "5.1.0",
     "echarts": "^4.9.0",
     "eslint": "^6.6.0",
@@ -89,6 +90,8 @@
   },
   "scripts": {
     "start": "node scripts/start.js",
+    "build:dev": "dotenv -e .env.development node --max_old_space_size=4096 scripts/build.js",
+    "build:pro": "dotenv -e .env.production node --max_old_space_size=4096 scripts/build.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
     "version": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0 && git add CHANGELOG.md"
