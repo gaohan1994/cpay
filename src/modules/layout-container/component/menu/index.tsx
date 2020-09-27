@@ -30,7 +30,7 @@ function LayoutMenu(props: Props) {
   const [openKeys, setOpenKeys] = useState([] as string[]);
   const [selectedKeys, setSelectedKeys] = useState([] as string[]);
 
-  useMount(() => {
+  useEffect(() => {
     let rootKeys: string[] = [];
     menus.map((item, index) => {
       if (!!item.subMenus) {
@@ -51,7 +51,7 @@ function LayoutMenu(props: Props) {
         : '',
     ];
     onSelect({ key: didSelectKeys.join('/') });
-  });
+  }, [window.location.href]);
 
   const onCollapse = () => {
     setCollapsed(!collapsed);

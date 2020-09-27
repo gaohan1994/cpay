@@ -14,7 +14,6 @@
         height: 100% !important;
       }
     }
-
   }
 
   &-row {
@@ -28,5 +27,16 @@
   &-card {
     width: 100%;
     height: 100%;
+    & > .ant-card-body {
+      height: 100% !important;
+      padding: 8px !important;
+    }
+
+    &-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
   }
 }
