@@ -69,7 +69,7 @@ export type GetDeptTreeDataCallback = [DeptItem[], DeptTreeData[]];
 export const getDeptTreeData = async (
   callback?: (data: GetDeptTreeDataCallback) => void
 ): Promise<GetDeptTreeDataCallback> => {
-  const data: any = await ApiRequset.get(`/cpay-admin/system/dept/treeData`);
+  const data: any = await ApiRequset.post(`/cpay-admin/system/dept/treeData`, {});
   const treeData =
     (data && data.code === RESPONSE_CODE.success && formatDeptTreeData(data.data)) ||
     [];
@@ -88,8 +88,9 @@ export const getDictList = async (
   dictType: string,
   callback?: (data: DictItem[]) => void
 ): Promise<IResponseResult<DictItem[]>> => {
-  const result = await ApiRequset.get(
-    `/cpay-admin/system/dict/list${jsonToQueryString({ dictType })}`
+  const result = await ApiRequset.post(
+    `/cpay-admin/system/dict/type/dictTypeList`,
+    { dictType }
   );
   callback && callback((result && result.data && result.data.rows) || []);
   return result;
@@ -104,8 +105,9 @@ export const getDictData = async (
   dictType: string,
   callback?: (data: DictDetailItem[]) => void
 ): Promise<IResponseListResult<DictDetailItem>> => {
-  const result = await ApiRequset.get(
-    `/cpay-admin/system/dict/data/list${jsonToQueryString({ dictType })}`
+  const result = await ApiRequset.post(
+    `/cpay-admin/system/dict/data/dictDataList`,
+    { dictType }
   );
   callback && callback((result.data && result.data.rows) || []);
   return result;
