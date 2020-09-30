@@ -9,7 +9,7 @@ import { ACTION_TYPES_COMMON } from '@/pages/common/reducer';
  * @param params
  */
 export async function getUserDept(dispatch?: any) {
-  const res = await ApiRequest.get(`/cpay-admin/system/dept/userDept`);
+  const res = await ApiRequest.post(`/cpay-admin/system/dept/userDeptDetail`, {});
   if (res && res.code === RESPONSE_CODE.success) {
     dispatch({
       type: ACTION_TYPES_COMMON.RECEIVE_USER_DEPT,

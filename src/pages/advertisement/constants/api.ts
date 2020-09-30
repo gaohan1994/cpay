@@ -8,24 +8,24 @@ import { IResponseResult } from '@/common/type';
  * @param params
  */
 export const advertInfoList = (params: IAvertisementListField) =>
-  ApiRequest.get(`/cpay-admin/advert/info/list${jsonToQueryString(params)}`);
+  ApiRequest.post(`/cpay-admin/advert/info/advertList`, params);
 
 export const advertInfoDetail = async (
   id: string,
   callback?: (params: IResponseResult<AdvertisementDetail>) => void
 ): Promise<IResponseResult<AdvertisementDetail>> => {
-  const result = await ApiRequest.get(`/cpay-admin/advert/info/details/${id}`);
+  const result = await ApiRequest.post(`/cpay-admin/advert/info/advertDetail`, { id });
   console.log('result:', result);
   callback && callback(result);
   return result;
 };
 
 export const advertInfoAudit = (params: any) =>
-  ApiRequest.post(`/cpay-admin/advert/audit/audit`, params);
+  ApiRequest.post(`/cpay-admin/advert/audit/advertAuditAudit`, params);
 
 export const advertInfoEdit = (params: any): Promise<any> => {
-  return ApiRequest.post(`/cpay-admin/advert/info/edit`, params);
+  return ApiRequest.post(`/cpay-admin/advert/info/advertEdit`, params);
 };
 
 export const advertInfoRemove = (id: number) =>
-  ApiRequest.post(`/cpay-admin/advert/info/remove`, { ids: id });
+  ApiRequest.post(`/cpay-admin/advert/info/advertRemove`, { ids: id });

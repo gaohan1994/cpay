@@ -54,7 +54,7 @@ export default () => {
         <div>
           <a
             onClick={() =>
-              history.push(`/advertisement/apply-update?id=${item.id}`)
+              history.push(`/advertisement/apply/update?id=${item.id}`)
             }
           >
             审核

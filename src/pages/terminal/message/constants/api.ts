@@ -49,8 +49,9 @@ export const terminalGroupListByDept = async (
   deptId: number,
   callback?: (params: ITerminalGroupByDeptId[]) => void
 ): Promise<any> => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/terminal/group/listByDepts${jsonToQueryString({ deptId })}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/group/groupListByDepts`,
+    { deptId }
   );
   callback && result && result.code === RESPONSE_CODE.success && callback(result.data);
   return result;

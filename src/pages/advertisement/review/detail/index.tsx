@@ -43,9 +43,10 @@ export default (props: Props) => {
   const [detail, setDetail] = useState(state.detail);
   const [pass, setPass] = useState(true);
   useEffect(() => {
-    const { id } = props.match.params;
-    if (id) {
-      advertInfoDetail(id).then((response) => {
+    const { search } = history.location;
+    const field = formatSearch(search);
+    if (field.id) {
+      advertInfoDetail(field.id).then((response) => {
         if (response.code === RESPONSE_CODE.success) {
           setDetail(response.data);
         }
