@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './index.scss';
-import { Row, Col, Card, Spin } from 'antd';
+import { Row, Col, Card, Spin, notification } from 'antd';
 import { systemMains } from './constants/api';
 import { IHomeData } from './constants/type';
 import echarts from 'echarts/lib/echarts';
@@ -15,6 +15,7 @@ import { useHistory } from 'react-router-dom'
 import { bar_option } from './chart/bar';
 import { line_option } from './chart/line'
 import moment from 'moment'
+import { RESPONSE_CODE } from '@/common/config';
 
 const Container = (props: any) => {
   return (
@@ -40,7 +41,16 @@ function App() {
 
   useEffect(() => {
     setLoading(true);
-    systemMains(callback);
+    systemMains()
+      .then((result) => {
+        if (result.code !== RESPONSE_CODE.success) {
+          notification.warn(result?.msg || ' ');
+          return;
+        }
+        callback(result);
+      }).catch((err) => {
+        notification.warn(err?.msg);
+      });;
   }, []);
 
   useEffect(() => {
