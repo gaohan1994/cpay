@@ -9,10 +9,8 @@ export const terminalTypeList = async (
   params: any,
   callback?: (data: any) => void
 ): Promise<any> => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/terminal/type/list${jsonToQueryString(params)}`
-  );
-  callback && result && 
+  const result = await ApiRequest.post(`/cpay-admin/terminal/type/terminalTypeList`, params);
+  callback && result &&
     result.code === RESPONSE_CODE.success &&
     callback(result.data.rows);
   return result;
@@ -26,7 +24,7 @@ export const terminalTypeAdd = async (
   params: any,
   callback?: (data: any) => void
 ): Promise<any> => {
-  const result = await ApiRequest.post(`/cpay-admin/terminal/type/add`, params);
+  const result = await ApiRequest.post(`/cpay-admin/terminal/type/terminalTypeAdd`, params);
   callback && callback(result);
   return result;
 };
@@ -40,7 +38,7 @@ export const terminalTypeEdit = async (
   callback?: (data: any) => void
 ): Promise<any> => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/type/edit`,
+    `/cpay-admin/terminal/type/terminalTypeEdit`,
     params
   );
   callback && callback(result);
@@ -56,7 +54,7 @@ export const terminalTypeRemove = async (
   callback?: (data: any) => void
 ): Promise<any> => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/type/remove`,
+    `/cpay-admin/terminal/type/terminalTypeRemove`,
     params
   );
   callback && callback(result);
@@ -71,8 +69,9 @@ export const terminalTypeDetail = async (
   params: any,
   callback?: (data: any) => void
 ): Promise<any> => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/terminal/type/detail/${params.id}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/type/terminalTypeDetail`,
+    { id: params.id }
   );
   callback && callback(result);
   return result;

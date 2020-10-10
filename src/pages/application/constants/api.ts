@@ -116,7 +116,7 @@ export const getAppTypeList = async (
   params: any,
   callback?: (params: IAppType[]) => void
 ): Promise<any> => {
-  const result = await ApiRequest.get(`/cpay-admin/app/type/list${jsonToQueryString(params)}`);
+  const result = await ApiRequest.post(`/cpay-admin/app/terminalTypeList/list`, params);
   callback && result && result.code === RESPONSE_CODE.success && callback(result.data.rows);
   return result;
 };

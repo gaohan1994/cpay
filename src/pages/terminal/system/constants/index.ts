@@ -12,8 +12,9 @@ export const terminalSysdetailList = async (
   params: FetchField.ITerminalSysdetailList,
   callback?: (data: ITerminalSysDetail[]) => void
 ): Promise<IResponseListResult<ITerminalSysDetail>> => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/terminal/sysdetail/list${jsonToQueryString(params)}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/sysDetail/terminalSysDetailList`,
+    params
   );
   const formatData: ITerminalSysDetail[] = merge(
     (result && result.data && result.data.rows) || []
@@ -44,7 +45,7 @@ export const terminalSysdetailExport = async (
   callback?: (data: any) => void
 ) => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/sysdetail/export`,
+    `/cpay-admin/terminal/sysdetail/terminalSysDetailExport`,
     params
   );
   callback && callback(result);

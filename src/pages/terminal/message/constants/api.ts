@@ -37,8 +37,9 @@ export const merchantQueryBocoms = (
 };
 
 export const terminalInfoList = (tableProps: ITerminalListField) =>
-  ApiRequest.get(
-    `/cpay-admin/terminal/info/list${jsonToQueryString({ ...tableProps })}`
+  ApiRequest.post(
+    `/cpay-admin/terminal/info/terminalInfoList`,
+    tableProps
   );
 
 /**
@@ -62,6 +63,6 @@ export const terminalGroupListByDept = async (
  * @param params
  */
 export const terminalInfoExport = async (params?: any) => {
-  const result = await ApiRequest.post(`terminal/info/export`, params);
+  const result = await ApiRequest.post(`/terminal/info/terminalInfoExport`, params);
   return result;
 };

@@ -10,8 +10,9 @@ import { RESPONSE_CODE } from '@/common/config';
 export const terminalAcquiringList = async (
   params?: FetchField.List
 ): Promise<any> => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/terminal/acquiring/list${jsonToQueryString(params)}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/acquiring/acquiringList`,
+    params
   );
   return result;
 };
@@ -24,7 +25,7 @@ export const terminalAcquiringRemove = async (params?: {
   ids: string;
 }): Promise<any> => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/acquiring/remove`,
+    `/cpay-admin/terminal/acquiring/acquiringRemove`,
     params
   );
   return result;
@@ -38,7 +39,7 @@ export const terminalAcquiringExport = async (
   params?: FetchField.Export
 ): Promise<any> => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/acquiring/export`,
+    `/cpay-admin/terminal/acquiring/acquiringExport`,
     params
   );
   return result;
@@ -51,8 +52,9 @@ export const terminalAcquiringExport = async (
 export const terminalAcquiringEditData = async (params: {
   id: string;
 }): Promise<any> => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/terminal/acquiring/edit/${params.id}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/acquiring/acquiringEditDetail`,
+    { id: params.id }
   );
   return result;
 };
@@ -65,7 +67,7 @@ export const terminalAcquiringEdit = async (
   params?: FetchField.Export
 ): Promise<any> => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/acquiring/edit`,
+    `/cpay-admin/terminal/acquiring/acquiringEdit`,
     params
   );
   return result;
@@ -79,7 +81,7 @@ export const terminalAcquiringAdd = async (
   params?: FetchField.Export
 ): Promise<any> => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/acquiring/add`,
+    `/cpay-admin/terminal/acquiring/acquiringAdd`,
     params
   );
   return result;

@@ -11,10 +11,11 @@ export const terminalGroupList = async (
   params?: FetchField,
   callback?: (data: TerminalGroupItem[]) => void
 ): Promise<any> => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/terminal/group/list${jsonToQueryString(params)}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/group/groupList`,
+    params
   );
-  callback && result && 
+  callback && result &&
     result.code === RESPONSE_CODE.success &&
     callback(result.data.rows);
   return result;
@@ -30,7 +31,7 @@ export const terminalGroupAdd = async (
   callback?: (data: TerminalGroupItem[]) => void
 ): Promise<any> => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/group/add`,
+    `/cpay-admin/terminal/group/groupAdd`,
     params
   );
   callback && result.code === RESPONSE_CODE.success && callback(result);
@@ -47,7 +48,7 @@ export const terminalGroupDelete = async (
   callback?: (data: TerminalGroupItem[]) => void
 ): Promise<any> => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/group/remove`,
+    `/cpay-admin/terminal/group/groupRemove`,
     params
   );
   callback && result.code === RESPONSE_CODE.success && callback(result);
@@ -64,7 +65,7 @@ export const terminalGroupEdit = async (
   callback?: (data: TerminalGroupItem[]) => void
 ): Promise<any> => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/group/edit`,
+    `/cpay-admin/terminal/group/groupEdit`,
     params
   );
   callback && result.code === RESPONSE_CODE.success && callback(result);

@@ -12,8 +12,9 @@ export const terminalAppList = async (
   params: FetchField.ITerminalAppList,
   callback?: (data: any) => void
 ) => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/terminal/app/list${jsonToQueryString(params)}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/app/terminalAppList`,
+    params
   );
   callback && result && callback(result);
   return result;
@@ -29,7 +30,7 @@ export const terminalAppExport = async (
   callback?: (data: any) => void
 ) => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/app/export`,
+    `/cpay-admin/terminal/app/terminalAppExport`,
     params
   );
   callback && result && callback(result);
