@@ -10,8 +10,9 @@ export const terminalInfoDetail = async (
   id: string,
   callback?: (result: IResponseResult<ITerminalSystemDetailInfo>) => void
 ): Promise<IResponseResult<ITerminalSystemDetailInfo>> => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/terminal/info/details/${id}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/info/terminalInfoEditDetail`,
+    { id }
   );
   callback && callback(result);
   return result;

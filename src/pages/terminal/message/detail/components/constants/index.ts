@@ -9,8 +9,9 @@ export const terminalFlowList = async (
   params: FetchField.TerminalFlowList,
   callback?: (data: IResponseListResult<FlowItem>) => void
 ): Promise<IResponseListResult<FlowItem>> => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/terminal/flow/list${jsonToQueryString(params)}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/flow/flowMonthList`,
+    params
   );
   callback && callback(result);
   return result;
@@ -24,7 +25,7 @@ export const terminalFlowExport = async (
   callback?: (data: IResponseResult<any>) => void
 ): Promise<IResponseResult<any>> => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/flow/export`,
+    `/cpay-admin/terminal/flow/flowMonthExport`,
     params
   );
   callback && callback(result);
@@ -35,8 +36,9 @@ export const terminalPowerList = async (
   params: FetchField.TerminalPowerList,
   callback?: (data: IResponseListResult<ITerminalPower>) => void
 ): Promise<IResponseListResult<ITerminalPower>> => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/terminal/power/list${jsonToQueryString(params)}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/power/flowMonthExport`,
+    params
   );
   callback && callback(result);
   return result;

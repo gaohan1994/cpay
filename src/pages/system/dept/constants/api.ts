@@ -1,35 +1,35 @@
 import ApiRequest, { jsonToQueryString } from '@/common/request-util';
 
 export const systemDeptList = (param: any) =>
-  ApiRequest.get(`/cpay-admin/system/dept/list/${jsonToQueryString(param)}`);
+  ApiRequest.post(`/cpay-admin/system/dept/deptList`, param);
 
 /**
  * @todo 机构信息修改前获取数据
  * @param deptId 
  */
 export const systemDeptEdits = (deptId: number) =>
-  ApiRequest.get(`/cpay-admin/system/dept/edits/${deptId}`);
+  ApiRequest.post(`/cpay-admin/system/dept/deptEditDetail`, { deptId });
 
 /**
 * @todo 机构信息修改
 * @param param 
 */
 export const systemDeptEdit = (param: any) =>
-  ApiRequest.post(`/cpay-admin/system/dept/edit`, param);
+  ApiRequest.post(`/cpay-admin/system/dept/deptEdit`, param);
 
 /**
 * @todo 机构删除
 * @param param 
 */
 export const systemDeptRemove = (id: number) =>
-  ApiRequest.get(`/cpay-admin/system/dept/remove/${id}`);
+  ApiRequest.post(`/cpay-admin/system/dept/deptRemove`, { deptId: id });
 
 /**
 * @todo 机构信息新增
 * @param param 
 */
 export const systemDeptAdd = (param: any) =>
-  ApiRequest.post(`/cpay-admin/system/dept/add`, param);
+  ApiRequest.post(`/cpay-admin/system/dept/deptAdd`, param);
 
 
 /**
@@ -37,7 +37,7 @@ export const systemDeptAdd = (param: any) =>
 * @param param 
 */
 export const checkDeptNameUnique = (param: any) =>
-  ApiRequest.post(`/cpay-admin/system/dept/checkDeptName`, param);
+  ApiRequest.post(`/cpay-admin/system/dept/checkDeptNameUnique`, param);
 
 /**
 * @todo 机构号校验是否唯一

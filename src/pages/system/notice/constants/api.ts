@@ -5,7 +5,7 @@ import ApiRequest, { jsonToQueryString } from '@/common/request-util';
  * @param param 
  */
 export const systemNoticeList = (param: any) =>
-  ApiRequest.get(`/cpay-admin/system/notice/list/${jsonToQueryString(param)}`);
+  ApiRequest.post(`/cpay-admin/system/notice/noticeList`, param);
 
 // /**
 //  * @todo 公告信息修改前获取数据
@@ -23,7 +23,7 @@ export const systemNoticeEdits = async (
   id: number,
   callback?: (params: any) => void
 ): Promise<any> => {
-  const result = await ApiRequest.get(`/cpay-admin/system/notice/edits/${id}`);
+  const result = await ApiRequest.post(`/cpay-admin/system/notice/noticeEditDetail`, { noticeId: id });
   callback && callback(result);
   return result;
 };
@@ -33,18 +33,18 @@ export const systemNoticeEdits = async (
 * @param param 
 */
 export const systemNoticeEdit = (param: any) =>
-  ApiRequest.post(`/cpay-admin/system/notice/edit`, param);
+  ApiRequest.post(`/cpay-admin/system/notice/noticeEdit`, param);
 
 /**
 * @todo 公告信息新增
 * @param param 
 */
 export const systemNoticeAdd = (param: any) =>
-  ApiRequest.post(`/cpay-admin/system/notice/add`, param);
+  ApiRequest.post(`/cpay-admin/system/notice/noticeAdd`, param);
 
 /**
 * @todo 公告信息删除
 * @param param 
 */
 export const systemNoticeRemove = (param: any) =>
-  ApiRequest.post(`/cpay-admin/system/notice/remove`, param);
+  ApiRequest.post(`/cpay-admin/system/notice/noticeRemove`, param);

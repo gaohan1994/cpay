@@ -11,8 +11,9 @@ export const terminalParamCopys = async (
   params: FetchField.TerminalParam,
   callback?: (result: IResponseResult<ITerminalParam>) => void
 ): Promise<IResponseResult<ITerminalParam>> => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/terminal/param/copys/${params.id}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/param/terminalParamCopyDetail`,
+    { id: params.id }
   );
   callback && callback(result);
   return result;
@@ -25,8 +26,9 @@ export const terminalParamEdit = async (
   params: FetchField.TerminalParam,
   callback?: (result: IResponseResult<ITerminalParam>) => void
 ): Promise<IResponseResult<ITerminalParam>> => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/terminal/param/edits/${params.id}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/param/terminalParamEditDetail`,
+    { id: params.id }
   );
   callback && callback(result);
   return result;

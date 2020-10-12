@@ -12,7 +12,7 @@ export async function systemMenuList(dispatch?: any, setLoading?: (loading: bool
   if (setLoading) {
     setLoading(true);
   }
-  const res = await ApiRequest.get(`/cpay-admin/system/menu/list`);
+  const res = await ApiRequest.post(`/cpay-admin/system/menu/menuList`, {});
   if (setLoading) {
     setLoading(false);
   }

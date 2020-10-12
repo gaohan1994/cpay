@@ -110,7 +110,7 @@ export const taskSoftListByType = async (
  * @param params
  */
 export const taskDownloadTaskList = (params: any) =>
-  ApiRequest.get(`/cpay-admin/task/downloadTask/downloadTaskList`, params);
+  ApiRequest.post(`/cpay-admin/task/downloadTask/downloadTaskList`, params);
 
 /**
 * @todo 请求软件更新任务执行情况列表

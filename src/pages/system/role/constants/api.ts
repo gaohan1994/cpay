@@ -22,7 +22,7 @@ export const systemRoleList = async (param: any, callback?: any) => {
   //     .join('&');
   //   return field.length > 0 ? `?${field}` : '';
   // };
-  const res = await ApiRequest.get(`/cpay-admin/system/role/list/${jsonToQueryString(param)}`);
+  const res = await ApiRequest.post(`/cpay-admin/system/role/roleList`, param);
   if (callback && res && res.code === RESPONSE_CODE.success) {
     callback(res);
   }
@@ -38,7 +38,7 @@ export const systemRoleEdits = async (
   id: number,
   callback?: (params: any) => void
 ): Promise<any> => {
-  const result = await ApiRequest.get(`/cpay-admin/system/role/edits/${id}`);
+  const result = await ApiRequest.post(`/cpay-admin/system/role/roleEditDetail`, { roleId: id });
   callback && callback(result);
   return result;
 };
@@ -48,7 +48,7 @@ export const systemRoleEdits = async (
  * @param param 
  */
 export const systemRoleAdd = (param: any) =>
-  ApiRequest.post(`/cpay-admin/system/role/add`, param);
+  ApiRequest.post(`/cpay-admin/system/role/roleAdd`, param);
 
 /**
  * @todo 系统角色修改
@@ -69,11 +69,11 @@ export const systemRoleRemove = (param: any) =>
  * @param param 
  */
 export const systemRoleChangeStatus = (param: any) =>
-  ApiRequest.post(`/cpay-admin/system/role/changeStatus`, param);
+  ApiRequest.post(`/cpay-admin/system/role/roleChangeStatus`, param);
 
 /**
 * @todo 系统角色导出
 * @param param 
 */
 export const systemRoleExport = (param: any) =>
-  ApiRequest.post(`/cpay-admin/system/role/export`, param);
+  ApiRequest.post(`/cpay-admin/system/role/roleExport`, param);

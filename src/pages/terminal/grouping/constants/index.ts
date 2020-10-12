@@ -14,8 +14,9 @@ import { RESPONSE_CODE } from '@/common/config';
 export const terminalGetGroupSet = async (
   callback?: (data: TerminalGroupItem[]) => void
 ): Promise<any> => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/terminal/groupSet/getGroupSet`
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/groupSet/getGroupSet`,
+    {}
   );
   callback && result && result.code === RESPONSE_CODE.success && callback(result.data);
   return result;
@@ -26,7 +27,7 @@ export const terminalGroupSetAdd = async (
   callback?: (data: any) => void
 ) => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/groupSet/add`,
+    `/cpay-admin/terminal/groupSet/getGroupSet`,
     params
   );
   callback && callback(result);
@@ -38,7 +39,7 @@ export const terminalGroupSetRemove = async (
   callback?: (data: any) => void
 ) => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/groupSet/remove`,
+    `/cpay-admin/terminal/groupSet/groupSetRemove`,
     params
   );
   callback && callback(result);
@@ -53,12 +54,11 @@ export const terminalInfoListByIsGroup = async (
   callback?: (data: any[]) => void
 ) => {
   console.log('params:', params);
-  const result = await ApiRequest.get(
-    `/cpay-admin/terminal/groupSet/selectTerminalInfoListByIsGroup${jsonToQueryString(
-      params
-    )}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/groupSet/selectTerminalInfoListByIsGroup`,
+    params
   );
-  callback && result && 
+  callback && result &&
     result.code === RESPONSE_CODE.success &&
     callback(result.data.rows);
   return result;
