@@ -1,15 +1,15 @@
 /*
  * @Author: centerm.gaozhiying
  * @Date: 2020-08-12 09:13:05
- * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-10 11:52:16
+ * @Last Modified by: mikey.zhaopeng
+ * @Last Modified time: 2020-10-12 09:52:03
  *
  * @todo 应用管理的详情页
  */
 import React, { useEffect, useState } from 'react';
 import { Descriptions, notification, Col, Row, Rate, Spin } from 'antd';
 import { useQueryParam } from '@/common/request-util';
-import { appInfoDetail } from '../../constants/api';
+import { appInfoDetail, appInfoEdit } from '../../constants/api';
 import { RESPONSE_CODE } from '../../../../common/config';
 import { IAppInfoDetail } from '../../types';
 import { useStore } from '@/pages/common/costom-hooks';
@@ -34,12 +34,13 @@ function Page() {
   */
   useEffect(() => {
     setLoading(true);
-    if (!res.loading) {
-      if (id) {
-        appInfoDetail(id, getDetailCallback);
-      } else {
-        setLoading(false);
-      }
+    // const isEdit = window.location.href.indexOf('edit') !== -1;
+    if (!id) {
+      setLoading(false);
+      return;
+    }
+    if (!!res.loading) {
+      appInfoDetail(id, getDetailCallback);
     }
   }, [id, res.loading]);
 
