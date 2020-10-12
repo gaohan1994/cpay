@@ -10,8 +10,9 @@ export const terminalShiftList = async (
   params: FetchField.List,
   callback?: (params: IResponseListResult<ShiftItem>) => void
 ) => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/relocation/record/list${jsonToQueryString(params)}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/relocation/record/relocationRecordList`,
+    params
   );
 
   callback && callback(result);
@@ -22,8 +23,9 @@ export const terminalShiftExport = async (
   params: Partial<FetchField.Exp>,
   callback?: (params: IFormatResult<any>) => void
 ) => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/relocation/record/export${jsonToQueryString(params)}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/relocation/record/relocationRecordExport`,
+    params
   );
 
   callback && callback(result);
@@ -35,7 +37,7 @@ export const relocationKeyList = async (
   callback?: (params: IFormatResult<any>) => void
 ) => {
   const result = await ApiRequest.post(
-    `/cpay-admin/relocation/key/list`,
+    `/cpay-admin/relocation/key/relocationKeyList`,
     params
   );
 
@@ -47,7 +49,7 @@ export const relocationKeyRemove = async (
   ids: string,
   callback?: (params: IFormatResult<any>) => void
 ) => {
-  const result = await ApiRequest.post(`/cpay-admin/relocation/key/remove`, {
+  const result = await ApiRequest.post(`/cpay-admin/relocation/key/relocationKeyRemove`, {
     ids,
   });
 
@@ -59,7 +61,7 @@ export const relocationKeyReset = async (
   ids: string,
   callback?: (params: IFormatResult<any>) => void
 ) => {
-  const result = await ApiRequest.post(`/cpay-admin/relocation/key/reset`, {});
+  const result = await ApiRequest.post(`/cpay-admin/relocation/key/relocationKeyReset`, {});
 
   callback && callback(result);
   return result;
@@ -70,7 +72,7 @@ export const relocationKeyAdd = async (
   callback?: (params: IFormatResult<any>) => void
 ): Promise<IResponseResult<any>> => {
   const result = await ApiRequest.post(
-    `/cpay-admin/relocation/key/add`,
+    `/cpay-admin/relocation/key/relocationKeyAdd`,
     params
   );
 
@@ -83,7 +85,7 @@ export const relocationKeyEdit = async (
   callback?: (params: IFormatResult<any>) => void
 ): Promise<IResponseResult<any>> => {
   const result = await ApiRequest.post(
-    `/cpay-admin/relocation/key/edit`,
+    `/cpay-admin/relocation/key/relocationKeyEdit`,
     params
   );
 
@@ -94,10 +96,9 @@ export const relocationKeyEdit = async (
 export const getAllTerminalPosition = async (
   params: any
 ): Promise<IResponseResult<any>> => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/relocation/monitor/getAllTerminalPosition${jsonToQueryString(
-      params
-    )}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/relocation/monitor/getAllTerminalPosition`,
+    params
   );
   return result;
 };
