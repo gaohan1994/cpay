@@ -7,7 +7,7 @@ import { RESPONSE_CODE } from '@/common/config';
  * @param params
  */
 export const taskDownloadJobList = (params: any) =>
-  ApiRequest.get(`/cpay-admin/task/downloadJob/list${jsonToQueryString(params)}`);
+  ApiRequest.post(`/cpay-admin/task/downloadJob/downloadJobList`, params);
 
 /**
  * @todo 请求软件更新任务基本信息详情
@@ -18,7 +18,7 @@ export const taskDownloadJobDetail = async (
   id: number,
   callback?: (params: any) => void
 ): Promise<any> => {
-  const result = await ApiRequest.get(`/cpay-admin/task/downloadJob/details/${id}`);
+  const result = await ApiRequest.post(`/cpay-admin/task/downloadJob/downloadJobDetail`, { id });
   callback && callback(result);
   return result;
 };
@@ -28,35 +28,35 @@ export const taskDownloadJobDetail = async (
 * @param params
 */
 export const taskDownloadJobAdd = (params: any) =>
-  ApiRequest.post(`/cpay-admin/task/downloadJob/add`, params);
+  ApiRequest.post(`/cpay-admin/task/downloadJob/downloadJobAdd`, params);
 
 /**
 * @todo 修改软件更新任务信息
 * @param params
 */
 export const taskDownloadJobEdit = (params: any) =>
-  ApiRequest.post(`/cpay-admin/task/downloadJob/edit`, params);
+  ApiRequest.post(`/cpay-admin/task/downloadJob/downloadJobEdit`, params);
 
 /**
  * @todo 删除软件更新任务基本信息
  * @param params
  */
 export const taskDownloadJobRemove = (params: { ids: string }) =>
-  ApiRequest.post(`/cpay-admin/task/downloadJob/remove`, params);
+  ApiRequest.post(`/cpay-admin/task/downloadJob/downloadJobRemove`, params);
 
 /**
  * 
  * @param id 发布软件更新的任务
  */
 export const taskDownloadJobPublish = (id: number) =>
-  ApiRequest.post(`/cpay-admin/task/downloadJob/publish/${id}`, {});
+  ApiRequest.post(`/cpay-admin/task/downloadJob/downloadJobPublish`, { id });
 
 /**
 * 
 * @param id 暂停软件更新的任务
 */
 export const taskDownloadJobPause = (id: number) =>
-  ApiRequest.post(`/cpay-admin/task/downloadJob/pause/${id}`, {});
+  ApiRequest.post(`/cpay-admin/task/downloadJob/downloadJobPause`, { id });
 
 /**
 * @todo 软件更新执行情况任务启动
@@ -70,14 +70,14 @@ export const taskDownloadJobDelay = (params: { ids: string }) =>
 * @param params
 */
 export const taskDownloadJobImportTemplate = () =>
-  ApiRequest.get(`/cpay-admin/task/downloadJob/importTemplate`);
+  ApiRequest.post(`/cpay-admin/task/downloadJob/downloadJobImportTemplate`, {});
 
 /**
 * @todo 软件更新执行情况任务启动
 * @param params
 */
 export const taskDownloadTaskReset = (params: { ids: string }) =>
-  ApiRequest.post(`/cpay-admin/task/downloadTask/reset`, params);
+  ApiRequest.post(`/cpay-admin/task/downloadTask/downloadTaskReset`, params);
 
 /**
  * @todo 删除软件更新任务基本信息
@@ -95,10 +95,11 @@ export const taskSoftListByType = async (
   params: any,
   callback?: (data: any[]) => void
 ): Promise<any> => {
-  const result = await ApiRequest.get(
-    `/cpay-admin/task/soft/getSoftListByType${jsonToQueryString(params)}`
+  const result = await ApiRequest.post(
+    `/cpay-admin/task/soft/getSoftListByType`,
+    params
   );
-  callback && result && 
+  callback && result &&
     result.code === RESPONSE_CODE.success &&
     callback(result.data);
   return result;
@@ -109,11 +110,11 @@ export const taskSoftListByType = async (
  * @param params
  */
 export const taskDownloadTaskList = (params: any) =>
-  ApiRequest.get(`/cpay-admin/task/downloadTask/list${jsonToQueryString(params)}`);
+  ApiRequest.get(`/cpay-admin/task/downloadTask/downloadTaskList`, params);
 
 /**
 * @todo 请求软件更新任务执行情况列表
 * @param params
 */
 export const taskDownloadTaskExport = (params: any) =>
-  ApiRequest.post(`/cpay-admin/task/downloadTask/export`, params);
+  ApiRequest.post(`/cpay-admin/task/downloadTask/downloadTaskExport`, params);
