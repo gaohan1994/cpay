@@ -34,9 +34,9 @@ export const terminalParamEdit = async (
   return result;
 };
 
-export const terminalParamUpdate = async (key: DetailType, params: any) => {
-  const fetchUrl = `/cpay-admin/terminal/param/${key.toLowerCase()}`;
-  console.log('fetchUrl:', fetchUrl);
-  const result = await ApiRequest.post(fetchUrl, params);
-  return result;
-};
+// 修改
+export const terminalParamsEdit = (params: any) =>
+  ApiRequest.post(`/cpay-admin/terminal/param/terminalParamEdit`, params);
+
+export const terminalParamAdd = (params: any) =>
+  ApiRequest.post(`/cpay-admin/terminal/param/terminalParamAdd`, params);

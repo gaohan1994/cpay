@@ -99,9 +99,6 @@ export default () => {
     {
       title: '组别名称',
       dataIndex: 'groupName',
-      render: (key: any, item: any) => (
-        <span>{!!item['groupName'] || '--'}</span>
-      ),
     },
     {
       title: '参数版本号',

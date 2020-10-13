@@ -3,7 +3,6 @@ import {
   Divider,
   Form,
   Button,
-  Skeleton,
   Col,
   notification,
   Row,
@@ -15,8 +14,6 @@ import { merge } from 'lodash';
 import { useHistory } from 'react-router-dom';
 import { useQueryParam } from '@/common/request-util';
 import { useDetail } from './costom-hooks';
-import BaseParam from './component/base-param';
-import DeptParam from './component/dept-param';
 import { DetailType } from '../types';
 import './component/index.scss';
 import invariant from 'invariant';
@@ -24,11 +21,10 @@ import { useStore } from '@/pages/common/costom-hooks';
 import { TerminalParamItem } from '@/pages/terminal/params/types';
 import { ITerminalParams } from './types';
 import { useSelectorHook } from '@/common/redux-util';
-import { terminalParamUpdate } from './constants';
+import { terminalParamAdd, terminalParamsEdit } from './constants';
 import { RESPONSE_CODE } from '@/common/config';
 import {
   CustomFormItems,
-  getCustomSelectFromItemData,
 } from '@/component/custom-form';
 import { CustomFromItem } from '@/common/type';
 import FixedFoot, { ErrorField } from '@/component/fixed-foot';
@@ -205,10 +201,10 @@ export default () => {
     }
     const baseParams: ITerminalParams = {
       ...mergeBase,
-      infoList: base.infoList
+      infoList: base.infoList ? base.infoList
         .split(/[\s\n]/)
         .filter((t) => !!t)
-        .join('\n'),
+        .join('\n') : '',
     };
     return JSON.stringify(baseParams);
   };
@@ -219,7 +215,7 @@ export default () => {
    * 2.遇到换行符格式化
    */
   const formatInfoList = () => {
-    const formatList = infoList.split(/[\s\n]/).filter((t) => !!t);
+    const formatList = !!infoList ? infoList.split(/[\s\n]/).filter((t) => !!t) : [];
     setInfoList(formatList.join(`\n`));
   };
 
@@ -232,9 +228,10 @@ export default () => {
         paramContent: formatParamsContent({ ...values, infoList: infoList }),
         ...(type === DetailType.EDIT ? { id } : {}),
       };
-      console.log('payload', payload);
+
       setLoading(true);
-      const result = await terminalParamUpdate(type, payload);
+      const fetchUrl = type === DetailType.EDIT ? terminalParamsEdit : terminalParamAdd;
+      const result = await fetchUrl(payload);
       setLoading(false);
       invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
       notification.success({ message: '操作成功！' });
