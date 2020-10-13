@@ -29,3 +29,6 @@ export const advertInfoEdit = (params: any): Promise<any> => {
 
 export const advertInfoRemove = (id: number) =>
   ApiRequest.post(`/cpay-admin/advert/info/advertRemove`, { ids: id });
+
+export const advertAdd = (params: any) =>
+  ApiRequest.post(`/cpay-admin/advert/info/advertAdd`, params);

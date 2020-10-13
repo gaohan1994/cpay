@@ -133,6 +133,13 @@ export default () => {
         formButtonProps={{
           submit,
           reset,
+          extraButtons: [{
+            title: '新增',
+            type: 'primary',
+            onClick: () => {
+              history.push(`/advertisement/apply/add`)
+            }
+          }]
         }}
       />
       <Table

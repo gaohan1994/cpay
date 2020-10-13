@@ -2,14 +2,15 @@
  * 模块路由配置
  * @Author: Ghan
  * @Date: 2020-07-20 17:28:31
- * @Last Modified by: Ghan
- * @Last Modified time: 2020-07-20 17:29:02
+ * @Last Modified by: centerm.gaohan
+ * @Last Modified time: 2020-10-13 09:53:29
  */
 import { GlobalOutlined } from '@ant-design/icons';
 import Advertisementapple from '@/pages/advertisement/apply';
 import Advertisementreview from '@/pages/advertisement/review';
 import Advertisementreviewdetail from '@/pages/advertisement/review/detail';
 import AdvertisementApplyUpdate from '@/pages/advertisement/apply/update';
+import AdvertisementAdd from '@/pages/advertisement/add';
 
 export const AdvertisementMenu = {
   name: '广告管理',
@@ -42,6 +43,13 @@ const routerConfig: any[] = [
     path: '/advertisement/apply/update',
     name: '广告申请详情',
     component: AdvertisementApplyUpdate,
+    exact: true,
+    inMenu: false,
+  },
+  {
+    path: '/advertisement/apply/add',
+    name: '广告新增',
+    component: AdvertisementAdd,
     exact: true,
     inMenu: false,
   },

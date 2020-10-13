@@ -3,7 +3,7 @@ import { Form, DatePicker, Button, Upload, notification } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { useStore } from '@/pages/common/costom-hooks';
 import { useSelectorHook } from '@/common/redux-util';
-import {} from '@/component/form';
+import { } from '@/component/form';
 import { CustomFormItems } from '@/component/custom-form';
 import {
   renderTreeSelect,
