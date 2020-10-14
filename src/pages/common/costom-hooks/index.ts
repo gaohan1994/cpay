@@ -78,8 +78,14 @@ export function useStore(dictType: string[]): CommonHooksState {
   useEffect(() => {
     /**
      * 请求机构数据
+     * @time 1014加入缓存机制，全局请求一次
      */
-    getDeptTreeData(getDeptCallback);
+    if (state.deptData.length === 0) {
+      getDeptTreeData(getDeptCallback);
+    }
+  }, [state.deptData])
+
+  useEffect(() => {
 
     /**
      * 请求字典数据

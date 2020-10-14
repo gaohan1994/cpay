@@ -252,7 +252,7 @@ export default () => {
       render: (key, item: any) => (
         <a
           onClick={() => {
-            history.push(`/terminal/message-detail?id=${item.id}`);
+            history.push(`/terminal/message/detail?id=${item.id}`);
           }}
         >
           详情

@@ -92,7 +92,6 @@ function CommonForm(props: Props) {
       return renderDatePickerForm(item);
     }
   };
-  console.log('count', count);
   return (
     <div>
       <Form form={form}>

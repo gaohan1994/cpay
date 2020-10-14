@@ -27,7 +27,7 @@ export const terminalGroupSetAdd = async (
   callback?: (data: any) => void
 ) => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/groupSet/getGroupSet`,
+    `/cpay-admin/terminal/groupSet/groupSetAdd`,
     params
   );
   callback && callback(result);

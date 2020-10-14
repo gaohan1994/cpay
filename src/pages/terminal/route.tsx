@@ -2,8 +2,8 @@
  * 终端模块路由配置
  * @Author: Ghan
  * @Date: 2020-07-20 17:28:31
- * @Last Modified by: Ghan
- * @Last Modified time: 2020-07-20 17:29:02
+ * @Last Modified by: centerm.gaohan
+ * @Last Modified time: 2020-10-14 10:08:27
  */
 
 import { AndroidOutlined } from '@ant-design/icons';
@@ -42,7 +42,7 @@ const routerConfig: any[] = [
   },
   {
     // 终端信息管理
-    path: '/terminal/message-detail',
+    path: '/terminal/message/detail',
     name: '终端信息管理详情',
     component: TerminalmessageDetail,
     inMenu: false,
@@ -54,14 +54,6 @@ const routerConfig: any[] = [
     path: '/terminal/params',
     component: Terminalparams,
     exact: true,
-  },
-  {
-    // 终端参数查询
-    name: '终端参数管理',
-    path: '/terminal/params-detail',
-    component: TerminalparamsDetail,
-    exact: true,
-    inMenu: false,
   },
   {
     // 终端参数查询
@@ -94,16 +86,16 @@ const routerConfig: any[] = [
   },
   {
     // 终端厂商管理
-    name: '终端厂商管理',
-    path: '/terminal/factory-add',
+    name: '终端厂商新增',
+    path: '/terminal/factory/add',
     component: TerminalfactoryDetail,
     exact: true,
     inMenu: false,
   },
   {
     // 终端厂商管理
-    name: '终端厂商管理',
-    path: '/terminal/factory-edit',
+    name: '终端厂商修改',
+    path: '/terminal/factory/edit',
     component: TerminalfactoryDetail,
     exact: true,
     inMenu: false,
@@ -117,14 +109,14 @@ const routerConfig: any[] = [
   },
   {
     name: '型号新增',
-    path: '/terminal/model-add',
+    path: '/terminal/model/add',
     component: TerminalmodelAdd,
     inMenu: false,
     exact: true,
   },
   {
     name: '型号修改',
-    path: '/terminal/model-edit',
+    path: '/terminal/model/edit',
     component: TerminalmodelAdd,
     inMenu: false,
     exact: true,

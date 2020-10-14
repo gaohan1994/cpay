@@ -35,3 +35,9 @@ export const firmAdd = async (params: any) => {
   const result = await ApiRequest.post(`/cpay-admin/terminal/firm/firmAdd`, params);
   return result;
 };
+
+export const firmRemove = async (params: any) => {
+  const result = await ApiRequest.post(`/cpay-admin/terminal/firm/firmRemove`, params);
+  return result;
+};
+

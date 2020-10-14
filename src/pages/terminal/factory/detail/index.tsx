@@ -47,12 +47,12 @@ export default () => {
       const fields = form.getFieldsValue();
       const payload = isEdit
         ? {
-            id: currentModel.id,
-            ...fields,
-          }
+          id: currentModel.id,
+          ...fields,
+        }
         : {
-            ...fields,
-          };
+          ...fields,
+        };
 
       const fetchUrl = isEdit ? firmEdit : firmAdd;
       const result = await fetchUrl(payload);
@@ -70,7 +70,7 @@ export default () => {
   const forms: CustomFromItem[] = [
     {
       label: '厂商代码',
-      key: 'firmId',
+      key: 'code',
       requiredType: 'input' as any,
     },
     {
@@ -79,16 +79,16 @@ export default () => {
       requiredType: 'input' as any,
     },
     {
-      label: '终端公钥',
-      key: 'publicKey',
-      render: () => {
-        return <TextArea />;
-      },
-    },
-    {
       label: 'TUSN标识',
       key: 'tusnHeader',
       requiredType: 'input' as any,
+    },
+    {
+      label: '终端公钥',
+      key: 'publicKey',
+      render: () => {
+        return <TextArea rows={8} />;
+      },
     },
   ];
   return (

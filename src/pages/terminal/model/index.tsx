@@ -115,7 +115,7 @@ export default () => {
   ];
 
   const onAdd = async () => {
-    history.push(`/terminal/model-add`);
+    history.push(`/terminal/model/add`);
   };
 
   const onDelete = async (id: string) => {
@@ -144,7 +144,7 @@ export default () => {
 
   const onEdit = async (item: any) => {
     console.log('edit');
-    history.push(`/terminal/model-edit?id=${item.id}`);
+    history.push(`/terminal/model/edit?id=${item.id}`);
   };
   return (
     <div>

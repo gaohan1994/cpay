@@ -2,6 +2,26 @@ import ApiRequest, { jsonToQueryString } from '@/common/request-util';
 import { FetchField, ITerminalFirmItem, ITerminalType } from '../types';
 import { RESPONSE_CODE } from '@/common/config';
 
+
+/**
+ * 查询终端厂商列表
+ * @param params
+ * @param callback
+ */
+export const terminalFirmListPage = async (
+  params: FetchField.TerminalFirmListAll,
+  callback?: (data: ITerminalFirmItem[]) => void
+): Promise<any> => {
+  const result = await ApiRequest.post(
+    `/cpay-admin/terminal/firm/firmList`,
+    params
+  );
+  callback && result &&
+    result.code === RESPONSE_CODE.success && result &&
+    callback(result.data.rows);
+  return result;
+};
+
 /**
  * 查询终端厂商列表
  * @param params

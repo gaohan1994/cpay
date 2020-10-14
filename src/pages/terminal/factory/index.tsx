@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Table, Input, Col, Button, notification, Modal } from 'antd';
+import { Form, Table, notification, Modal } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { PlusOutlined, CheckOutlined, CloseOutlined } from '@ant-design/icons';
@@ -9,10 +9,10 @@ import { FormItem, FormItmeType } from '@/component/form/type';
 import Forms from '@/component/form';
 import { useStore } from '@/pages/common/costom-hooks';
 import { formatPaginate } from '@/common/request-util';
-import { RESPONSE_CODE, getDownloadPath, BASE_URL } from '@/common/config';
+import { RESPONSE_CODE, BASE_URL } from '@/common/config';
 import invariant from 'invariant';
-import { terminalFirmList } from '../constants';
-import { changeStatus } from './constants';
+import { terminalFirmListPage, } from '../constants';
+import { changeStatus, firmRemove } from './constants';
 import { useHistory } from 'react-router-dom';
 export default () => {
   useStore([]);
@@ -21,7 +21,7 @@ export default () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]); // 选中的列的key值列表
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: PaginatedParams[0], tableProps: any) => {
-      return terminalFirmList({
+      return terminalFirmListPage({
         ...formatPaginate(paginatedParams),
         ...tableProps,
       });
@@ -77,11 +77,11 @@ export default () => {
   };
 
   const onAdd = async () => {
-    history.push(`/terminal/factory-add`);
+    history.push(`/terminal/factory/add`);
   };
 
   const onEdit = async (item: any) => {
-    history.push(`/terminal/factory-edit?id=${item.id}`);
+    history.push(`/terminal/factory/edit?id=${item.id}`);
   };
 
   const columns = createTableColumns([
@@ -160,6 +160,9 @@ export default () => {
       cancelText: '取消',
       onOk: async () => {
         try {
+          const result = await firmRemove({ ids: id });
+          invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
+          notification.success({ message: '删除成功' });
           submit();
         } catch (error) {
           notification.warn({ message: error.message });
