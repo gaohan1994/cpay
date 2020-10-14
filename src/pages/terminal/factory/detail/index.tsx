@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import { RESPONSE_CODE } from '@/common/config';
 import invariant from 'invariant';
 import { formatSearch } from '@/common/request-util';
-import { firmEdit, terminalFirmDetail, firmAdd } from '../constants';
+import { firmEdit, terminalFirmDetail, firmAdd, checkFirmCodeUnique } from '../constants';
 
 const { TextArea } = Input;
 
@@ -15,8 +15,6 @@ export default () => {
   const history = useHistory();
   const [form] = Form.useForm();
   const [currentModel, setCurrentModel] = useState({} as any);
-  const [terminalFirmList, setTerminalFirmList] = useState([] as any[]);
-  const [firmValue, setFirmValue] = useState('');
   const [error, setError] = useState<any[]>([]);
 
   useEffect(() => {
@@ -26,7 +24,7 @@ export default () => {
       terminalFirmDetail(field.id).then((response: any) => {
         if (response.code === RESPONSE_CODE.success) {
           form.setFieldsValue({
-            firmId: response.data.code,
+            code: response.data.code,
             firmName: response.data.firmName,
             publicKey: response.data.publicKey,
             tusnHeader: response.data.tusnHeader,
@@ -39,12 +37,16 @@ export default () => {
 
   const onSubmit = async () => {
     try {
-      await form.validateFields();
+      const fields = await form.validateFields();
+
+      const checkResult = await checkFirmCodeUnique({ code: fields.code });
+      console.log('checkResult', checkResult);
+      invariant(checkResult.code === RESPONSE_CODE.success && checkResult.data === false, checkResult.msg || ' ');
+
       const { search } = history.location;
       const field = formatSearch(search);
       const isEdit = !!field.id;
 
-      const fields = form.getFieldsValue();
       const payload = isEdit
         ? {
           id: currentModel.id,
@@ -60,7 +62,8 @@ export default () => {
       notification.success({ message: isEdit ? '修改成功！' : '新增成功！' });
       history.goBack();
     } catch (errorInfo) {
-      setError(errorInfo.errorFields);
+      errorInfo.message && notification.warn({ message: errorInfo.message });
+      errorInfo.errorFields && setError(errorInfo.errorFields);
     }
   };
 
@@ -91,6 +94,11 @@ export default () => {
       },
     },
   ];
+
+  let fieldLabels: any = {};
+  forms.forEach((item) => {
+    fieldLabels[item.key] = item.label
+  })
   return (
     <div style={{ paddingTop: 10 }}>
       <Form
@@ -99,7 +107,7 @@ export default () => {
         style={{ backgroundColor: 'white' }}
       >
         <CustomFormItems items={forms} singleCol={true} />
-        <FixedFoot errors={error} fieldLabels={[]}>
+        <FixedFoot errors={error} fieldLabels={fieldLabels}>
           <Button type="primary" onClick={onSubmit}>
             提交
           </Button>

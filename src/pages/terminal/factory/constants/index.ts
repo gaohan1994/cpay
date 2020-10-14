@@ -41,3 +41,7 @@ export const firmRemove = async (params: any) => {
   return result;
 };
 
+export const checkFirmCodeUnique = async (params: any) => {
+  const result = await ApiRequest.post(`/cpay-admin/terminal/firm/checkFirmCodeUnique`, params);
+  return result;
+};

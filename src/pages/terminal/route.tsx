@@ -3,7 +3,7 @@
  * @Author: Ghan
  * @Date: 2020-07-20 17:28:31
  * @Last Modified by: centerm.gaohan
- * @Last Modified time: 2020-10-14 10:08:27
+ * @Last Modified time: 2020-10-14 10:13:56
  */
 
 import { AndroidOutlined } from '@ant-design/icons';
@@ -135,20 +135,6 @@ const routerConfig: any[] = [
     component: Terminalapplication,
     exact: true,
   },
-  // {
-  //   // 商户信息查询
-  //   name: '商户信息查询',
-  //   path: '/terminal/merchant',
-  //   component: Terminalmerchant,
-  //   exact: true
-  // },
-  // {
-  //   // 终端高级查询
-  //   name: '终端高级查询',
-  //   path: '/terminal/query',
-  //   component: Terminalquery,
-  //   exact: true,
-  // },
   {
     path: '/terminal/acquiring',
     name: '终端收单信息',
