@@ -31,11 +31,26 @@ export default () => {
     groupData: [] as ITerminalGroupByDeptId[], // 终端组别列表
     advertisement: {} as AdvertisementDetail,
   };
+  const [commonFormProps, setCommonFormProps] = useState({});
+  const [isDetail, setIsDetail] = useState(false);
   const [deptId, setDeptId] = useState(initState.deptId);
   const [groupData, setTerminalGroupList] = useState(initState.groupData);
   const [imageFileList, setImageFileList] = useState([] as any[]);
   const [videoFileList, setVideoFileList] = useState([] as any[]);
   const [advertisement, setAdvertisement] = useState(initState.advertisement);
+
+  // 是否是详情
+  useEffect(() => {
+    if (window.location.href.indexOf('detail') >= 0) {
+      setIsDetail(true);
+    }
+  }, [window.location]);
+
+  useEffect(() => {
+    if (!!isDetail) {
+      setCommonFormProps({ disabled: true });
+    }
+  }, [isDetail]);
 
   useEffect(() => {
     const params = formatSearch(history.location.search);
@@ -341,11 +356,13 @@ export default () => {
             {videoFileList.length > 0 ? null : '上传'}
           </Upload>
         </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            保存
-          </Button>
-        </Form.Item>
+        {!isDetail && (
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              保存
+            </Button>
+          </Form.Item>
+        )}
       </Form>
     </div>
   );

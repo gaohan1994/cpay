@@ -3,7 +3,7 @@
  * @Author: Ghan
  * @Date: 2020-07-20 17:28:31
  * @Last Modified by: centerm.gaohan
- * @Last Modified time: 2020-10-13 09:53:29
+ * @Last Modified time: 2020-10-15 09:33:40
  */
 import { GlobalOutlined } from '@ant-design/icons';
 import Advertisementapple from '@/pages/advertisement/apply';
@@ -41,6 +41,13 @@ const routerConfig: any[] = [
   },
   {
     path: '/advertisement/apply/update',
+    name: '广告申请修改',
+    component: AdvertisementApplyUpdate,
+    exact: true,
+    inMenu: false,
+  },
+  {
+    path: '/advertisement/apply/detail',
     name: '广告申请详情',
     component: AdvertisementApplyUpdate,
     exact: true,

@@ -52,12 +52,14 @@ export default () => {
       title: '操作',
       render: (item: any) => (
         <div>
+          <a onClick={() => history.push(`/advertisement/apply/detail?id=${item.id}`)}>详情</a>
+          {` | `}
           <a
             onClick={() =>
               history.push(`/advertisement/apply/update?id=${item.id}`)
             }
           >
-            审核
+            修改
           </a>
           {` | `}
           <a onClick={() => onDelete(item.id)}>删除</a>
@@ -90,7 +92,7 @@ export default () => {
     },
     {
       title: '有效起始时间',
-      dataIndex: 'createTime',
+      dataIndex: 'startTime',
     },
     {
       title: '审核状态',

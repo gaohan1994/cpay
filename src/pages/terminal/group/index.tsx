@@ -89,12 +89,22 @@ export default () => {
       title: '新增',
       type: 'primary',
       icon: <PlusOutlined />,
-      onClick: setTrue,
+      onClick: () => {
+        modalForm.setFieldsValue({
+          name: '',
+          deptId: '',
+          remark: '',
+        });
+        setEditId('');
+        setModalTitle('新增');
+        setTrue();
+      },
     },
   ];
 
-  const onAdd = async (values: any) => {
+  const onAdd = async () => {
     try {
+      const values: any = await modalForm.getFieldsValue();
       const payload = {
         ...values,
         ...(modalTitle === '修改' && editId ? { id: editId } : {}),
@@ -107,7 +117,7 @@ export default () => {
       notification.success({ message: `${modalTitle}分组成功!` });
       submit();
     } catch (error) {
-      notification.warn({ message: error.message });
+      error.message && notification.warn({ message: error.message });
     }
   };
 
@@ -160,8 +170,8 @@ export default () => {
         okText="确定"
         visible={modalVisible}
         maskClosable
-        footer={null}
-        // onOk={onAdd}
+        // footer={null}
+        onOk={onAdd}
         // confirmLoading={confirmLoading}
         onCancel={() => {
           setModalTitle('新增');
@@ -215,12 +225,6 @@ export default () => {
             ]}
           >
             <TextArea style={{ minHeight: 150 }} />
-          </Item>
-          <Item>
-            <Button>取消</Button>
-            <Button type="primary" htmlType="submit" style={{ marginLeft: 12 }}>
-              确定
-            </Button>
           </Item>
         </Form>
       </Modal>

@@ -62,14 +62,12 @@ function Page(props: Props) {
     },
     {
       title: '有效起始时间',
-      dataIndex: 'createTime',
+      dataIndex: 'startTime',
     },
     {
       title: '审核状态',
       dataIndex: 'status',
-      // render: (item) => {
-      //   return <span>{item === 1 ? '通过' : '不通过'}</span>;
-      // },
+      dictType: 'advert_status',
     },
   ]);
 
