@@ -36,5 +36,14 @@ export const BASIC_CONFIG = {
 };
 
 export const getDownloadPath = (filename: string): string => {
-  return `${BASE_URL}/cpay-admin/tmp/download?fileName=${filename}`;
+  const href = `${BASE_URL}/cpay-admin/tmp/download?fileName=${filename}`;
+
+  const body = document.getElementsByTagName('body')[0];
+  const downloadForm = document.createElement('form');
+  downloadForm.method = 'POST';
+  downloadForm.action = href;
+  body.appendChild(downloadForm);
+  downloadForm.submit();
+  downloadForm.remove();
+  return '';
 };

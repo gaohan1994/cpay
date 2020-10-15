@@ -50,7 +50,6 @@ function CommonForm(props: Props) {
   const { height, width } = useWindowSize();
 
   useEffect(() => {
-    console.log('width', width);
     if (width <= 768) {
       setCount(3);
       return;

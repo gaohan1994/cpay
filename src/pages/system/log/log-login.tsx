@@ -1,8 +1,8 @@
 /*
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-14 16:15:09 
- * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-14 16:27:28
+ * @Last Modified by: centerm.gaohan
+ * @Last Modified time: 2020-10-14 15:16:44
  * 
  * @todo 登录日志
  */
@@ -166,7 +166,7 @@ function SystemLog(props: Props) {
           invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
 
           const href = getDownloadPath(result.data);
-          window.open(href, '_blank');
+          // window.open(href, '_blank');
           notification.success({ message: '导出成功' });
         } catch (error) {
           notification.warn({ message: error.message });

@@ -1,8 +1,8 @@
 /*
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-01 11:44:53 
- * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-07 15:46:47
+ * @Last Modified by: centerm.gaohan
+ * @Last Modified time: 2020-10-14 15:17:24
  * 
  * @todo 封装的终端集合选择表单
  */
@@ -221,7 +221,7 @@ export function FormTusns(props: Props) {
     const res = await taskDownloadJobImportTemplate();
     if (res && res.code === RESPONSE_CODE.success) {
       const href = getDownloadPath(res.data);
-      window.open(href, '_blank');
+      // window.open(href, '_blank');
     } else {
       notification.error({ message: res && res.msg || '下载模版失败' });
     }

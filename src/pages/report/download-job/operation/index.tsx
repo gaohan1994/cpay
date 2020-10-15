@@ -1,8 +1,8 @@
 /*
  * @Author: centerm.gaozhiying 
  * @Date: 2020-08-26 11:27:53 
- * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-11 16:35:06
+ * @Last Modified by: centerm.gaohan
+ * @Last Modified time: 2020-10-14 15:16:37
  * 
  * @todo 软件更新执行情况查询
  */
@@ -163,7 +163,7 @@ function Page(props: Props) {
           invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '导出失败，请重试');
           if (result.data) {
             const href = getDownloadPath(result.data);
-            window.open(href, '_blank');
+            // window.open(href, '_blank');
           }
         } catch (error) {
           notification.warn({ message: error.message });

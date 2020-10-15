@@ -1,8 +1,8 @@
 /*
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-14 14:46:54 
- * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-14 15:32:46
+ * @Last Modified by: centerm.gaohan
+ * @Last Modified time: 2020-10-14 15:16:41
  * 
  * @todo 字典管理
  */
@@ -293,7 +293,7 @@ function Page(props: Props) {
           invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
 
           const href = getDownloadPath(result.data);
-          window.open(href, '_blank');
+          // window.open(href, '_blank');
           notification.success({ message: '导出成功' });
         } catch (error) {
           notification.warn({ message: error.message });
@@ -378,7 +378,7 @@ function Page(props: Props) {
     checkKeyUniqueByType(param)
       .then(function (res) {
         if (res && res.code === RESPONSE_CODE.success) {
-          flag = res.data === false;
+          flag = res.data === true;
         }
         if (!flag) {
           callback();
@@ -401,7 +401,8 @@ function Page(props: Props) {
       label: fieldLabels.dictValue,
       key: 'dictValue',
       requiredType: 'input' as any,
-      rules: [
+      // 改成新增才需要校验，修改不用
+      rules: editItem.dictId ? [] : [
         { validator: checkDictValue },
         {
           required: true,
@@ -438,7 +439,6 @@ function Page(props: Props) {
       render: () => <TextArea />
     },
   ];
-
   return (
     <Spin spinning={loading}>
       <Forms
@@ -459,7 +459,7 @@ function Page(props: Props) {
       />
       <Modal
         visible={modalVisible}
-        title={editItem.dictId ? "新增字典数据" : "修改字典数据"}
+        title={editItem.dictId ? "修改字典数据" : "新增字典数据"}
         onCancel={hideModal}
         onOk={handleOk}
       >

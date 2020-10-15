@@ -1,8 +1,8 @@
 /*
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-14 14:46:54 
- * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-14 15:32:46
+ * @Last Modified by: centerm.gaohan
+ * @Last Modified time: 2020-10-14 15:16:39
  * 
  * @todo 字典管理
  */
@@ -241,6 +241,8 @@ function Page(props: Props) {
    * @todo 弹出新增弹窗
    */
   const onAdd = () => {
+    setEditItem({});
+    addForm.setFieldsValue({});
     showModal();
   }
 
@@ -256,7 +258,7 @@ function Page(props: Props) {
           invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
 
           const href = getDownloadPath(result.data);
-          window.open(href, '_blank');
+          // window.open(href, '_blank');
           notification.success({ message: '导出成功' });
         } catch (error) {
           notification.warn({ message: error.message });
@@ -374,7 +376,7 @@ function Page(props: Props) {
       label: fieldLabels.dictType,
       key: 'dictType',
       requiredType: 'input' as any,
-      rules: [
+      rules: editItem.dictId ? [] : [
         { validator: checkDictType },
         {
           required: true,
@@ -401,7 +403,6 @@ function Page(props: Props) {
       render: () => <TextArea />
     },
   ];
-
   return (
     <Spin spinning={loading}>
       <Forms
@@ -422,7 +423,7 @@ function Page(props: Props) {
       />
       <Modal
         visible={modalVisible}
-        title={editItem.dictId ? "新增字典" : "修改字典"}
+        title={editItem.dictId ? "修改字典" : "新增字典"}
         onCancel={hideModal}
         onOk={handleOk}
       >

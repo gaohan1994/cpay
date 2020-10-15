@@ -39,7 +39,7 @@ export default () => {
           invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
 
           const href = getDownloadPath(result.data);
-          window.open(href, '_blank');
+          // window.open(href, '_blank');
           notification.success({ message: '导出成功' });
         } catch (error) {
           notification.warn({ message: error.message });

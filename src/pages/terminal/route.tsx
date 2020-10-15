@@ -3,7 +3,7 @@
  * @Author: Ghan
  * @Date: 2020-07-20 17:28:31
  * @Last Modified by: centerm.gaohan
- * @Last Modified time: 2020-10-14 10:13:56
+ * @Last Modified time: 2020-10-14 11:11:41
  */
 
 import { AndroidOutlined } from '@ant-design/icons';
@@ -24,6 +24,8 @@ import Terminalquery from '@/pages/terminal/query';
 import Terminalsystem from '@/pages/terminal/system';
 import TerminalAcquiring from '@/pages/terminal/acquiring';
 import TerminalAcquiringDetail from '@/pages/terminal/acquiring/detail';
+import TerminalTemplate from '@/pages/terminal/template';
+import TerminalTemplateDetail from '@/pages/terminal/template/detail';
 
 export const TerminalMenu = {
   name: '终端管理',
@@ -148,6 +150,26 @@ const routerConfig: any[] = [
     component: TerminalAcquiringDetail,
     exact: true,
     inMenu: false,
+  },
+  {
+    path: '/terminal/template',
+    name: '终端参数模板',
+    component: TerminalTemplate,
+    exact: true,
+  },
+  {
+    path: '/terminal/template/add',
+    name: '参数模板新增',
+    component: TerminalTemplateDetail,
+    exact: true,
+    inMenu: false
+  },
+  {
+    path: '/terminal/template/edit',
+    name: '参数模板修改',
+    component: TerminalTemplateDetail,
+    exact: true,
+    inMenu: false
   },
 ];
 

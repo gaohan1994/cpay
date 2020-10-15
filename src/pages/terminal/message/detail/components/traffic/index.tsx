@@ -32,7 +32,7 @@ export default (props: Props) => {
           new Date().getMonth() >= 9
             ? new Date().getMonth() + 1
             : `0${new Date().getMonth() + 1}`
-        }`,
+          }`,
       });
     },
     {
@@ -80,7 +80,7 @@ export default (props: Props) => {
           invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
 
           const href = getDownloadPath(result.data);
-          window.open(href, '_blank');
+          // window.open(href, '_blank');
           notification.success({ message: '导出成功' });
         } catch (error) {
           notification.warn({ message: error.message });

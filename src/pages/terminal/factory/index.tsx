@@ -12,7 +12,7 @@ import { formatPaginate } from '@/common/request-util';
 import { RESPONSE_CODE, BASE_URL } from '@/common/config';
 import invariant from 'invariant';
 import { terminalFirmListPage, } from '../constants';
-import { changeStatus, firmRemove } from './constants';
+import { changeStatus, firmRemove, downloadPublicKey } from './constants';
 import { useHistory } from 'react-router-dom';
 export default () => {
   useStore([]);
@@ -48,8 +48,10 @@ export default () => {
 
   const onDownload = async (id: any) => {
     try {
-      const href = `${BASE_URL}/cpay-admin/terminal/firm/downloadPublicKey/${id}`;
-      window.open(href, '_blank');
+      const result = await downloadPublicKey(id);
+      // invariant(result.code === recode)
+      // const href = `${BASE_URL}/cpay-admin/terminal/firm/downloadPublicKey/${id}`;
+      // window.open(href, '_blank');
       notification.success({ message: '下载成功！' });
     } catch (error) {
       notification.warn({ message: error.message });
@@ -155,7 +157,7 @@ export default () => {
   const onDelete = async (id: string) => {
     Modal.confirm({
       title: '提示',
-      content: `确认要删除选中的组别么?`,
+      content: `确认要删除选中的厂商么?`,
       okText: '确定',
       cancelText: '取消',
       onOk: async () => {
