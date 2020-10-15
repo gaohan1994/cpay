@@ -72,16 +72,16 @@ export function UseCommonSelectData(
     .map((item, index) => {
       return !!item.dictType
         ? {
-            formName: formName[index] || item.dictType,
-            placeholder: item.dictName,
-            formType: FormItmeType.Select,
-            selectData: item.data.map((option) => {
-              return {
-                value: option.dictValue,
-                title: option.dictLabel,
-              };
-            }),
-          }
+          formName: formName[index] || item.dictType,
+          placeholder: item.dictName,
+          formType: FormItmeType.Select,
+          selectData: item.data.map((option) => {
+            return {
+              value: option.dictValue,
+              title: option.dictLabel,
+            };
+          }),
+        }
         : (undefined as any);
     })
     .filter((d) => !!d);

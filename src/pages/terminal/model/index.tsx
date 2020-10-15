@@ -126,15 +126,16 @@ export default () => {
       cancelText: '取消',
       onOk: async () => {
         try {
-          terminalTypeRemove({ ids: `${id}` }).then((response) => {
-            console.log('response');
-            if (response.code === RESPONSE_CODE.success) {
-              notification.success({ message: '删除成功！' });
-            } else {
-              notification.success({ message: '删除失败！' });
-            }
-          });
-          submit();
+          terminalTypeRemove({ ids: `${id}` })
+            .then((response) => {
+              console.log('response');
+              if (response.code === RESPONSE_CODE.success) {
+                notification.success({ message: '删除成功！' });
+                submit();
+              } else {
+                notification.success({ message: '删除失败！' });
+              }
+            });
         } catch (error) {
           notification.warn({ message: error.message });
         }

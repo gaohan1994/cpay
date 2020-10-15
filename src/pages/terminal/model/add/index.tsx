@@ -56,12 +56,12 @@ export default () => {
       const fields = form.getFieldsValue();
       const payload = isEdit
         ? {
-            id: currentModel.id,
-            ...fields,
-          }
+          id: currentModel.id,
+          ...fields,
+        }
         : {
-            ...fields,
-          };
+          ...fields,
+        };
       const result = await fetchUrl(payload);
       invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
       notification.success({ message: isEdit ? '修改成功！' : '添加成功！' });
@@ -106,8 +106,8 @@ export default () => {
       render: () => {
         return (
           <Radio.Group>
-            <Radio value={0}>是</Radio>
-            <Radio value={1}>否</Radio>
+            <Radio value={1}>是</Radio>
+            <Radio value={2}>否</Radio>
           </Radio.Group>
         );
       },

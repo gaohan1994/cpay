@@ -104,7 +104,8 @@ function CommonForm(props: Props) {
                   return item.render();
                 } else {
                   const { span } = mergeItem;
-                  const defaultSpan = 24 / count;
+                  const isDeptId = item.formName === 'deptId';
+                  const defaultSpan = isDeptId ? (24 / count) * 2 : 24 / count;
                   return (
                     <Col
                       span={
