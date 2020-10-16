@@ -3,7 +3,7 @@
  * @Author: centerm.gaohan 
  * @Date: 2020-10-14 11:10:25 
  * @Last Modified by: centerm.gaohan
- * @Last Modified time: 2020-10-16 14:24:57
+ * @Last Modified time: 2020-10-16 16:34:52
  */
 import React, { useEffect, useState } from 'react';
 import { Form, Table, Button, notification, Input, Divider, Card, Modal, Row, Col } from 'antd';
@@ -36,7 +36,7 @@ import { formatSearch, formatListResult } from '@/common/request-util';
 import Forms from '@/component/form';
 import { useAntdTable } from 'ahooks';
 import { createTableColumns } from '@/component/table';
-import { merge } from 'lodash';
+import { merge, uniqBy } from 'lodash';
 import { UseDictRenderHelper } from '@/component/table/render';
 
 const { TextArea } = Input;
@@ -50,6 +50,16 @@ const FormItemLayout = {
   }
 }
 
+// 返回参数列表 去掉重复的和不含有当前app的
+function filterParams(list: any[], selectedApp: string): any[] {
+
+  const nextSelectedParams: any[] = merge([], list);
+  const nextList = uniqBy(nextSelectedParams, 'id').filter(i => String(i.applicableAppType) === String(selectedApp));
+  console.log('nextSelectedParams', nextSelectedParams);
+  console.log('selectedApp', selectedApp);
+  return nextList;
+}
+
 export default (props: any) => {
   const history = useHistory();
   const fields = formatSearch(props.location.search);
@@ -58,7 +68,8 @@ export default (props: any) => {
   const { deptTreeList, loading, dictList } = useStore(['acquiring_param_belong_app', 'acquiring_param_type', 'acquiring_param_template_type']);
   const [error, setError] = useState<any[]>([]);
   const isEdit = !!fields.id;
-
+  // init
+  const [init, setInit] = useState(false);
   // 用户选择的app类型
   const [selectedApp, setSelectedApp] = useState('');
   // 选择参数的modal visible
@@ -70,12 +81,15 @@ export default (props: any) => {
 
   // 选择参数
   const { tableProps, search }: any = useAntdTable(
-    (paginatedParams: any, tableProps: any) =>
-      acquiringList({
+    (paginatedParams: any, tableProps: any) => {
+      console.log('selectedApp', selectedApp);
+      return acquiringList({
         pageSize: paginatedParams.pageSize,
         pageNum: paginatedParams.current,
         ...tableProps,
-      }),
+        applicableAppType: selectedApp,
+      })
+    },
     {
       form: modalForm,
       formatResult: formatListResult,
@@ -89,14 +103,30 @@ export default (props: any) => {
         .then(result => {
           if (result.code === RESPONSE_CODE.success) {
             form.setFieldsValue({ ...result.data });
+            setSelectedApp(result.data.applicableAppType);
             setSelectedParams(result.data.terminalAcquiringParamList);
           }
         })
         .catch(errorInfo => {
           errorInfo.message && notification.warn({ message: errorInfo.message });
         })
+        .finally(() => {
+          setInit(true);
+        });
+    } else {
+      setInit(true);
     }
   }, [isEdit]);
+
+  // 修改 selectedApp 要判断
+  useEffect(() => {
+    if (!!init) {
+      console.log('selectedApp', selectedApp);
+      const nextList = filterParams(selectedParams, selectedApp);
+      console.log('nextList', nextList);
+      setSelectedParams(nextList);
+    }
+  }, [init, selectedApp]);
 
   const onFinish = async () => {
     try {
@@ -121,7 +151,15 @@ export default (props: any) => {
 
   // 打开params modal
   const onAddParams = () => {
-    setVisible(true);
+    // 县教研选择app了没
+    try {
+      invariant(!!selectedApp, '请先选择适用app');
+      setVisible(true);
+      submit();
+    } catch (error) {
+      notification.warn({ message: error.message });
+    }
+
   }
 
   // 选择好了参数
@@ -129,23 +167,24 @@ export default (props: any) => {
     try {
       invariant(selectedRowKeys.length > 0, '请选择要添加的参数');
       // 这里要去重
-      if (selectedParams.length === 0) {
-        setSelectedParams(selectedRowKeys);
-        setVisible(false);
-        return;
-      }
-      let hash: any = {};
-      const nextSelectedParams: any[] = merge([], selectedParams, selectedRowKeys);
-      nextSelectedParams.reduce((prevList, currentItem) => {
-        console.log('prevList', prevList);
-        if (!hash[currentItem.id]) {
-          hash[currentItem.id] = true;
-          prevList.push(currentItem)
-        }
-        return prevList;
-      }, []);
-      console.log('nextSelectedParams', nextSelectedParams);
-      setSelectedParams(nextSelectedParams);
+      // if (selectedParams.length === 0) {
+      //   setSelectedParams(selectedRowKeys);
+      //   setVisible(false);
+      //   return;
+      // }
+      // let hash: any = {};
+      // const nextSelectedParams: any[] = ;
+      // nextSelectedParams.reduce((prevList, currentItem) => {
+      //   console.log('prevList', prevList);
+      //   if (!hash[currentItem.id]) {
+      //     hash[currentItem.id] = true;
+      //     prevList.push(currentItem)
+      //   }
+      //   return prevList;
+      // }, []);
+      const nextList = filterParams(merge([], selectedParams, selectedRowKeys), selectedApp);
+      console.log('nextSelectedParams', nextList);
+      setSelectedParams(nextList);
       setVisible(false);
     } catch (error) {
       notification.warn({ message: error.message });
@@ -278,18 +317,6 @@ export default (props: any) => {
 
   const paramItemForm: any[] = [
     {
-      label: '应用类型',
-      key: 'applicableAppType',
-      render: (item: any) => {
-        const targetDict = dictList.acquiring_param_belong_app;
-        const targetDictItem =
-          targetDict &&
-          targetDict.data &&
-          targetDict.data.find((dictItem) => dictItem.dictValue === String(item.applicableAppType));
-        return <Input value={targetDictItem?.dictLabel} />
-      }
-    },
-    {
       label: '参数编号',
       key: 'paramCode',
     },
@@ -316,6 +343,18 @@ export default (props: any) => {
         return (
           <Input value={item.paramValueText || item.paramValueInt || item.paramValueFloat || item.paramValueDate || item.paramValueEnum || '--'} />
         )
+      }
+    },
+    {
+      label: '应用类型',
+      key: 'applicableAppType',
+      render: (item: any) => {
+        const targetDict = dictList.acquiring_param_belong_app;
+        const targetDictItem =
+          targetDict &&
+          targetDict.data &&
+          targetDict.data.find((dictItem) => dictItem.dictValue === String(item.applicableAppType));
+        return <Input value={targetDictItem?.dictLabel} />
       }
     },
   ];

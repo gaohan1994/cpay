@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying
  * @Date: 2020-09-01 14:37:54
  * @Last Modified by: centerm.gaohan
- * @Last Modified time: 2020-10-16 10:36:23
+ * @Last Modified time: 2020-10-16 14:32:30
  *
  * @todo 软件更新新增页面
  */
@@ -705,7 +705,6 @@ export default function Page() {
         }
       }
     } catch (errorInfo) {
-      console.log('Failed:', errorInfo);
       setError(errorInfo.errorFields);
     }
   };
@@ -726,7 +725,7 @@ export default function Page() {
 
   return (
     <Spin spinning={loading || dictLoading}>
-      <Form form={form}>
+      <Form form={form} style={{ paddingBottom: 100 }}>
         <Divider orientation="left">【终端信息】</Divider>
         <CustomFormItems items={terminalInfoForms} />
         <Divider orientation="left">【软件信息】</Divider>

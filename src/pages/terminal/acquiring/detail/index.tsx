@@ -159,6 +159,7 @@ export default (props: any) => {
         render: () => {
           return (
             <Input
+              type='number'
               // 如果不是文本类型则不能输入
               disabled={selectedParamsType !== '2'}
             />
@@ -173,6 +174,7 @@ export default (props: any) => {
         render: () => {
           return (
             <Input
+              type='number'
               // 如果不是浮点类型则不能输入
               disabled={selectedParamsType !== '3'}
             />

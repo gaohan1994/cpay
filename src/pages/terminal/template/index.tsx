@@ -3,7 +3,7 @@
  * @Author: centerm.gaohan 
  * @Date: 2020-10-14 09:54:41 
  * @Last Modified by: centerm.gaohan
- * @Last Modified time: 2020-10-16 11:35:03
+ * @Last Modified time: 2020-10-16 15:59:20
  */
 import React, { useState } from 'react';
 import { Form, Table, notification, Modal, Divider } from 'antd';
@@ -22,7 +22,7 @@ import history from '@/common/history-util';
 import { RESPONSE_CODE } from '@/common/config';
 
 export default () => {
-  const { deptList } = useStore([]);
+  const { deptList } = useStore(['acquiring_param_belong_app', 'acquiring_param_template_type']);
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);
 
   const [form] = Form.useForm();
@@ -54,7 +54,7 @@ export default () => {
       cancelText: '取消',
       onOk: async () => {
         try {
-          const result = await terminalTemplateRemove(item.id);
+          const result = await terminalTemplateRemove({ ids: item.id });
           invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
           notification.success({ message: '删除成功!' });
           submit();
@@ -67,9 +67,31 @@ export default () => {
 
   const forms: FormItem[] = [
     {
+      formName: 'deptId',
+      placeholder: '适用机构',
+      formType: FormItmeType.TreeSelectCommon,
+    },
+    {
       formName: 'templateName',
       formType: FormItmeType.Normal,
       placeholder: '请输入参数模板名称'
+    },
+    {
+      formName: 'templateName',
+      formType: FormItmeType.Normal,
+      placeholder: '模板编号'
+    },
+    {
+      formName: 'templateType',
+      placeholder: '模板类型',
+      formType: FormItmeType.SelectCommon,
+      dictList: 'acquiring_param_template_type',
+    },
+    {
+      formName: 'applicableAppType',
+      placeholder: '适用应用名称',
+      formType: FormItmeType.SelectCommon,
+      dictList: 'acquiring_param_belong_app',
     },
   ];
 
@@ -103,10 +125,12 @@ export default () => {
     {
       title: '模板类型',
       dataIndex: 'templateType',
+      dictType: 'acquiring_param_template_type'
     },
     {
       title: '适用应用名称',
       dataIndex: 'applicableAppType',
+      dictType: 'acquiring_param_belong_app'
     },
     {
       title: '新增时间',
