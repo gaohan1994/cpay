@@ -3,7 +3,7 @@
  * @Author: Ghan
  * @Date: 2020-07-20 17:28:31
  * @Last Modified by: centerm.gaohan
- * @Last Modified time: 2020-10-14 11:11:41
+ * @Last Modified time: 2020-10-16 13:57:31
  */
 
 import { AndroidOutlined } from '@ant-design/icons';
@@ -143,7 +143,6 @@ const routerConfig: any[] = [
     component: TerminalAcquiring,
     exact: true,
   },
-
   {
     path: '/terminal/acquiring/detail',
     name: '终端收单信息详情',

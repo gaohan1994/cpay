@@ -51,7 +51,7 @@ function fomartBreadData(pathname: string): ILayoutSiderSubMenu[] {
       }
     } else {
       const currentMenu = routerConfig.find(
-        (menu) => menu.path === `/${currentPathData.join('/')}`
+        (menu: any) => (menu.breadPath || menu.path) === `/${currentPathData.join('/')}`
       );
       if (currentMenu) {
         breads.push(currentMenu as any);
@@ -77,16 +77,16 @@ function Bread(props: Props) {
             {index === 0 || index === breads.length - 1 ? (
               breadItem.name
             ) : (
-              <Link
-                to={`${
-                  (breadItem.path as string).startsWith('/')
-                    ? breadItem.path
-                    : `/${breadItem.path}`
-                }`}
-              >
-                {breadItem.name}
-              </Link>
-            )}
+                <Link
+                  to={`${
+                    (breadItem.path as string).startsWith('/')
+                      ? breadItem.path
+                      : `/${breadItem.path}`
+                    }`}
+                >
+                  {breadItem.name}
+                </Link>
+              )}
           </Item>
         );
       })}

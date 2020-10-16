@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-14 14:46:54 
  * @Last Modified by: centerm.gaohan
- * @Last Modified time: 2020-10-14 15:16:39
+ * @Last Modified time: 2020-10-15 14:53:18
  * 
  * @todo 字典管理
  */
@@ -109,7 +109,7 @@ function Page(props: Props) {
       onOk: async () => {
         try {
           const param = {
-            ids: item.userId
+            ids: item.dictId
           }
           setLoading(true);
           const result = await systemDictRemove(param);
@@ -169,15 +169,18 @@ function Page(props: Props) {
   const columns = createTableColumns([
     {
       title: '操作',
-      render: (key, item) => (
-        <div>
-          <a onClick={() => onEdit(item)}>修改</a>
-          <Divider type="vertical" />
-          <a onClick={() => navToList(item)}>列表</a>
-          <Divider type="vertical" />
-          <a onClick={() => onRemove(item)}>删除</a>
-        </div>
-      ),
+      render: (key, item) => {
+        // console.log('item', item);
+        return (
+          <div>
+            <a onClick={() => onEdit(item)}>修改</a>
+            <Divider type="vertical" />
+            <a onClick={() => navToList(item)}>列表</a>
+            <Divider type="vertical" />
+            <a onClick={() => onRemove(item)}>删除</a>
+          </div>
+        )
+      },
       fixed: 'left',
       align: 'center',
       width: 150,

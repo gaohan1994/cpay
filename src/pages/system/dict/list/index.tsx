@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-14 14:46:54 
  * @Last Modified by: centerm.gaohan
- * @Last Modified time: 2020-10-14 15:16:41
+ * @Last Modified time: 2020-10-15 14:51:21
  * 
  * @todo 字典管理
  */
@@ -278,6 +278,15 @@ function Page(props: Props) {
    * @todo 弹出新增弹窗
    */
   const onAdd = () => {
+    setEditItem({});
+    addForm.setFieldsValue({
+      dictLabel: '',
+      dictValue: '',
+      dictType: '',
+      dictSort: '',
+      status: '',
+      remark: '',
+    });
     showModal();
   }
 

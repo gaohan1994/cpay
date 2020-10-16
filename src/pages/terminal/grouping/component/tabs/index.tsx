@@ -136,45 +136,45 @@ export default (props: Props) => {
   const extraButtons: any[] =
     currentTab === '1'
       ? [
-          {
-            title: '解除',
-            icon: <CheckOutlined />,
-            type: 'primary',
-            onClick: onSelectRowUpdate,
-          },
-        ]
+        {
+          title: '解除',
+          icon: <CheckOutlined />,
+          type: 'primary',
+          onClick: onSelectRowUpdate,
+        },
+      ]
       : [
-          {
-            title: '分组',
-            icon: <CheckOutlined />,
-            type: 'primary',
-            onClick: onSelectRowUpdate,
-          },
-          {
-            title: '导入',
-            icon: <ImportOutlined />,
-            type: 'primary',
-            onClick: () => setTrue(),
-          },
-        ];
+        {
+          title: '分组',
+          icon: <CheckOutlined />,
+          type: 'primary',
+          onClick: onSelectRowUpdate,
+        },
+        {
+          title: '导入',
+          icon: <ImportOutlined />,
+          type: 'primary',
+          onClick: () => setTrue(),
+        },
+      ];
 
   const columns = createTableColumns([
     {
       title: '终端序列号',
       dataIndex: 'tusn',
     },
-    // {
-    //   title: '终端厂商',
-    //   dataIndex: 'firmName',
-    // },
     {
-      title: '终端编号',
+      title: '终端厂商',
       dataIndex: 'firmName',
     },
-    // {
-    //   title: '商户编号',
-    //   dataIndex: 'merchantId',
-    // },
+    {
+      title: '商户编号',
+      dataIndex: 'merchantId',
+    },
+    {
+      title: '终端编号',
+      dataIndex: 'terminalCode',
+    },
     {
       title: '终端型号',
       dataIndex: 'terminalTypeName',
@@ -225,7 +225,7 @@ export default (props: Props) => {
                   columns={columns}
                   {...tableProps}
                   pagination={getStandardPagination(tableProps.pagination)}
-                  // scroll={{ x: 800 }}
+                // scroll={{ x: 800 }}
                 />
               </TabPane>
             );

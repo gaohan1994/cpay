@@ -21,6 +21,8 @@ export function useStore(dictType: string[]): CommonHooksState {
   const [useSelector, dispatch] = useRedux();
   const state = useSelector((state) => state.common);
 
+  const [timer, setTimer] = useState(0);
+
   const getDeptCallback = useCallback((deptData: GetDeptTreeDataCallback) => {
     const [data, treeData] = deptData;
     dispatch({
@@ -80,8 +82,9 @@ export function useStore(dictType: string[]): CommonHooksState {
      * 请求机构数据
      * @time 1014加入缓存机制，全局请求一次
      */
-    if (state.deptData.length === 0) {
+    if (state.deptData.length === 0 && timer < 3) {
       getDeptTreeData(getDeptCallback);
+      setTimer(prevTimer => prevTimer + 1);
     }
   }, [state.deptData])
 

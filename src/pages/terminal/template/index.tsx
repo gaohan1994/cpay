@@ -3,10 +3,10 @@
  * @Author: centerm.gaohan 
  * @Date: 2020-10-14 09:54:41 
  * @Last Modified by: centerm.gaohan
- * @Last Modified time: 2020-10-14 11:12:14
+ * @Last Modified time: 2020-10-16 11:35:03
  */
 import React, { useState } from 'react';
-import { Form, Table, notification, Modal } from 'antd';
+import { Form, Table, notification, Modal, Divider } from 'antd';
 import { useAntdTable } from 'ahooks';
 import invariant from 'invariant';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
@@ -79,12 +79,10 @@ export default () => {
       render: (item) => (
         <div>
           <a onClick={() => onEdit(item)}>修改</a>
-          {` | `}
+          <Divider type="vertical" />
           <a onClick={() => onDelete(item)}>删除</a>
         </div>
       ),
-      fixed: 'left',
-      width: 100,
     },
     {
       title: '模板编号',

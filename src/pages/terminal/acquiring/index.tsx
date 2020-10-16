@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Table, notification, Modal } from 'antd';
+import { Form, Table, notification, Modal, Divider } from 'antd';
 import { useAntdTable } from 'ahooks';
 import invariant from 'invariant';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
@@ -17,11 +17,12 @@ import { useStore } from '@/pages/common/costom-hooks';
 import history from '@/common/history-util';
 import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
 
-export default () => {
-  useStore([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);
+export default (props: any) => {
+  useStore(['acquiring_param_belong_app', 'acquiring_param_type']);
 
+  const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);
   const [form] = Form.useForm();
+  console.log('props', props);
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: PaginatedParams, tableProps: any) => {
       return terminalAcquiringList({ ...tableProps });
@@ -47,26 +48,25 @@ export default () => {
       invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
 
       const href = getDownloadPath(result.data);
-      // window.open(href, '_blank');
       notification.success({ message: '导出成功' });
     } catch (error) {
       notification.warn({ message: error.message });
     }
   };
 
-  const onDelete = async () => {
+  const onDelete = async (item?: any) => {
     try {
-      invariant(selectedRowKeys.length > 0, '请选择要删除的参数');
+      invariant(!!item || selectedRowKeys.length > 0, '请选择要删除的参数');
 
       Modal.confirm({
         title: '提示',
-        content: `确认要删除当前机构的参数吗?`,
+        content: `确认要删除参数吗?`,
         okText: '确定',
         cancelText: '取消',
         onOk: async () => {
           try {
             const result = await terminalAcquiringRemove({
-              ids: selectedRowKeys.join(','),
+              ids: item ? item.id : selectedRowKeys.join(','),
             });
             setSelectedRowKeys([]);
             invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
@@ -101,14 +101,21 @@ export default () => {
       render: (item) => (
         <div>
           <a onClick={() => onEdit(item)}>修改</a>
+          <Divider type='vertical' />
+          <a
+            onClick={() => {
+              onDelete(item);
+            }}
+          >
+            删除
+          </a>
         </div>
       ),
-      fixed: 'left',
-      width: 60,
     },
     {
       title: '应用类型',
       dataIndex: 'applicableAppType',
+      dictType: 'acquiring_param_belong_app',
     },
     {
       title: '参数编号',
@@ -121,18 +128,17 @@ export default () => {
     {
       title: '参数类型',
       dataIndex: 'paramType',
+      dictType: 'acquiring_param_type'
     },
     {
-      title: '长度',
-      dataIndex: 'paramLength',
-    },
-    {
-      title: '枚举值',
-      dataIndex: 'enumValue',
-    },
-    {
-      title: '小数位数',
-      dataIndex: 'decimalPlaces',
+      title: '参数值',
+      render: (item) => {
+        return (
+          <span>
+            {item.paramValueText || item.paramValueInt || item.paramValueFloat || item.paramValueDate || item.paramValueEnum || '--'}
+          </span>
+        )
+      }
     },
   ]);
 
