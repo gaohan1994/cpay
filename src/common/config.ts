@@ -16,6 +16,8 @@ export const isProduction = () => {
  * 测试环境     http://172.30.20.100:8089
  */
 export const BASE_URL = !isProduction()
+  // ? 'http://localhost:8080/cpay-admin'
+  // : 'http://localhost:8080/cpay-admin'
   ? 'http://172.30.20.100:48089'
   : 'http://172.30.20.100:48089';
 

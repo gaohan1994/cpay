@@ -10,7 +10,7 @@ export const terminalFlowList = async (
   callback?: (data: IResponseListResult<FlowItem>) => void
 ): Promise<IResponseListResult<FlowItem>> => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/flow/flowMonthList`,
+    `/cpay-admin/terminal/info/terminalInfoTerminalFlowMonthList`,
     params
   );
   callback && callback(result);
@@ -37,9 +37,12 @@ export const terminalPowerList = async (
   callback?: (data: IResponseListResult<ITerminalPower>) => void
 ): Promise<IResponseListResult<ITerminalPower>> => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/power/flowMonthExport`,
+    `/cpay-admin/terminal/power/powerList`,
     params
   );
   callback && callback(result);
   return result;
 };
+
+export const powerRemove = (params: any) =>
+  ApiRequest.post(`/cpay-admin/terminal/power/powerRemove`, params);

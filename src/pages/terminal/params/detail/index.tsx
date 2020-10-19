@@ -248,7 +248,7 @@ export default () => {
       requiredType: 'select',
       render: () =>
         renderTreeSelect({
-          disabled: !switchDept,
+          disabled: !switchDept || type === 'COPY',
           placeholder: '请选择所属机构',
           formName: 'deptId',
           formType: FormItmeType.TreeSelect,
