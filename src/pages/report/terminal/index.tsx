@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-09 11:16:42 
  * @Last Modified by: centerm.gaohan
- * @Last Modified time: 2020-10-19 14:47:15
+ * @Last Modified time: 2020-10-19 15:05:43
  * 
  * @todo 终端信息统计
  */
@@ -70,9 +70,19 @@ function Page(props: Props) {
     if (month >= 1 && month <= 9) {
       currentdate = year + "0" + month;
     }
+
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1;
+    const currentYear = currentDate.getFullYear();
+    const currentEndDate = currentYear + (currentMonth >= 1 && currentMonth <= 9 ? "0" : "") + currentMonth;
+    setEndTime(moment(currentEndDate));
     setValidStartTime(moment(currentdate));
     setStartTime(moment(currentdate));
-    form.setFieldsValue({ startTime: moment(currentdate), isShowAll: 0 });
+    form.setFieldsValue({
+      startTime: moment(currentdate),
+      endTime: moment(currentEndDate),
+      isShowAll: 0,
+    });
   }, []);
 
   /**
