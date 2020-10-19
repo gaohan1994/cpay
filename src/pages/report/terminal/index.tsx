@@ -2,7 +2,7 @@
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-09 11:16:42 
  * @Last Modified by: centerm.gaohan
- * @Last Modified time: 2020-10-19 15:05:43
+ * @Last Modified time: 2020-10-19 15:16:03
  * 
  * @todo 终端信息统计
  */
@@ -36,6 +36,7 @@ function Page(props: Props) {
   const [validStartTime, setValidStartTime] = useState('' as any);
   const [startTime, setStartTime] = useState('' as any);
   const [endTime, setEndTime] = useState('' as any);
+  const [isShowAll, setIsShowAll] = useState(0);
 
   const [form] = Form.useForm();
   const res: any = useAntdTable(
@@ -43,6 +44,7 @@ function Page(props: Props) {
       ...tableProps,
       startTime: tableProps.startTime ? tableProps.startTime.format('YYYYMM') : tableProps.startTime.format('YYYYMM'),
       endTime: tableProps.endTime ? tableProps.endTime.format('YYYYMM') : tableProps.endTime,
+      isShowAll,
     }),
     {
       form,
@@ -178,7 +180,7 @@ function Page(props: Props) {
       render: () =>
         <div key={'isShowAll'} style={{ marginLeft: 12 }}>
           <Form.Item name={'isShowAll'} label='统计范围'>
-            <Radio.Group >
+            <Radio.Group onChange={(e) => setIsShowAll(e.target.value)}>
               <Radio value={0}>本级机构</Radio>
               <Radio value={1}>本级及下级机构</Radio>
             </Radio.Group>
