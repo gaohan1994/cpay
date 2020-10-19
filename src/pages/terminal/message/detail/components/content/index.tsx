@@ -83,8 +83,8 @@ export default (props: Props) => {
       label: '终端状态',
       value:
         (terminalDetailInfo.terminalInfo &&
-        typeof terminalDetailInfo.terminalInfo.status === 'number' &&
-        terminalDetailInfo.terminalInfo.status === 1
+          typeof terminalDetailInfo.terminalInfo.status === 'number' &&
+          terminalDetailInfo.terminalInfo.status === 1
           ? '已激活'
           : '未激活') || '--',
     });
@@ -92,7 +92,7 @@ export default (props: Props) => {
       label: '商户编号',
       value:
         (terminalDetailInfo.terminalInfo &&
-          terminalDetailInfo.terminalInfo.merchantId) ||
+          terminalDetailInfo.terminalInfo.merchantCode) ||
         '--',
     });
     detailArr.push({
@@ -114,7 +114,7 @@ export default (props: Props) => {
       label: '商户地址',
       value:
         terminalDetailInfo.terminalInfo &&
-        terminalDetailInfo.terminalInfo.county
+          terminalDetailInfo.terminalInfo.county
           ? `${terminalDetailInfo.terminalInfo.county} ${terminalDetailInfo.terminalInfo.city} ${terminalDetailInfo.terminalInfo.address}`
           : '--',
     });

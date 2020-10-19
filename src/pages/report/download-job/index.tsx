@@ -1,8 +1,8 @@
 /*
  * @Author: centerm.gaozhiying 
  * @Date: 2020-09-09 11:16:42 
- * @Last Modified by: centerm.gaozhiying
- * @Last Modified time: 2020-09-09 18:04:10
+ * @Last Modified by: centerm.gaohan
+ * @Last Modified time: 2020-10-19 14:46:45
  * 
  * @todo 终端信息统计
  */
@@ -229,21 +229,22 @@ function Page(props: Props) {
       formName: 'isShowAll',
       formType: FormItmeType.SelectCommon,
       dictList: 'isShowAll',
-      render: () => <Col span={6} key={'isShowAll'}>
-        <Form.Item name={'isShowAll'} label='统计范围'>
-          <Radio.Group>
-            <Radio value={0}>本级机构</Radio>
-            <Radio value={1}>关联机构</Radio>
-          </Radio.Group>
-        </Form.Item>
-      </Col>
+      render: () =>
+        <div key={'isShowAll'} style={{ marginLeft: 12 }}>
+          <Form.Item name={'isShowAll'} label='统计范围'>
+            <Radio.Group >
+              <Radio value={0}>本级机构</Radio>
+              <Radio value={1}>关联机构</Radio>
+            </Radio.Group>
+          </Form.Item>
+        </div>
     },
   ];
 
   /**
    * @todo 改变日期调用
-   * @param date 
-   * @param key 
+   * @param date
+   * @param key
    */
   const onChangeDate = (date: string, key: 'startTime' | 'endTime') => {
     if (key === 'startTime') {
@@ -255,7 +256,7 @@ function Page(props: Props) {
 
   /**
    * @todo 渲染日期表单，有开始和结束两种
-   * @param key 
+   * @param key
    */
   const renderDateForm = (key: 'startTime' | 'endTime') => {
     return (

@@ -169,7 +169,7 @@ export default (props: Props) => {
     },
     {
       title: '商户编号',
-      dataIndex: 'merchantId',
+      dataIndex: 'merchantCode',
     },
     {
       title: '终端编号',

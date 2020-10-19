@@ -25,6 +25,7 @@ import UploadLogDetail from '@/pages/upload/log/detail';
 import UploadLogAdd from '@/pages/upload/log/add';
 import UploadLogOperation from '@/pages/upload/log/operation';
 import UploadCount from '@/pages/upload/count';
+import UploadParams from '@/pages/upload/params';
 
 export const UploadMenu = {
   name: '远程更新',
@@ -187,6 +188,12 @@ const routerConfig: any[] = [
     path: '/upload/count',
     name: '更新试点',
     component: UploadCount,
+    exact: true
+  },
+  {
+    path: '/upload/params',
+    name: '参数下发',
+    component: UploadParams,
     exact: true
   },
 ];

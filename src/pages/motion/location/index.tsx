@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Table, notification, Modal } from 'antd';
-import { useAntdTable } from 'ahooks';
+import { useAntdTable, useBoolean } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { LogoutOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd/lib/button';
-import { terminalShiftList, terminalShiftExport } from '../constants';
+import { relocationCurrentExport, relocationCurrentList } from '../constants';
 import { formatListResult, formatPaginate } from '@/common/request-util';
 import invariant from 'invariant';
 import { createTableColumns, getStandardPagination } from '@/component/table';
@@ -13,14 +13,16 @@ import Forms from '@/component/form';
 import { useStore } from '@/pages/common/costom-hooks';
 import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
 import history from '@/common/history-util';
+import ModalMap from '../component/modal-map';
 
 export default () => {
   useStore([]);
-
   const [form] = Form.useForm();
+  const [visible, { toggle }] = useBoolean(false);
+  const [currentItem, setCurrentItem] = useState({} as any);
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: PaginatedParams[0], tableProps: any) => {
-      return terminalShiftList({
+      return relocationCurrentList({
         ...formatPaginate(paginatedParams),
         ...tableProps,
       });
@@ -37,7 +39,7 @@ export default () => {
       title: '确认要导出终端信息？',
       onOk: async () => {
         try {
-          const result = await terminalShiftExport({});
+          const result = await relocationCurrentExport({});
           invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
 
           const href = getDownloadPath(result.data);
@@ -77,10 +79,11 @@ export default () => {
   const columns = createTableColumns([
     {
       title: '操作',
-      render: (key, item: any) => (
+      render: (item: any) => (
         <a
           onClick={() => {
-            history.push(`/terminal/message/detail?id=${item.id}`);
+            setCurrentItem(item);
+            toggle(true);
           }}
         >
           详情
@@ -162,6 +165,7 @@ export default () => {
         pagination={getStandardPagination(tableProps.pagination)}
         scroll={{ x: 2000 }}
       />
+      <ModalMap visible={visible} toggle={toggle} point={currentItem} />
     </div>
   );
 };

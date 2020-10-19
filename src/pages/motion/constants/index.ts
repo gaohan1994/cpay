@@ -102,3 +102,9 @@ export const getAllTerminalPosition = async (
   );
   return result;
 };
+
+export const relocationCurrentList = (params: any) =>
+  ApiRequest.post(`/cpay-admin/relocation/current/relocationCurrentList`, params);
+
+export const relocationCurrentExport = (params: any) =>
+  ApiRequest.post(`/cpay-admin/relocation/current/relocationCurrentExport`, params);

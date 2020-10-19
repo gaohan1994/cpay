@@ -1,11 +1,10 @@
 /*
- * @Author: centerm.gaozhiying
- * @Date: 2020-09-01 14:37:54
+ * @Author: centerm.gaohan 
+ * @Date: 2020-10-19 14:13:10 
  * @Last Modified by: centerm.gaohan
- * @Last Modified time: 2020-10-19 14:03:43
- *
- * @todo 软件更新新增页面
+ * @Last Modified time: 2020-10-19 14:25:32
  */
+
 import React, { useRef, useEffect, useState } from 'react';
 import { useQueryParam } from '@/common/request-util';
 import {
@@ -20,12 +19,12 @@ import {
   notification,
 } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
-import { useFormSelectData } from './costom-hooks';
+import { useFormSelectData } from '../../upload/add/costom-hooks';
 import {
   taskDownloadJobDetail,
   taskDownloadJobAdd,
   taskDownloadJobEdit,
-} from '../constants/api';
+} from '../../upload/constants/api';
 import { CustomCheckGroup } from '@/component/checkbox-group';
 import { useStore } from '@/pages/common/costom-hooks';
 import { CustomFromItem } from '@/common/type';
@@ -34,7 +33,6 @@ import {
   CustomFormItems,
   ButtonLayout,
 } from '@/component/custom-form';
-import { SoftInfoItem } from './component/soft-info-form';
 import { useDetail } from '@/pages/common/costom-hooks/use-detail';
 import { CustomRadioGroup } from '@/component/radio-group';
 import moment from 'moment';
@@ -46,6 +44,7 @@ import { RESPONSE_CODE } from '@/common/config';
 import { useHistory } from 'react-router-dom';
 import FixedFoot, { ErrorField } from '@/component/fixed-foot';
 import { FormTusnsFailed } from '../../component/form-tusns-failed';
+import { SoftInfoItem } from '../../upload/add/component/soft-info-form';
 
 const fieldLabels = {
   jobName: '任务名称',
@@ -728,9 +727,9 @@ export default function Page() {
       <Form form={form} style={{ paddingBottom: 100 }}>
         <Divider orientation="left">【终端信息】</Divider>
         <CustomFormItems items={terminalInfoForms} />
-        <Divider orientation="left">【软件信息】</Divider>
+        <Divider orientation="left">【参数信息】</Divider>
         <Button type="primary" onClick={onAddSoftInfoFormsItem}>
-          新增软件
+          新增参数
         </Button>
         {softInfoFormsNum > 0 &&
           new Array(softInfoFormsNum)
@@ -739,7 +738,7 @@ export default function Page() {
               return (
                 <Card
                   key={`softInfo${index}`}
-                  title={`软件${index + 1}`}
+                  title={`参数${index + 1}`}
                   bordered={true}
                   style={{ marginTop: 10 }}
                   extra={
@@ -753,6 +752,9 @@ export default function Page() {
                     commonValue={{ ...form.getFieldsValue() }}
                     appIds={getSoftAppIds()}
                   />
+                  {/* <Form form={softFroms[index]}>
+                      <CustomFormItems items={softInfoForms} />
+                    </Form> */}
                 </Card>
               );
             })}
@@ -766,11 +768,6 @@ export default function Page() {
             .concat(getReleaseTypeFormsByDept())
             .concat(getReleaseTypeFormsByCondition())}
         />
-        {/* <Form.Item {...ButtonLayout} >
-          <Button type="primary" onClick={onSubmit}>
-            保存
-        </Button>
-        </Form.Item> */}
       </Form>
       <FixedFoot errors={error} fieldLabels={fieldLabels}>
         <Button type="primary" loading={loading} onClick={onSubmit}>

@@ -4,7 +4,7 @@ export interface ITerminalSystemDetail {
   sd: number;
 }
 
-export interface ITerminalApp {}
+export interface ITerminalApp { }
 
 export interface ITerminalInfo {
   address: string;
@@ -29,6 +29,7 @@ export interface ITerminalInfo {
   imei: string;
   imsi: string;
   netMark: string;
+  merchantCode?: string;
 }
 
 export interface ITerminalSystemDetailInfo {

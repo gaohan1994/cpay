@@ -271,8 +271,7 @@ export default () => {
     },
     {
       title: '商户编号',
-      width: 80,
-      dataIndex: 'merchantId',
+      dataIndex: 'merchantCode',
     },
     {
       title: '终端厂商',

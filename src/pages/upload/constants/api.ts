@@ -260,3 +260,11 @@ export const taskCountRemove = (params: { ids: string }) =>
 */
 export const taskLogSetList = (params: any) =>
   ApiRequest.post(`/cpay-admin/task/logSet/taskLogSetList`, params);
+
+
+/**
+* @todo 查询参数下发信息列表
+* @param params
+*/
+export const issueJobList = (params: any) =>
+  ApiRequest.post(`/cpay-admin/issue/job/issueJobList`, params);
