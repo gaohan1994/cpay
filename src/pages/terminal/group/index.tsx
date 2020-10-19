@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Table, Input, Col, Button, notification, Modal } from 'antd';
+import { Form, Table, Input, Col, Button, notification, Modal, Divider } from 'antd';
 import { useAntdTable, useBoolean } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { PlusOutlined } from '@ant-design/icons';
@@ -60,7 +60,7 @@ export default () => {
       render: (item: any) => (
         <div>
           <a onClick={() => onEdit(item)}>修改</a>
-          {` | `}
+          <Divider type='vertical' />
           <a onClick={() => onDelete(item.id)}>删除</a>
         </div>
       ),

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Table, notification, Modal } from 'antd';
+import { Form, Table, notification, Modal, Divider } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { useAntdTable } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
@@ -53,7 +53,7 @@ export default () => {
       render: (item: any) => (
         <div>
           <a onClick={() => history.push(`/advertisement/apply/detail?id=${item.id}`)}>详情</a>
-          {` | `}
+          <Divider type='vertical' />
           <a
             onClick={() =>
               history.push(`/advertisement/apply/update?id=${item.id}`)
@@ -61,7 +61,7 @@ export default () => {
           >
             修改
           </a>
-          {` | `}
+          <Divider type='vertical' />
           <a onClick={() => onDelete(item.id)}>删除</a>
         </div>
       ),

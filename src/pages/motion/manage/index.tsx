@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Table, notification, Modal, Input, Button } from 'antd';
+import { Form, Table, notification, Modal, Input, Button, Divider } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { LogoutOutlined } from '@ant-design/icons';
@@ -159,9 +159,9 @@ export default () => {
       render: (key, item: any) => (
         <div>
           <a onClick={() => onEdit(item)}>详情</a>
-          {` | `}
+          <Divider type='vertical' />
           <a onClick={() => onEdit(item)}>修改</a>
-          {` | `}
+          <Divider type='vertical' />
           <a onClick={() => onDelete(item)}>删除</a>
         </div>
       ),
