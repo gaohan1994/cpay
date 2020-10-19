@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useAntdTable } from 'ahooks';
 import { LogoutOutlined } from '@ant-design/icons';
 import { ITerminalSystemDetailInfo } from '../../types';
 import { Table, Form, Modal, notification } from 'antd';
 import invariant from 'invariant';
-import Forms from '@/component/form';
-import { FormItem, FormItmeType } from '@/component/form/type';
+import { FormItem } from '@/component/form/type';
 import { terminalFlowList, terminalFlowExport } from '../constants';
-import { formatListResult } from '@/common/request-util';
+import { formatPaginate } from '@/common/request-util';
 import { createTableColumns } from '@/component/table';
 import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
 
@@ -22,7 +21,7 @@ export default (props: Props) => {
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) => {
       return terminalFlowList({
-        // ...formatPaginate(paginatedParams),
+        ...formatPaginate(paginatedParams),
         ...tableProps,
         tusn:
           (terminalDetailInfo.terminalInfo &&
@@ -37,7 +36,12 @@ export default (props: Props) => {
     },
     {
       form,
-      formatResult: formatListResult,
+      formatResult: (mergeResult: any) => {
+        return {
+          list: mergeResult.data || [],
+          total: mergeResult.data.length,
+        };
+      },
     }
   );
   const { submit, reset } = search;
@@ -110,8 +114,14 @@ export default (props: Props) => {
           extraButtons,
         }}
       /> */}
-      <div style={{ margin: 12, marginTop: 0 }}>总计（移动流量）：0MB</div>
-      <Table columns={columns} {...tableProps} />
+      <div style={{ margin: 12, marginTop: 0 }}>
+        总计（移动流量）：
+      {tableProps.dataSource && tableProps.dataSource.reduce((pre: any, cur: any) => {
+        return pre + cur.monthFlow;
+      }, 0)}
+        MB
+      </div>
+      <Table rowKey='tusn' columns={columns} {...tableProps} />
     </div>
   );
 };

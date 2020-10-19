@@ -3,7 +3,7 @@ import { useAntdTable } from 'ahooks';
 import { ITerminalSystemDetailInfo } from '../../types';
 import { Table, Form, Button, notification, Modal } from 'antd';
 import { terminalPowerList, powerRemove } from '../constants';
-import { formatListResult } from '@/common/request-util';
+import { formatListResult, formatPaginate } from '@/common/request-util';
 import { createTableColumns } from '@/component/table';
 import invariant from 'invariant';
 import { RESPONSE_CODE } from '@/common/config';
@@ -36,6 +36,7 @@ export default (props: Props) => {
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) => {
       return terminalPowerList({
+        ...formatPaginate(paginatedParams),
         ...tableProps,
         tusn:
           (terminalDetailInfo.terminalInfo &&
@@ -89,7 +90,6 @@ export default (props: Props) => {
     selectedRowKeys,
     onChange: setSelectedRowKeys,
   }
-
   return (
     <div>
       <div style={{ marginBottom: 12 }}>
