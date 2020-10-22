@@ -18,7 +18,7 @@ export const taskDownloadJobDetail = async (
   id: number,
   callback?: (params: any) => void
 ): Promise<any> => {
-  const result = await ApiRequest.post(`/cpay-admin/task/downloadJob/downloadJobDetail`, { id });
+  const result = await ApiRequest.post(`/cpay-admin/task/downloadJob/downloadJobDetail`, { jobId: id });
   callback && callback(result);
   return result;
 };

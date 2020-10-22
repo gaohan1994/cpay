@@ -52,7 +52,7 @@ export default function Page() {
   const { detail } = useDetail(id, taskDownloadJobDetail, setLoading);
 
   const getDownloadJobOutputValue = (key: string) => {
-    return getObjectValue(detail, ['downloadJobOutput', key]);
+    return getObjectValue(detail, ['downloadJobDetailOutput', key]);
   }
 
   const getCommonValue = (key: string) => {
@@ -173,7 +173,7 @@ export default function Page() {
           if (key === '软件信息') {
             return (
               <div key={key} style={{ marginBottom: 30 }}>
-                <div className={'ant-descriptions-title'}>{`【${key}】`}</div>
+                <div style={{ marginBottom: 30 }} className={'ant-descriptions-title'}>{`【${key}】`}</div>
                 <Table rowKey="id" bordered columns={columns} dataSource={item.value} pagination={false} scroll={{ x: 1400 }} />
               </div>
             )

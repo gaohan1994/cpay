@@ -268,3 +268,83 @@ export const taskLogSetList = (params: any) =>
 */
 export const issueJobList = (params: any) =>
   ApiRequest.post(`/cpay-admin/issue/job/issueJobList`, params);
+
+/**
+ * @todo 新增参数下发
+ * @param params
+ */
+export const issueJobAdd = (params: any) => 
+  ApiRequest.post(`/cpay-admin/issue/job/issueJobAdd`, params)
+
+  /**
+   * @todo 编辑参数下发
+   * @param params 
+   */
+export const issueJobEdit = (params: any) => 
+  ApiRequest.post(`/cpay-admin/issue/job/issueJobEdit`, params)
+
+/**
+ * @todo 查询参数下发详情
+ * @param params
+ */
+export const issueJobDetail = async (id: number, callback?: (params: any)=> void) => {
+  const result = await ApiRequest.post(`/cpay-admin/issue/job/issueJobDetail`, {jobId: id})
+  callback && callback(result)
+  return result
+} 
+
+/**
+ * @todo 删除参数下发
+ * @param params 
+ */
+export const issueJobRemove = (params: {ids: string}) => 
+  ApiRequest.post(`/cpay-admin/issue/job/issueJobRemove`, params)
+
+/**
+ * @todo 参数下发启动任务
+ * @param params
+ */
+export const issueJobPublish = (id: number) => 
+  ApiRequest.post(`/cpay-admin/issue/job/issueJobPublish`, { id })
+
+/**
+ * @todo 参数下发启动暂停
+ * @param params
+ */
+export const issueJobPause = (id: number) =>
+  ApiRequest.post(`/cpay-admin/issue/job/issueJobPause`, { id })
+
+/**
+ * @todo 参数下发启动延时
+ * @param params 
+ */
+export const issueJobDelay = (id: number) =>
+  ApiRequest.post(`/cpay-admin/issue/job/issueJobDelay`, { id })
+
+/**
+ * @todo 参数下发执行情况任务列表
+ * @param id 
+ */
+export const issueTaskList = (params: any) =>
+  ApiRequest.post(`/cpay-admin/issue/task/issueTaskList`, params)
+
+/**
+ * @todo 参数下发执行情况任务暂停
+ * @param params 
+ */
+export const issueTaskPause = (params: {ids: string}) => 
+  ApiRequest.post(`/cpay-admin/issue/task/issueTaskPause`, params)
+
+/**
+ * @todo 参数下发执行情况任务重置/启动
+ * @param params 
+ */
+export const issueTaskReset = (params: {ids: string}) => 
+  ApiRequest.post(`/cpay-admin/issue/task/issueTaskReset`, params)
+
+/**
+ * @todo 参数下发执行情况任务导出
+ * @param params 
+ */
+export const issueTaskExport = (params: any) => 
+  ApiRequest.post(`/cpay-admin/issue/task/issueTaskExport`, params)

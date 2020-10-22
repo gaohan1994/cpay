@@ -21,7 +21,7 @@ export const terminalSysdetailList = async (
   ).map((item: ITerminalSysDetail) => {
     return {
       ...item,
-      sysDetail: JSON.parse(item.sysDetail as any),
+      // sysDetail: JSON.parse(item.sysDetail as any),
     };
   });
 

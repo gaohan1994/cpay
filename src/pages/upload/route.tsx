@@ -26,6 +26,9 @@ import UploadLogAdd from '@/pages/upload/log/add';
 import UploadLogOperation from '@/pages/upload/log/operation';
 import UploadCount from '@/pages/upload/count';
 import UploadParams from '@/pages/upload/params';
+import UploadParamsAdd from '@/pages/upload/params/add'
+import UploadParamsDetail from '@/pages/upload/params/detail'
+import UploadParamsOperation from '@/pages/upload/params/operation'
 
 export const UploadMenu = {
   name: '远程更新',
@@ -195,6 +198,41 @@ const routerConfig: any[] = [
     name: '参数下发',
     component: UploadParams,
     exact: true
+  },
+  {
+    path: '/upload/params/add',
+    name: '新增',
+    component: UploadParamsAdd,
+    exact: true,
+    inMenu: false
+  },
+  {
+    path: '/upload/params/edit',
+    name: '修改',
+    component: UploadParamsAdd,
+    exact: true,
+    inMenu: false
+  },
+  {
+    path: '/upload/params/detail',
+    name: '详情',
+    component: UploadParamsDetail,
+    exact: true,
+    inMenu: false
+  },
+  {
+    path: '/upload/params/copy',
+    name: '复制',
+    component: UploadParamsAdd,
+    exact: true,
+    inMenu: false
+  },
+  {
+    path: '/upload/params/operation',
+    name: '执行情况',
+    component: UploadParamsOperation,
+    exact: true,
+    inMenu: false
   },
 ];
 

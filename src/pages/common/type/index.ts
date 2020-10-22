@@ -23,6 +23,7 @@ export interface DictItem {
   dictId: number;
   status: number;
   data: DictDetailItem[];
+  dictDataList: DictDetailItem[];
 }
 
 export interface DictDetailItem {

@@ -139,13 +139,13 @@ const routerConfig: any[] = [
   },
   {
     path: '/terminal/acquiring',
-    name: '终端收单信息',
+    name: '收单参数管理',
     component: TerminalAcquiring,
     exact: true,
   },
   {
     path: '/terminal/acquiring/detail',
-    name: '终端收单信息详情',
+    name: '收单参数管理详情',
     component: TerminalAcquiringDetail,
     exact: true,
     inMenu: false,

@@ -36,45 +36,56 @@ export function useStore(dictType: string[]): CommonHooksState {
   }, []);
 
   const getDictListCallback = useCallback((dictList: DictItem[]) => {
-    /**
-     * 一级字典目录拿到之后遍历查询字典详情
-     */
     if (dictList.length === 0) {
       return;
     }
 
-    const promises = dictList.map((dict) => getDictData(dict.dictType));
-    Promise.all(promises)
-      // .then((responses) =>
-      //   responses.filter((res) => res.code === RESPONSE_CODE.success)
-      // )
-      .then((responses) => {
-        responses.forEach((response, index) => {
-          let data: any = { rows: [] };
-          if (response.code === RESPONSE_CODE.success && response.data) {
-            data = response.data;
+    dictList.map((item) => {
+      dispatch({
+        type: ACTION_TYPES_COMMON.RECEIVE_DICT_LIST,
+        payload: {
+          dictType: item.dictType,
+          data: {
+            dictName: item.dictName || '',
+            dictType: item.dictType || '',
+            data: item.dictDataList || []
           }
-          const { rows } = data;
-          /**
-           * @params {dictTypeItem} 找到分类父亲
-           */
-          const dictTypeItem =
-            rows.length > 0
-              ? dictList.find((d) => d.dictType === rows[0].dictType)
-              : dictList[index];
-
-          dispatch({
-            type: ACTION_TYPES_COMMON.RECEIVE_DICT_LIST,
-            payload: {
-              dictType: dictTypeItem?.dictType,
-              data: {
-                ...dictTypeItem,
-                data: rows,
-              },
-            },
-          });
-        });
+        },
       });
+    })
+
+    // const promises = dictList.map((dict) => getDictData(dict.dictType));
+    // Promise.all(promises)
+    //   // .then((responses) =>
+    //   //   responses.filter((res) => res.code === RESPONSE_CODE.success)
+    //   // )
+    //   .then((responses) => {
+    //     responses.forEach((response, index) => {
+    //       let data: any = { rows: [] };
+    //       if (response.code === RESPONSE_CODE.success && response.data) {
+    //         data = response.data;
+    //       }
+    //       const { rows } = data;
+    //       /**
+    //        * @params {dictTypeItem} 找到分类父亲
+    //        */
+    //       const dictTypeItem =
+    //         rows.length > 0
+    //           ? dictList.find((d) => d.dictType === rows[0].dictType)
+    //           : dictList[index];
+
+    //       dispatch({
+    //         type: ACTION_TYPES_COMMON.RECEIVE_DICT_LIST,
+    //         payload: {
+    //           dictType: dictTypeItem?.dictType,
+    //           data: {
+    //             ...dictTypeItem,
+    //             data: rows,
+    //           },
+    //         },
+    //       });
+    //     });
+    //   });
   }, []);
 
   useEffect(() => {
@@ -94,8 +105,8 @@ export function useStore(dictType: string[]): CommonHooksState {
      * 请求字典数据
      */
     const promises =
-      dictType.length > 0 &&
-      dictType.map((type) => getDictList(type, getDictListCallback));
+      dictType.length > 0 && getDictList(dictType, getDictListCallback)
+      // dictType.map((type) => getDictList(type, getDictListCallback));
 
   }, []);
 

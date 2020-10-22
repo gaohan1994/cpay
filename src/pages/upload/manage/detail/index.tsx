@@ -421,11 +421,11 @@ function Page() {
     <Spin spinning={loading}>
       <Card title="软件信息">
         <Descriptions column={1}>
-          <Descriptions.Item label="软件名称" style={styles.descItem}>{softInfo.appName}</Descriptions.Item>
-          <Descriptions.Item label="软件包名" style={styles.descItem}>{softInfo.code}</Descriptions.Item>
-          <Descriptions.Item label="软件类型" style={styles.descItem}>{getDictText(`${softInfo.type}`, 'driver_type')}</Descriptions.Item>
-          <Descriptions.Item label="是否支持DCC" style={styles.descItem}>{getDictText(`${softInfo.dccSupFlag}`, 'is_dcc_sup')}</Descriptions.Item>
-          <Descriptions.Item label="银联间直联" style={styles.descItem}>{getDictText(`${softInfo.cupConnMode}`, 'unionpay_connection')}</Descriptions.Item>
+          <Descriptions.Item label="软件名称" style={styles.descItem}><div style={{padding: 12}}>{softInfo.appName}</div></Descriptions.Item>
+          <Descriptions.Item label="软件包名" style={styles.descItem}><div style={{padding: 12}}>{softInfo.code}</div></Descriptions.Item>
+          <Descriptions.Item label="软件类型" style={styles.descItem}><div style={{padding: 12}}>{getDictText(`${softInfo.type}`, 'driver_type')}</div></Descriptions.Item>
+          <Descriptions.Item label="是否支持DCC" style={styles.descItem}><div style={{padding: 12}}>{getDictText(`${softInfo.dccSupFlag}`, 'is_dcc_sup')}</div></Descriptions.Item>
+          <Descriptions.Item label="银联间直联" style={styles.descItem}><div style={{padding: 12}}>{getDictText(`${softInfo.cupConnMode}`, 'unionpay_connection')}</div></Descriptions.Item>
         </Descriptions>
       </Card>
 

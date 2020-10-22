@@ -140,6 +140,10 @@ function Page(props: Props) {
       width: 150,
     },
     {
+      title: '任务名称',
+      dataIndex: 'jobName',
+    },
+    {
       title: '成功',
       dataIndex: 'successCount',
       width: 70,
@@ -171,10 +175,7 @@ function Page(props: Props) {
         return <Tag color={getTaskJobStatusColor(item)}>{item}</Tag>
       }
     },
-    {
-      title: '任务名称',
-      dataIndex: 'jobName',
-    },
+    
     {
       title: '有效起始日期',
       width: 200,

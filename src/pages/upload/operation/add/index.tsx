@@ -276,7 +276,7 @@ export default function Page() {
       const fields = form.getFieldsValue();
       let param: any = {
         ...fields,
-        copsSign: 0,
+        // copsSign: 0,
       }
       setLoading(true);
       if (id && type === '1') {

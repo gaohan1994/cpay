@@ -184,8 +184,8 @@ export default function Page() {
     if (dictLoading) {
       return;
     }
-    if (detail.downloadJobOutput) {
-      const downloadJobOutput = detail.downloadJobOutput;
+    if (detail.downloadJobDetailOutput) {
+      const downloadJobOutput = detail.downloadJobDetailOutput;
       form.setFieldsValue({
         ...downloadJobOutput,
         cupConnMode: `${downloadJobOutput.cupConnMode}`,

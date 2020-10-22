@@ -85,12 +85,13 @@ export const getDeptTreeData = async (
  * @param params
  */
 export const getDictList = async (
-  dictType: string,
+  dictTypes: string[],
   callback?: (data: DictItem[]) => void
 ): Promise<IResponseResult<DictItem[]>> => {
   const result = await ApiRequset.post(
-    `/cpay-admin/system/dict/type/dictTypeList`,
-    { dictType }
+    // `/cpay-admin/system/dict/type/dictTypeList`,
+    '/cpay-admin/system/dict/data/getManyDictDataList',
+    { dictTypes }
   );
   callback && callback((result && result.data && result.data.rows) || []);
   return result;

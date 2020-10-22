@@ -1,7 +1,11 @@
 import ApiRequest, { jsonToQueryString } from '@/common/request-util';
+import { RESPONSE_CODE } from '@/common/config';
 
-export const terminalTemplateList = (params: any) =>
-  ApiRequest.post(`/cpay-admin/terminal/template/terminalTemplateList`, params);
+export const terminalTemplateList = async (params: any, callback?: (data: any[]) => void): Promise<any> => {
+  const result = await ApiRequest.post(`/cpay-admin/terminal/template/terminalTemplateList`, params);
+  callback && result && result.code === RESPONSE_CODE.success && callback(result?.data?.rows || [])
+  return result
+}
 
 export const terminalTemplateRemove = (params: any) =>
   ApiRequest.post(`/cpay-admin/terminal/template/terminalTemplateRemove`, params);

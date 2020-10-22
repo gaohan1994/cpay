@@ -19,9 +19,12 @@ import ApiRequest, { jsonToQueryString } from '@/common/request-util';
 import { RESPONSE_CODE } from '@/common/config';
 import { taskSoftVersionListByType } from '@/pages/upload/constants/api';
 
-export function useFormSelectedList(fetchFunc: Function, dependValue: any[], fetchFields: any) {
+export function useFormSelectedList(fetchFunc: Function, dependValue: any[], fetchFields: any, flag?: boolean) {
   const [list, setList] = useState([] as any[]);
   useEffect(() => {
+    if(flag) { // 如果为true，不发请求
+      return
+    }
     fetchFunc(fetchFields, (data: any[]) => {
       setList(data);
     });
@@ -44,7 +47,7 @@ export function useTerminalFirmList() {
 }
 
 export function useTerminalTypeList(firmId: number) {
-  const { list, setList } = useFormSelectedList(terminalTypeListByFirm, [firmId], { firmId });
+  const { list, setList } = useFormSelectedList(terminalTypeListByFirm, [firmId], { firmId }, firmId === -1);
   const terminalTypeList: any[] = list;
   const setTerminalTypeList = setList;
   return { terminalTypeList, setTerminalTypeList };

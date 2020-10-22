@@ -264,6 +264,7 @@ export default () => {
     {
       title: '终端序列号',
       dataIndex: 'tusn',
+      width: 200
     },
     {
       title: '终端编号',

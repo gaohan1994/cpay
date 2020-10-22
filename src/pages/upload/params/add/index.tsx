@@ -20,11 +20,7 @@ import {
 } from 'antd';
 import { useForm } from 'antd/lib/form/Form';
 import { useFormSelectData } from '../../upload/add/costom-hooks';
-import {
-  taskDownloadJobDetail,
-  taskDownloadJobAdd,
-  taskDownloadJobEdit,
-} from '../../upload/constants/api';
+import { issueJobEdit, issueJobAdd, issueJobDetail } from '../../constants/api';
 import { CustomCheckGroup } from '@/component/checkbox-group';
 import { useStore } from '@/pages/common/costom-hooks';
 import { CustomFromItem } from '@/common/type';
@@ -44,7 +40,7 @@ import { RESPONSE_CODE } from '@/common/config';
 import { useHistory } from 'react-router-dom';
 import FixedFoot, { ErrorField } from '@/component/fixed-foot';
 import { FormTusnsFailed } from '../../component/form-tusns-failed';
-import { SoftInfoItem } from '../../upload/add/component/soft-info-form';
+import { SoftInfoItem } from './component/soft-info-form';
 
 const fieldLabels = {
   jobName: '任务名称',
@@ -74,12 +70,12 @@ export default function Page() {
   const type = useQueryParam('type');
   const [form] = useForm();
   const history = useHistory();
-  const [softFrom1] = useForm();
-  const [softFrom2] = useForm();
-  const [softFrom3] = useForm();
-  const [softFrom4] = useForm();
-  const [softFrom5] = useForm();
-  const softFroms = [softFrom1, softFrom2, softFrom3, softFrom4, softFrom5];
+  const [paramsForm] = useForm();
+  // const [paramsForm2] = useForm();
+  // const [paramsForm3] = useForm();
+  // const [paramsForm4] = useForm();
+  // const [paramsForm5] = useForm();
+  // const paramsForms = [paramsForm1, paramsForm2, paramsForm3, paramsForm4, paramsForm5];
   /** 获取字典数据 */
   const dictRes = useStore([
     'terminal_type',
@@ -94,7 +90,7 @@ export default function Page() {
     'is_group_update',
   ]);
 
-  const [softInfoFormsNum, setSoftInfoFormsNum] = useState(1);
+  // const [softInfoFormsNum, setSoftInfoFormsNum] = useState(1);
   const [validDateShow, setValidDateShow] = useState(false);
   const [tusnsOptions, setTusnsOptions] = useState([]);
   const [failedTusnsOptions, setFailedTusnsOptions] = useState([]);
@@ -109,12 +105,7 @@ export default function Page() {
   const [groupIdsInit, setGroupIdsInit] = useState(false);
   const [error, setError] = useState<ErrorField[]>([]);
 
-  /**
-   * 第一步初始化数据
-   * 第二步
-   * 1、新增则
-   */
-  const { detail } = useDetail(id, taskDownloadJobDetail, setLoading);
+  const { detail } = useDetail(id, issueJobDetail, setLoading);
 
   const {
     terminalFirmList,
@@ -158,15 +149,15 @@ export default function Page() {
    */
   useEffect(() => {
     if (!groupIdsInit) {
-      const downloadJobOutput = detail.downloadJobOutput || {};
+      const issueParamJobOutput = detail.issueParamJobOutput || {};
       if (
         groupIdsRef &&
         groupIdsRef.current &&
         groupIdsRef.current.setCheckedList &&
-        downloadJobOutput.groupIds
+        issueParamJobOutput.groupIds
       ) {
         setGroupIdsInit(true);
-        const arr: string[] = downloadJobOutput.groupIds.split(',');
+        const arr: string[] = issueParamJobOutput.groupIds.split(',');
         const numArr: number[] = [];
         for (let i = 0; i < arr.length; i++) {
           numArr.push(numeral(arr[i]).value());
@@ -183,74 +174,57 @@ export default function Page() {
     if (dictLoading) {
       return;
     }
-    if (detail.downloadJobOutput) {
-      const downloadJobOutput = detail.downloadJobOutput;
+    if (detail.issueParamJobOutput) {
+      const issueParamJobOutput = detail.issueParamJobOutput;
       form.setFieldsValue({
-        ...downloadJobOutput,
-        cupConnMode: `${downloadJobOutput.cupConnMode}`,
-        releaseType: `${downloadJobOutput.releaseType}`,
-        dccSupFlag: `${downloadJobOutput.dccSupFlag}`,
-        isGroupUpdate: `${downloadJobOutput.isGroupUpdate}`,
-        activateType: `${downloadJobOutput.activateType}`,
+        ...issueParamJobOutput,
+        cupConnMode: `${issueParamJobOutput.cupConnMode}`,
+        releaseType: `${issueParamJobOutput.releaseType}`,
+        dccSupFlag: `${issueParamJobOutput.dccSupFlag}`,
+        isGroupUpdate: `${issueParamJobOutput.isGroupUpdate}`,
+        activateType: `${issueParamJobOutput.activateType}`,
       });
-      setBussTypeValue(downloadJobOutput.bussType);
-      setCupConnModeValue(`${downloadJobOutput.cupConnMode}`);
-      setDccSupFlagValue(`${downloadJobOutput.dccSupFlag}`);
-      setZzFlagValue(downloadJobOutput.zzFlag);
-      setGroupFilterTypeValue(downloadJobOutput.isGroupUpdate);
-      setReleaseTypeValue(`${downloadJobOutput.releaseType}`);
-      setTerminalFirmValue(downloadJobOutput.firmId);
-      setDeptId(downloadJobOutput.deptId);
+      setBussTypeValue(issueParamJobOutput.bussType);
+      setCupConnModeValue(`${issueParamJobOutput.cupConnMode}`);
+      setDccSupFlagValue(`${issueParamJobOutput.dccSupFlag}`);
+      setZzFlagValue(issueParamJobOutput.zzFlag);
+      setGroupFilterTypeValue(issueParamJobOutput.isGroupUpdate);
+      setReleaseTypeValue(`${issueParamJobOutput.releaseType}`);
+      setTerminalFirmValue(issueParamJobOutput.firmId);
+      setDeptId(issueParamJobOutput.deptId);
       if (
         terminalTypesRef &&
         terminalTypesRef.current &&
         terminalTypesRef.current.setCheckedList &&
-        downloadJobOutput.terminalTypes
+        issueParamJobOutput.terminalTypes
       ) {
         terminalTypesRef.current.setCheckedList(
-          downloadJobOutput.terminalTypes.split(',')
+          issueParamJobOutput.terminalTypes.split(',')
         );
       }
       if (
         activateTypesRef &&
         activateTypesRef.current &&
         activateTypesRef.current.setCheckedList &&
-        downloadJobOutput.activateTypes
+        issueParamJobOutput.activateTypes
       ) {
         activateTypesRef.current.setCheckedList(
-          downloadJobOutput.activateTypes.split(',')
+          issueParamJobOutput.activateTypes.split(',')
         );
       }
-      setValidDateShow(downloadJobOutput.validDateShow === 1 ? true : false);
-      if (downloadJobOutput.validDateShow === 1) {
+      setValidDateShow(issueParamJobOutput.validDateShow === 1 ? true : false);
+      if (issueParamJobOutput.validDateShow === 1) {
         form.setFieldsValue({
-          validStartTime: moment(downloadJobOutput.validStartTime || 0),
-          validEndTime: moment(downloadJobOutput.validEndTime || 0),
+          validStartTime: moment(issueParamJobOutput.validStartTime || 0),
+          validEndTime: moment(issueParamJobOutput.validEndTime || 0),
         });
       }
-      setTimeout(() => {
-        if (downloadJobOutput.downloadJobAppList) {
-          const downloadJobAppList = downloadJobOutput.downloadJobAppList;
-          if (
-            Array.isArray(downloadJobAppList) &&
-            downloadJobAppList.length > 0
-          ) {
-            for (let i = 0; i < downloadJobAppList.length; i++) {
-              softFroms[i].setFieldsValue(downloadJobAppList[i]);
-              softFroms[i].setFieldsValue({
-                appType: `${downloadJobAppList[i].appType}`,
-                actionType: `${downloadJobAppList[i].actionType}`,
-                appCode: downloadJobAppList[i].appCode,
-                appId: downloadJobAppList[i].appId,
-              });
-            }
-          } else {
-            setSoftInfoFormsNum(0);
-          }
-        } else {
-          setSoftInfoFormsNum(0);
-        }
-      }, 100);
+      if(issueParamJobOutput.paramTemplateId) {
+        paramsForm.setFieldsValue({
+          paramTemplateId: issueParamJobOutput.paramTemplateId
+        })
+      }
+      
     }
     if (detail.tusnList) {
       // 在修改操作时：使用setTimeout是为了保证终端集合是在所有表单设置完以后再执行，
@@ -267,10 +241,7 @@ export default function Page() {
    * @todo 重置软件信息表单
    */
   const resetSoftInfo = () => {
-    for (let i = 0; i < softFroms.length; i++) {
-      softFroms[i].resetFields();
-      setSoftInfoFormsNum(1);
-    }
+      // setSoftInfoFormsNum(1);
   };
 
   /**
@@ -615,31 +586,6 @@ export default function Page() {
   };
 
   /**
-   * @todo 新增软件表单项
-   */
-  const onAddSoftInfoFormsItem = () => {
-    if (softInfoFormsNum < 5) {
-      setSoftInfoFormsNum(softInfoFormsNum + 1);
-    } else {
-      message.error('单个任务最大支持5个软件');
-    }
-  };
-
-  /**
-   * @todo 删除软件表单项
-   * @param index
-   */
-  const onDeleteSoftInfoFormsItem = (index: number) => {
-    if (softInfoFormsNum > 1) {
-      for (let i = index; i < softInfoFormsNum; i++) {
-        softFroms[index].setFieldsValue(softFroms[i + 1].getFieldsValue());
-      }
-    }
-    softFroms[softInfoFormsNum - 1].resetFields();
-    setSoftInfoFormsNum(softInfoFormsNum - 1);
-  };
-
-  /**
    * @todo 提交
    */
   const onSubmit = async () => {
@@ -647,13 +593,11 @@ export default function Page() {
       await form.validateFields();
       const fields = form.getFieldsValue();
       let arr: any[] = [];
-      for (let i = 0; i < softInfoFormsNum; i++) {
-        await softFroms[i].validateFields();
-        arr.push({ ...softFroms[i].getFieldsValue(), isDependApp: false });
-      }
+      const templateParams = await paramsForm.validateFields();
       let param: any = {
         ...form.getFieldsValue(),
         validDateShow: validDateShow ? 1 : 0,
+        paramTemplateId: templateParams.paramTemplateId // 参数模板的值
       };
       // 组别过滤方式为0（无）时，没有组别集合
       if (groupFilterTypeValue === 0 && param.groupIds) {
@@ -666,40 +610,32 @@ export default function Page() {
           validEndTime: fields.validEndTime.format('YYYY-MM-DD HH:mm:ss'),
         };
       }
-      for (let i = 0; i < arr.length; i++) {
-        const item = arr[i];
-        for (const key in item) {
-          if (Object.prototype.hasOwnProperty.call(item, key)) {
-            const element = item[key];
-            param[`downloadJobAppList[${i}].${key}`] = element;
-          }
-        }
-      }
+
       setLoading(true);
-      if (id && type === '1') {
+      if (id && !type) {
         param = {
           ...param,
           id,
         };
-        const res = await taskDownloadJobEdit(param);
+        const res = await issueJobEdit(param);
         setLoading(false);
         if (res && res.code === RESPONSE_CODE.success) {
-          notification.success({ message: '修改软件更新任务成功' });
+          notification.success({ message: '修改参数下发任务成功' });
           history.goBack();
         } else {
           notification.error({
-            message: res.msg || '修改软件更新任务失败，请重试',
+            message: res.msg || '修改参数下发任务失败，请重试',
           });
         }
       } else {
-        const res = await taskDownloadJobAdd(param);
+        const res = await issueJobAdd(param);
         setLoading(false);
         if (res && res.code === RESPONSE_CODE.success) {
-          notification.success({ message: '添加软件更新任务成功' });
+          notification.success({ message: '添加参数下发任务成功' });
           history.goBack();
         } else {
           notification.error({
-            message: res.msg || '添加软件更新任务失败，请重试',
+            message: res.msg || '添加参数下发任务失败，请重试',
           });
         }
       }
@@ -708,19 +644,6 @@ export default function Page() {
     }
   };
 
-  /**
-   * @todo 获取软件信息选中的软件的appid以及依赖的软件的appid的集合（用以控制不重复选择软件以及依赖软件可选列表）
-   */
-  const getSoftAppIds = () => {
-    let appIds: any[] = [];
-    for (let i = 0; i < softFroms.length; i++) {
-      appIds.push({
-        appId: softFroms[i].getFieldValue('appId'),
-        dependAppIds: softFroms[i].getFieldValue('dependAppIds'),
-      });
-    }
-    return appIds;
-  };
 
   return (
     <Spin spinning={loading || dictLoading}>
@@ -728,36 +651,7 @@ export default function Page() {
         <Divider orientation="left">【终端信息】</Divider>
         <CustomFormItems items={terminalInfoForms} />
         <Divider orientation="left">【参数信息】</Divider>
-        <Button type="primary" onClick={onAddSoftInfoFormsItem}>
-          新增参数
-        </Button>
-        {softInfoFormsNum > 0 &&
-          new Array(softInfoFormsNum)
-            .fill({})
-            .map((item: any, index: number) => {
-              return (
-                <Card
-                  key={`softInfo${index}`}
-                  title={`参数${index + 1}`}
-                  bordered={true}
-                  style={{ marginTop: 10 }}
-                  extra={
-                    <Button onClick={() => onDeleteSoftInfoFormsItem(index)}>
-                      删除
-                    </Button>
-                  }
-                >
-                  <SoftInfoItem
-                    form={softFroms[index]}
-                    commonValue={{ ...form.getFieldsValue() }}
-                    appIds={getSoftAppIds()}
-                  />
-                  {/* <Form form={softFroms[index]}>
-                      <CustomFormItems items={softInfoForms} />
-                    </Form> */}
-                </Card>
-              );
-            })}
+        <SoftInfoItem form={paramsForm} />
         <Divider orientation="left">【任务时间】</Divider>
         <CustomFormItems items={taskTimeForms} />
         <Divider orientation="left">【更新方式】</Divider>
