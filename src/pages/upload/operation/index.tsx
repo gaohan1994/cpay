@@ -349,7 +349,7 @@ function Page(props: Props) {
     const res = await taskOperationJobPuase(selectedRowKeys[0]);
     setLoading(false);
     if (res && res.code === RESPONSE_CODE.success) {
-      notification.success({ message: '启动任务成功' });
+      notification.success({ message: '暂停任务成功' });
       customSubmit();
     } else {
       notification.error({ message: res && res.msg || '执行任务失败，请重试' });

@@ -61,7 +61,7 @@ export default function Page() {
   const initialValues = merge({}, (detail && detail) || {});
 
   useEffect(() => {
-    systemMenuList(dispatch, setMenuLoading);
+    systemMenuList({}, dispatch, setMenuLoading);
   }, []);
 
   useEffect(() => {

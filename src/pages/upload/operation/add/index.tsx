@@ -82,6 +82,9 @@ export default function Page() {
   useEffect(() => {
     if (!res.loading) {
       form.setFieldsValue(initialValues);
+      if (typeof detail.firmId === 'number') {
+        setTerminalFirmValue(detail.firmId);
+      }
       if (typeof detail.terminalTypeId === 'number') {
         setTerminalTypeValue(detail.terminalTypeId);
       }
@@ -92,6 +95,7 @@ export default function Page() {
         setReleaseTypeValue(`${detail.releaseType}`);
         form.setFieldsValue({ releaseType: `${detail.releaseType}` });
       }
+
       if (detail.tusns) {
         // 在修改操作时：使用setTimeout是为了保证终端集合是在所有表单设置完以后再执行，
         // 由于获取终端信息是要根据（厂商、终端型号等参数），在终端集合组件

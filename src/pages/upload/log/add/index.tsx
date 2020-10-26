@@ -74,6 +74,7 @@ export default function Page() {
   const id = useQueryParam('id');
   useStore(['log_upload_type']);
   const [form] = useForm();
+  const [appCodeForm] = useForm();
   const history = useHistory();
   const [loading, setLoading] = useState(false);
   const [tusnsOptions, setTusnsOptions] = useState([]);
@@ -103,10 +104,12 @@ export default function Page() {
         ...tableProps,
       }),
     {
-      form,
+      form: appCodeForm,
       formatResult: formatListResult,
     }
   );
+
+  const { submit, reset } = search
 
   /**
    * @todo 获取详情数据
@@ -126,6 +129,10 @@ export default function Page() {
    * @todo 监听详情，设置相应表单数据
    */
   useEffect(() => {
+    console.log("deatil",Object.keys(detail).length);
+    if(!Object.keys(detail).length){
+      return
+    }    
     form.setFieldsValue(initialValues);
     if (typeof detail.type === 'number') {
       form.setFieldsValue({ type: `${detail.type}` });
@@ -182,7 +189,7 @@ export default function Page() {
       }),
     },
     {
-      show: logUploadTypeValue === '0',
+      show: logUploadTypeValue === '01',
       label: fieldLabels.appCode,
       key: 'appCode',
       requiredType: 'input' as any,
@@ -314,6 +321,7 @@ export default function Page() {
   }
 
   const showModal = () => {
+    submit()
     setCodeVisible(true);
   };
 

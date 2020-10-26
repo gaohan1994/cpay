@@ -82,7 +82,7 @@ export default function Page() {
 
   const initialValues = merge(
     {},
-    (detail && detail) || {}
+    (detail && detail.appInfo) || {}
   );
 
   useEffect(() => {

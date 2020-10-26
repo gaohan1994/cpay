@@ -25,6 +25,7 @@ export function formatMenuTreeData(menuData: any[]): any[] {
   function setChild(root: any, array: any[], prefix: string) {
     let index = 0;
     array.forEach((item) => {
+      if(item.children && item.children.length === 0) { item.children = null }
       if (item.parentId === root.menuId) {
         const itemWithKey = { ...item, key: `${prefix}-${index}`, title: `${item.menuName} ${item.perms || 'null'}` };
         if (root.children) {
@@ -96,10 +97,12 @@ export function getStatusColor(text: string) {
     case '成功':
     case '正常':
     case '是':
+    case '显示':
       return '#3D7DE9'
     case '失败':
     case '停用':
     case '否':
+    case '隐藏':
       return '#ed5565'
   }
 }

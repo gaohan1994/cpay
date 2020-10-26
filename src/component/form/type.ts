@@ -117,6 +117,8 @@ export interface IComponentFormTreeSelectForm
     TreeSelectProps<any> {
   formType: FormItmeType.TreeSelect;
   treeSelectData: DeptTreeData[];
+  nodeKey?: string;
+  nodeTitle?: string;
 }
 
 /**
@@ -135,7 +137,10 @@ export function isCommonTreeSelectForm(
 export interface IComponentFormCommonTreeSelectForm
   extends FormBaseProps,
     TreeSelectProps<any> {
-  formType: FormItmeType.TreeSelectCommon;
+  formType: FormItmeType.TreeSelectCommon | FormItmeType.TreeSelect;
+  treeSelectData?: any[];
+  nodeKey?: string;
+  nodeTitle?: string;
 }
 
 /**

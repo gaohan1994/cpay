@@ -86,7 +86,7 @@ export default function Page() {
     'terminal_type',
     'unionpay_connection',
     'buss_type',
-    'dcc_sup_flag',
+    'is_dcc_sup',
     'zz_flag',
     'download_task_type',
     'driver_type',

@@ -37,19 +37,22 @@ export function ComponentContainer(props: any) {
 /**
  * 渲染treeSelect
  */
-export function renderTreeHelper(data: DeptTreeData) {
+export function renderTreeHelper(data: any, nodeKey?: string, nodeTitle?: string) {
+  const keyName = nodeKey || 'id'
+  const titleName = nodeTitle || 'name'
   // 有叶子节点
   if (!!data.children) {
+
     return (
-      <TreeNode key={data.id} value={data.id} title={data.name}>
-        {data.children.map((item) => {
-          return renderTreeHelper(item);
+      <TreeNode key={data[keyName]} value={data[keyName]} title={data[titleName]}>
+        {data.children.map((item: any) => {
+          return renderTreeHelper(item, nodeKey, nodeTitle);
         })}
       </TreeNode>
     );
   }
   // 无叶子结点
-  return <TreeNode key={data.id} value={data.id} title={data.name} />;
+  return <TreeNode key={data[keyName]} value={data[keyName]} title={data[titleName]} />;
 }
 
 /**
@@ -90,7 +93,7 @@ export function UseCommonSelectData(
 }
 
 export function renderTreeSelect(data: IComponentFormTreeSelectForm) {
-  const { formName, span, treeSelectData, formType, ...rest } = data;
+  const { formName, span, treeSelectData, formType, nodeKey, nodeTitle, ...rest } = data;
   return (
     <TreeSelect
       key={formName}
@@ -99,7 +102,7 @@ export function renderTreeSelect(data: IComponentFormTreeSelectForm) {
       {...rest}
     >
       {treeSelectData.map((item) => {
-        return renderTreeHelper(item);
+        return renderTreeHelper(item, nodeKey, nodeTitle);
       })}
     </TreeSelect>
   );
@@ -226,13 +229,13 @@ export function renderCommonTreeSelectForm(
 ) {
   const UseCommonTreeSelectData = (): IComponentFormTreeSelectForm => {
     const state = useSelectorHook((state) => state.common.deptTreeData);
-    const { formName, ...rest } = data;
+    const { formName, treeSelectData, placeholder, ...rest } = data;
     return {
       ...rest,
       formType: FormItmeType.TreeSelect,
       formName: formName || 'deptId',
-      treeSelectData: state,
-      placeholder: '所属机构',
+      treeSelectData: treeSelectData || state,
+      placeholder: placeholder || '所属机构',
     };
   };
 

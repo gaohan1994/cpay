@@ -61,6 +61,19 @@ const routerConfig: any[] = [
     inMenu: false,
   },
   {
+    path: '/application/review',
+    name: '应用审核',
+    component: Applicationreview,
+    exact: true
+  },
+  {
+    path: '/application/review/review',
+    name: '审核',
+    component: ApplicationReviewForm,
+    exact: true,
+    inMenu: false,
+  },
+  {
     path: '/application/publish',
     name: '应用发布',
     component: Applicationpublish,
@@ -80,19 +93,7 @@ const routerConfig: any[] = [
     exact: true,
     inMenu: false,
   },
-  {
-    path: '/application/review',
-    name: '应用审核',
-    component: Applicationreview,
-    exact: true
-  },
-  {
-    path: '/application/review/review',
-    name: '审核',
-    component: ApplicationReviewForm,
-    exact: true,
-    inMenu: false,
-  },
+  
   {
     path: '/application/type',
     name: '应用分类',

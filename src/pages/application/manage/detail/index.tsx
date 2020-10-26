@@ -33,16 +33,13 @@ function Page() {
   * @todo 获取完相应字典数据，设置详情值
   */
   useEffect(() => {
-    setLoading(true);
-    // const isEdit = window.location.href.indexOf('edit') !== -1;
     if (!id) {
       setLoading(false);
       return;
     }
-    if (!!res.loading) {
-      appInfoDetail(id, getDetailCallback);
-    }
-  }, [id, res.loading]);
+    setLoading(true)
+    appInfoDetail(id, getDetailCallback);
+  }, []);
 
   /**
    * @todo 从接口拿到应用详情后的回调方法
@@ -51,7 +48,9 @@ function Page() {
   const getDetailCallback = (result: any) => {
     setLoading(false);
     if (result && result.code === RESPONSE_CODE.success) {
-      let detail: IAppInfoDetail = result.data;
+      console.log(result.data.appInfo,'result.data.appInfo');
+      
+      let detail: IAppInfoDetail = result.data.appInfo || {};
       let arr: any[] = [];
       let permissions: string[] = [];
       let permissionsStr: string = '';

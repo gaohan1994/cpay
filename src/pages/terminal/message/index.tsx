@@ -30,7 +30,7 @@ export default () => {
   const [form] = Form.useForm();
   useStore([
     'terminal_type',
-    'is_support_dcc',
+    'is_dcc_sup',
     'unionpay_connection',
     'buss_type',
     'term_real_status',
@@ -197,7 +197,7 @@ export default () => {
       placeholder: '是否支持DCC',
       formName: 'dccSupFlag',
       formType: FormItmeType.SelectCommon,
-      dictList: 'is_support_dcc',
+      dictList: 'is_dcc_sup',
     },
     {
       placeholder: '银联间直联',

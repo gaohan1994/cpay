@@ -42,7 +42,7 @@ const getObjectValue = (obj: any, keys: string[]) => {
 export default function Page() {
   const id = useQueryParam('id');
   const res = useStore(['driver_type', 'download_task_type', 'release_type',
-    'buss_type', 'unionpay_connection', 'dcc_sup_flag',
+    'buss_type', 'unionpay_connection', 'is_dcc_sup',
     'terminal_type', 'activate_type', 'is_group_update', 'zz_flag','acquiring_param_belong_app',
     'acquiring_param_template_type'
   ]);
@@ -72,7 +72,7 @@ export default function Page() {
     terminalInfo.push({ label: "终端类型", value: getActivateTypeNames(getIssueParamsJobOutputValue('activateTypes')) });
     terminalInfo.push({ label: "银联间直连", value: getDictText(getIssueParamsJobOutputValue('cupConnMode'), 'unionpay_connection') });
     terminalInfo.push({ label: "业务类型", value: getDictText(getIssueParamsJobOutputValue('bussType'), 'buss_type') });
-    terminalInfo.push({ label: "DCC交易指定类型", value: getDictText(getIssueParamsJobOutputValue('dccSupFlag'), 'dcc_sup_flag') });
+    terminalInfo.push({ label: "DCC交易指定类型", value: getDictText(getIssueParamsJobOutputValue('dccSupFlag'), 'is_dcc_sup') });
     terminalInfo.push({ label: "增值终端", value: getDictText(getIssueParamsJobOutputValue('zzFlag'), 'zz_flag') });
     arr.push({ key: '终端信息', value: terminalInfo });
     const paramsInfo: any = []
@@ -99,7 +99,7 @@ export default function Page() {
       releaseTypeInfo.push({ label: "终端组别", value: getIssueParamsJobOutputValue('groupNames') });
     }
     if (getIssueParamsJobOutputValue('releaseType') === 0) {
-      releaseTypeInfo.push({ label: "终端集合", value: getIssueParamsJobOutputValue('tusns') });
+      releaseTypeInfo.push({ label: "终端集合", value: getCommonValue('tusnList').join('，') });
     }
     arr.push({ key: '发布类型', value: releaseTypeInfo });
     setDetailArr(arr);

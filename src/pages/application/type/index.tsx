@@ -150,9 +150,9 @@ function Page(props: Props) {
       modalForm.setFieldsValue({
         typeCode: item.typeCode,
         typeName: item.typeName,
-        typeIcon: item.iconPath.replace(`${BASIC_CONFIG.SOURCE_URL}/`, ''),
+        typeIcon: item.iconPath?.replace(`${BASIC_CONFIG.SOURCE_URL}/`, ''),
       });
-      setImageUrl(item.iconPath.replace(`${BASIC_CONFIG.SOURCE_URL}/`, ''));
+      setImageUrl(item.iconPath?.replace(`${BASIC_CONFIG.SOURCE_URL}/`, ''));
     }
     setModalVisible(true);
   };

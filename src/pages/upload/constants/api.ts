@@ -97,7 +97,7 @@ export const taskUploadJobDetail = async (
   id: number,
   callback?: (params: any) => void
 ): Promise<any> => {
-  const result = await ApiRequest.post(`/cpay-admin/task/uploadJob/downloadJobDetail`, { id });
+  const result = await ApiRequest.post(`/cpay-admin/task/uploadJob/uploadJobDetail`, { id });
   callback && callback(result);
   return result;
 };
@@ -107,34 +107,34 @@ export const taskUploadJobDetail = async (
 * @param params 
 */
 export const taskUploadJobAdd = (params: any) =>
-  ApiRequest.post(`/cpay-admin/task/uploadJob/downloadJobAdd`, params);
+  ApiRequest.post(`/cpay-admin/task/uploadJob/uploadJobAdd`, params);
 
 /**
 * @todo 修改终端上传任务(日志提取修改)
 * @param params 
 */
 export const taskUploadJobEdit = (params: any) =>
-  ApiRequest.post(`/cpay-admin/task/uploadJob/downloadJobEdit`, params);
+  ApiRequest.post(`/cpay-admin/task/uploadJob/uploadJobEdit`, params);
 
 /**
 * @todo 删除终端上传任务删除（日志提取删除）
 * @param params
 */
 export const taskUploadJobRemove = (params: { ids: string }) =>
-  ApiRequest.post(`/cpay-admin/task/uploadJob/downloadJobRemove`, params);
+  ApiRequest.post(`/cpay-admin/task/uploadJob/uploadJobRemove`, params);
 
 /**
 * @todo 删除终端上传任务发布（日志提取执行任务）
 * @param params
 */
 export const taskUploadJobPublish = (id: number) =>
-  ApiRequest.post(`/cpay-admin/task/uploadJob/downloadJobPublish`, { id });
+  ApiRequest.post(`/cpay-admin/task/uploadJob/uploadJobPublish`, { id });
 
 /**
  * @todo 导入终端信息
  */
 export const taskUploadJobImportData = (param: any) =>
-  ApiRequest.postFormData(`/cpay-admin/task/uploadJob/downloadJobImportData`, param);
+  ApiRequest.postFormData(`/cpay-admin/task/uploadJob/uploadJobImportData`, param);
 
 /**
  * @todo 查询终端上传任务列表(日志提取)

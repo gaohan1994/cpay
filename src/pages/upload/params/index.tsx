@@ -188,7 +188,7 @@ function Page(props: Props) {
     },
     {
       title: '创建机构',
-      dataIndex: 'deptName',
+      dataIndex: 'createDeptName',
     }
   ]);
 
