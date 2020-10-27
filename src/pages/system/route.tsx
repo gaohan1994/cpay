@@ -18,6 +18,7 @@ import SystemDictList from '@/pages/system/dict/list';
 import SystemParam from '@/pages/system/param';
 import SystemNotice from '@/pages/system/notice';
 import SystemNoticeAdd from '@/pages/system/notice/add';
+import SystemLogSet from '@/pages/system/log-set/index'
 import SystemLog from '@/pages/system/log';
 import SystemLogDetail from '@/pages/system/log/log.operation.detail';
 
@@ -119,6 +120,12 @@ const routerConfig: any[] = [
     component: SystemNoticeAdd,
     exact: true,
     inMenu: false,
+  },
+  {
+    path: '/system/logSet',
+    name: '日志配置',
+    component: SystemLogSet,
+    exact: true
   },
   {
     path: '/system/log',
