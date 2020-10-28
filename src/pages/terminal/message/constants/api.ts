@@ -63,6 +63,6 @@ export const terminalGroupListByDept = async (
  * @param params
  */
 export const terminalInfoExport = async (params?: any) => {
-  const result = await ApiRequest.post(`/terminal/info/terminalInfoExport`, params);
+  const result = await ApiRequest.post(`/cpay-admin/terminal/info/terminalInfoExport`, params);
   return result;
 };

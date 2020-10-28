@@ -78,11 +78,12 @@ export default function Page() {
     appInfo
   } = useFormSelectData({ ...form.getFieldsValue(), deptId: deptId }, form);
 
-  const { detail } = useDetail(id, appInfoDetail, setLoading);
+  let { detail } = useDetail(id, appInfoDetail, setLoading);
+  detail = detail.appInfo || {}
 
   const initialValues = merge(
     {},
-    (detail && detail.appInfo) || {}
+    (detail || {})
   );
 
   useEffect(() => {

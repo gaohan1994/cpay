@@ -31,7 +31,7 @@ type Props = {};
 
 function Page(props: Props) {
   // 请求dept数据
-  useStore(['sys_common_status']);
+  useStore(['sys_common_status', 'sys_oper_type']);
 
   const [loading, setLoading] = useState(false);
 

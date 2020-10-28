@@ -102,7 +102,7 @@ export default () => {
       title: '确认要导出终端信息？',
       onOk: async () => {
         try {
-          const result = await terminalInfoExport();
+          const result = await terminalInfoExport({});
           invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
 
           const href = getDownloadPath(result.data);
@@ -188,7 +188,7 @@ export default () => {
     },
     {
       placeholder: '终端类型',
-      formName: 'terminalTypeIds',
+      formName: 'activateType',
       formType: FormItmeType.SelectCommon,
       dictList: 'terminal_type',
       mode: 'multiple',
@@ -285,7 +285,8 @@ export default () => {
     },
     {
       title: '终端类型',
-      dataIndex: 'terminalTypeName',
+      dataIndex: 'activateType',
+      dictType: 'terminal_type'
     },
     {
       title: '所属机构',

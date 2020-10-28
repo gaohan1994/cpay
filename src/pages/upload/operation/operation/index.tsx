@@ -84,7 +84,8 @@ function Page(props: Props) {
     },
     {
       title: '所属机构',
-      dataIndex: 'firmName',
+      dataIndex: 'deptName',
+
     },
     {
       title: '终端厂商',

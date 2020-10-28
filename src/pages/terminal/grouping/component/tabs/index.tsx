@@ -127,7 +127,7 @@ export default (props: Props) => {
       placeholder: '商户编号',
     },
     {
-      formName: 'terminalTypeId',
+      formName: 'activateType',
       formType: FormItmeType.SelectCommon,
       dictList: 'terminal_type',
     },

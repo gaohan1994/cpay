@@ -49,7 +49,8 @@ function Page() {
   const [error, setError] = useState<ErrorField[]>([]);
   const [form] = Form.useForm();
 
-  const { detail } = useDetail(id, appInfoDetail, setLoading);
+  let { detail } = useDetail(id, appInfoDetail, setLoading);
+  detail = detail?.appInfo || {}
 
   useEffect(() => {
     let permissions: string[] = [];

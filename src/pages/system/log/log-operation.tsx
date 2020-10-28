@@ -86,7 +86,8 @@ function SystemLog(props: Props) {
     },
     {
       title: '操作类型',
-      dataIndex: 'type',
+      dataIndex: 'operId',
+      dictType: 'sys_oper_type'
     },
     {
       title: '操作人员',
