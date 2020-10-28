@@ -45,7 +45,7 @@ export const terminalSysdetailExport = async (
   callback?: (data: any) => void
 ) => {
   const result = await ApiRequest.post(
-    `/cpay-admin/terminal/sysdetail/terminalSysDetailExport`,
+    `/cpay-admin/terminal/sysDetail/terminalSysDetailExport`,
     params
   );
   callback && callback(result);

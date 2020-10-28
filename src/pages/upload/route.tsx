@@ -32,7 +32,7 @@ import UploadParamsOperation from '@/pages/upload/params/operation'
 
 export const UploadMenu = {
   name: '远程更新',
-  icon: ToolOutlined,
+  icon: 'ToolOutlined',
   path: 'upload',
   value: 'upload'
 };

@@ -41,7 +41,7 @@ export function useFormSelectData(props: any) {
     setActivateTypesList(state.terminal_type && state.terminal_type.data || []);
     setUnionpayConnectionList(state.unionpay_connection && state.unionpay_connection.data || []);
     setBussTypeList(state.buss_type && state.buss_type.data || []);
-    setDccSupFlagList(state.is_dcc_sup && state.is_dcc_sup.data || []);
+    setDccSupFlagList(state.dcc_sup_flag && state.dcc_sup_flag.data || []);
     setReleaseTypeList(state.release_type && state.release_type.data || []);
     setActivateTypeList(state.activate_type && state.activate_type.data || []);
     setIsGroupUpdateList(state.is_group_update && state.is_group_update.data || []);

@@ -9,10 +9,13 @@ import {
 } from 'react-router-dom';
 import { AnimatedSwitch, spring } from 'react-router-transition';
 import { routerConfig } from '@/common/route-config';
-import { menuConfig } from '@/common/menu-config';
+import { menuConfig, formatMenuConfig } from '@/common/menu-config';
 import LayouContainer from '@/modules/layout-container';
 import { history } from '@/common/history-util';
 import ErrorComponent from '@/pages/exception/error';
+import { systemMenuList } from '@/pages/system/menu/constants/api'
+import { connect } from 'react-redux';
+import { getMenuUser } from '@/pages/home/constants/api';
 
 export type WebNavigator = { child?: any[] } & RouteProps;
 
@@ -24,14 +27,21 @@ export type CreateWebNavigationParams = {
 function createWebNavigation(params: CreateWebNavigationParams): any {
   const { routes, transition = true } = params;
   return class extends React.Component<any, any> {
+
+    public componentDidMount () {
+      const { dispatch } = this.props
+      getMenuUser(dispatch)
+    }
     render() {
+      const { menuTreeData } = this.props
       const login = routes.find((r) => r.path === '/login');
       return (
         <BrowserRouter>
           <Router history={history}>
             <Switch>
               {login && <Route key={'login'} {...login} />}
-              <LayouContainer menus={menuConfig}>
+              <LayouContainer menus={formatMenuConfig(menuTreeData)}>
+              {/* <LayouContainer menus={menuConfig}> */}
                 {routes.map((item: WebNavigator, index: number) => {
                   const { ...rest } = item;
                   return <Route key={index} {...rest} />;
@@ -101,6 +111,8 @@ function createSwitchNavigation(
   }
 }
 
-const AppRouter = createWebNavigation({ routes: routerConfig });
+const AppRouter = connect((state: any) => {
+  return {menuTreeData: state?.user?.menus}
+})(createWebNavigation({ routes: routerConfig }))
 
 export { createWebNavigation, AppRouter };

@@ -29,7 +29,7 @@ import TerminalTemplateDetail from '@/pages/terminal/template/detail';
 
 export const TerminalMenu = {
   name: '终端管理',
-  icon: AndroidOutlined,
+  icon: 'AndroidOutlined',
   path: 'terminal',
   value: 'terminal',
 };

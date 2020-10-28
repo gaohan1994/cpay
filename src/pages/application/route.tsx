@@ -20,7 +20,7 @@ import Applicationtype from '@/pages/application/type';
 
 export const ApplicationMenu = {
   name: '应用管理',
-  icon: AppstoreAddOutlined,
+  icon: 'AppstoreAddOutlined',
   path: 'application',
   value: 'application'
 };

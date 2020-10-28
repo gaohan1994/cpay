@@ -38,7 +38,7 @@ function Page(props: Props) {
   useStore([
     'download_task_status',
     'terminal_operator_command',
-    'download_task_type',
+    'job_action',
   ]);
   const id = useQueryParam('id');
   const jobName = useQueryParam('jobName');
@@ -101,7 +101,7 @@ function Page(props: Props) {
     // {
     //   title: '操作类型',
     //   dataIndex: 'actionType',
-    //   dictType: 'download_task_type',
+    //   dictType: 'job_action',
     // },
     {
       title: '模板参数名称',
@@ -148,7 +148,7 @@ function Page(props: Props) {
     // {
     //   formName: 'actionType',
     //   formType: FormItmeType.SelectCommon,
-    //   dictList: 'download_task_type',
+    //   dictList: 'job_action',
     // },
     // {
     //   placeholder: '参数模板',

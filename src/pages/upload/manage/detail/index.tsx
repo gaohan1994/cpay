@@ -56,7 +56,7 @@ const initState = {
 function Page() {
   const history = useHistory();
   const id = useQueryParam('id');
-  const res = useStore(['driver_type', 'unionpay_connection', 'is_dcc_sup']);
+  const res = useStore(['driver_type', 'unionpay_connection', 'dcc_sup_flag']);
   const typesRef: any = useRef();
 
   const [terminalFirmList, setTerminalFirmList] = useState(
@@ -424,7 +424,7 @@ function Page() {
           <Descriptions.Item label="软件名称" style={styles.descItem}><div style={{padding: 12}}>{softInfo.appName}</div></Descriptions.Item>
           <Descriptions.Item label="软件包名" style={styles.descItem}><div style={{padding: 12}}>{softInfo.code}</div></Descriptions.Item>
           <Descriptions.Item label="软件类型" style={styles.descItem}><div style={{padding: 12}}>{getDictText(`${softInfo.type}`, 'driver_type')}</div></Descriptions.Item>
-          <Descriptions.Item label="是否支持DCC" style={styles.descItem}><div style={{padding: 12}}>{getDictText(`${softInfo.dccSupFlag}`, 'is_dcc_sup')}</div></Descriptions.Item>
+          <Descriptions.Item label="是否支持DCC" style={styles.descItem}><div style={{padding: 12}}>{getDictText(`${softInfo.dccSupFlag}`, 'dcc_sup_flag')}</div></Descriptions.Item>
           <Descriptions.Item label="银联间直联" style={styles.descItem}><div style={{padding: 12}}>{getDictText(`${softInfo.cupConnMode}`, 'unionpay_connection')}</div></Descriptions.Item>
         </Descriptions>
       </Card>

@@ -14,7 +14,7 @@ import ReportDownloadJobOperation from '@/pages/report/download-job/operation';
 
 export const ReportMenu = {
   name: '报表中心',
-  icon: FundOutlined,
+  icon: 'FundOutlined',
   path: 'report',
   value: 'report'
 };

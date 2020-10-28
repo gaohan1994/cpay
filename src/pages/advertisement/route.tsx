@@ -14,7 +14,7 @@ import AdvertisementAdd from '@/pages/advertisement/add';
 
 export const AdvertisementMenu = {
   name: '广告管理',
-  icon: GlobalOutlined,
+  icon: 'GlobalOutlined',
   path: 'advertisement',
   value: 'advertisement',
 };

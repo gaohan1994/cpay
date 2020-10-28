@@ -24,7 +24,7 @@ import SystemLogDetail from '@/pages/system/log/log.operation.detail';
 
 export const SystemMenu = {
   name: '系统管理',
-  icon: SettingOutlined,
+  icon: 'SettingOutlined',
   path: 'system',
   value: 'system'
 };
@@ -122,7 +122,7 @@ const routerConfig: any[] = [
     inMenu: false,
   },
   {
-    path: '/system/logSet',
+    path: '/system/configLog',
     name: '日志配置',
     component: SystemLogSet,
     exact: true

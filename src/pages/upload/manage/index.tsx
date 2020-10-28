@@ -24,7 +24,7 @@ type Props = {};
 
 function Page(props: Props) {
   // 请求dept数据
-  useStore(['driver_type', 'unionpay_connection', 'is_dcc_sup']);
+  useStore(['driver_type', 'unionpay_connection', 'dcc_sup_flag']);
 
   const [loading, setLoading] = useState(false);
 
@@ -145,7 +145,7 @@ function Page(props: Props) {
     {
       title: '是否支持DCC',
       dataIndex: 'dccSupFlag',
-      dictType: 'is_dcc_sup',
+      dictType: 'dcc_sup_flag',
     },
     {
       title: '银联间直联',
@@ -176,7 +176,7 @@ function Page(props: Props) {
     {
       formName: 'dccSupFlag',
       formType: FormItmeType.SelectCommon,
-      dictList: 'is_dcc_sup',
+      dictList: 'dcc_sup_flag',
     },
     {
       formName: 'cupConnMode',

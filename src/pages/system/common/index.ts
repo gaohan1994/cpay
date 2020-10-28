@@ -7,37 +7,28 @@ import { DeptItem, DeptTreeData } from "@/pages/common/type";
 export function formatMenuTreeData(menuData: any[]): any[] {
   let rootPrefix = '0';
   function parseArrayToTree(array: any[]) {
-    let tree: any[] = [];
     let rootNum = 0;
-    for (let i = 0; i < array.length; i++) {
-      if (array[i].parentId === 0) {
-        let root = array[i];
-        const key = `${rootPrefix}-${rootNum++}`;
-        root.key = key;
-        root.title = `${root.menuName} ${root.perms || 'null'}`;
-        tree.push(root);
-        setChild(root, menuData, key);
-      }
-    }
-    return tree;
+    const rootList = array.filter(item => item.parentId === 0)
+    rootList.map((item, index) => {
+      const key = `${rootPrefix}-${rootNum++}`;
+      item.key = key
+      item.title = `${item.menuName} ${item.perms || 'null'}`;
+      setChild(item, array, key)
+    })
+    return rootList;
   }
 
   function setChild(root: any, array: any[], prefix: string) {
-    let index = 0;
-    array.forEach((item) => {
+    const childList = array.filter(item => {
       if(item.children && item.children.length === 0) { item.children = null }
-      if (item.parentId === root.menuId) {
-        const itemWithKey = { ...item, key: `${prefix}-${index}`, title: `${item.menuName} ${item.perms || 'null'}` };
-        if (root.children) {
-          root.children.push(itemWithKey);
-          index++;
-        } else {
-          root.children = [itemWithKey];
-          index++;
-        }
-        setChild(itemWithKey, array, `${prefix}-${index}`);
-      }
-    });
+      return item.parentId === root.menuId
+    })    
+    root.children = [...childList]
+    childList.map((item, index) => {
+      item.key = `${prefix}-${index}`
+      item.title = `${item.menuName} ${item.perms || 'null'}`
+      setChild(item, array, `${prefix}-${index}`)
+    })
   }
 
   return parseArrayToTree(menuData);
@@ -103,6 +94,7 @@ export function getStatusColor(text: string) {
     case '停用':
     case '否':
     case '隐藏':
+    case '关闭':
       return '#ed5565'
   }
 }

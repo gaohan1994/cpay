@@ -19,6 +19,8 @@ import AdvertisementRoute, {
 } from '@/pages/advertisement/route';
 import { HomeOutlined, FundViewOutlined } from '@ant-design/icons';
 
+// const icon = require('@ant-design/icons')['HomeOutlined']
+
 function formartRouteToMenu(routeConfig: any[]): any[] {
   const newConfig: any[] = merge([], routeConfig);
   return newConfig
@@ -37,7 +39,7 @@ function formartRouteToMenu(routeConfig: any[]): any[] {
 const menuConfig: ILayoutSiderMenu[] = [
   {
     name: '主页',
-    icon: HomeOutlined,
+    icon: 'HomeOutlined',
     path: 'home',
     value: 'home',
   },
@@ -60,7 +62,7 @@ const menuConfig: ILayoutSiderMenu[] = [
   {
     ...MotionMenu,
     subMenus: formartRouteToMenu(MotionRoute),
-    icon: FundViewOutlined,
+    icon: 'FundViewOutlined',
   },
   {
     ...ReportMenu,
@@ -72,4 +74,42 @@ const menuConfig: ILayoutSiderMenu[] = [
   },
 ];
 
-export { menuConfig };
+function formartChildren(routeConfig: any[]): any[] {
+  const newConfig: any[] = merge([], routeConfig);
+  return newConfig
+    .map((route) => {
+      // if (route.visible === '0') {
+        return {
+          name: route.menuName,
+          value: route.url && route.url.substring(1, route.url.length),
+          path: route.url && route.url.substring(1, route.url.length),
+        };
+      // }
+    })
+    .filter((item) => !!item);
+}
+
+const formatMenuConfig = (menuList: any[]) => {
+  if(!Array.isArray(menuList) || !menuList.length) {
+    return []
+  }
+  const arr = menuList.map((item) => {
+    const obj: ILayoutSiderMenu = {
+      name: item.menuName,
+      icon: item.icon,
+      path: item.url && item.url.substring(1, item.url.length),
+      value: item.url && item.url.substring(1, item.url.length)
+    }
+    Array.isArray(item.children) && item.children.length && (obj.subMenus = formartChildren(item.children))
+    return obj
+  })
+  arr.unshift({
+    name: '主页',
+    icon: 'HomeOutlined',
+    path: 'home',
+    value: 'home',
+  })  
+  return arr
+}
+
+export { menuConfig, formatMenuConfig };

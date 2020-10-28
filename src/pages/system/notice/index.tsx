@@ -46,7 +46,7 @@ const fieldLabels = {
 type Props = {};
 
 function Page(props: Props) {
-  useStore(['sys_normal_disable', 'sys_notice_type']);
+  useStore(['sys_notice_status', 'sys_notice_type']);
   const dictList = useSelectorHook(state => state.common.dictList);
 
   const [loading, setLoading] = useState(false);
@@ -173,13 +173,13 @@ function Page(props: Props) {
     {
       title: '公告类型',
       dataIndex: 'noticeType',
-      dictType: 'sys_notice_type',
+      dictType: 'sys_notice_type'
     },
     {
       title: '公告状态',
       dataIndex: 'status',
-      dictType: 'sys_normal_disable',
-      render: (item) => <Tag color={getStatusColor(item)}>{item}</Tag>
+      dictType: 'sys_notice_status',
+      // render: (item) => <Tag color={getStatusColor(item)}>{item}</Tag>
     },
     {
       title: '创建者',

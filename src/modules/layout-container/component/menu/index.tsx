@@ -7,7 +7,7 @@ import { ILayoutSiderMenu } from '../../types';
 import { MenuInfo } from 'rc-menu/lib/interface';
 import { history } from '@/common/history-util';
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
-
+import  * as Icon from '@ant-design/icons';
 const { Sider } = Layout;
 const { SubMenu } = Menu;
 
@@ -123,7 +123,13 @@ function LayoutMenu(props: Props) {
                 return (
                   <SubMenu
                     key={menuItem.value}
-                    icon={<menuItem.icon />}
+                    // icon={renderIcon(menuItem.icon)}
+                    icon={
+                      React.createElement(
+                        // Icon[menuItem.icon],
+                        Icon['MessageOutlined']
+                      )
+                    }
                     title={menuItem.name}
                     style={{
                       paddingBottom: index === menus.length - 1 ? 50 : 0,
@@ -142,7 +148,12 @@ function LayoutMenu(props: Props) {
               return (
                 <Menu.Item
                   key={menuItem.value}
-                  icon={<menuItem.icon />}
+                  icon={
+                    React.createElement(
+                      // Icon[menuItem.icon],
+                      Icon['MessageOutlined']
+                    )
+                  }
                   style={{ paddingBottom: index === menus.length - 1 ? 50 : 0 }}
                 >
                   {menuItem.name}

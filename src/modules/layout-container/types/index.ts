@@ -5,7 +5,7 @@ export interface ILayoutSiderSubMenu {
 }
 
 export interface ILayoutSiderMenu {
-  icon: any;
+  icon: string;
   name: string;
   path: string;
   value: string;
