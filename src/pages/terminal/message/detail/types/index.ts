@@ -1,7 +1,23 @@
 export interface ITerminalSystemDetail {
-  ram: number;
-  rom: number;
-  sd: number;
+  id: number,
+  androidVersion: string;
+  commParaVersion: string;
+  createTime: string;
+  emvVersion: string;
+  launcherParaVersion: string;
+  networkType: string;
+  osVersion: string;
+  payAppCode: string;
+  payAppName: string;
+  payAppVersion: string;
+  payAppVersionOutside: string;
+  paySdk: string;
+  safeModelVersion: string;
+  tmsAppVersion: string;
+  tmsAppVersionOutside: string;
+  tmsSdk: string;
+  tusn: string;
+  updateTime: string;
 }
 
 export interface ITerminalApp { }

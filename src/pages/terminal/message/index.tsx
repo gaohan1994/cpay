@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Table, notification, Modal } from 'antd';
+import { Form, Table, notification, Modal, Button } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
-import { ImportOutlined, LogoutOutlined } from '@ant-design/icons';
+import { ImportOutlined, LogoutOutlined, DownloadOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd/lib/button';
 import {
   terminalInfoList,
@@ -25,6 +25,8 @@ import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
 import history from '@/common/history-util';
 import { useSelectorHook } from '@/common/redux-util';
 import { getDictText } from '@/pages/common/util';
+import ImportModal from './components/importModal';
+import {terminalInfoImport, terminalInfoImportTemplate } from './constants/api'
 
 export default () => {
   const [form] = Form.useForm();
@@ -54,6 +56,7 @@ export default () => {
   const [terminalFirmTypeList, setTerminalFirmTypeList] = useState(
     initState.terminalFirmTypeList
   );
+  const [importModalVisible, setImportModalVisible] = useState(false);
   useEffect(() => {
     getTerminalFirmList({}, setTerminalFirmList);
   }, []);
@@ -116,6 +119,19 @@ export default () => {
       cancelText: '取消',
     });
   };
+
+  /**
+   * @todo 下载模版
+   */
+  const onDownloadImportTemplate = async () => {
+    const res = await terminalInfoImportTemplate({});
+    if (res && res.code === RESPONSE_CODE.success) {
+      const href = getDownloadPath(res.data);
+      // window.open(href, '_blank');
+    } else {
+      notification.error({ message: res && res.msg || '下载模版失败' });
+    }
+  }
 
   const forms: FormItem[] = [
     {
@@ -342,6 +358,7 @@ export default () => {
       title: '导入',
       icon: <ImportOutlined />,
       type: 'primary',
+      onClick: () => setImportModalVisible(true)
     },
     {
       title: '导出',
@@ -374,6 +391,12 @@ export default () => {
         pagination={getStandardPagination(tableProps.pagination)}
         scroll={{ x: 2200 }}
       />
+      <ImportModal 
+        visible={importModalVisible}
+        onCancel={() => setImportModalVisible(false)}
+      >
+        <Button type='primary' onClick={onDownloadImportTemplate}><DownloadOutlined />下载模版</Button>
+      </ImportModal>
     </div>
   );
 };

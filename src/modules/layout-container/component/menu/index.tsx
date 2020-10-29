@@ -123,11 +123,10 @@ function LayoutMenu(props: Props) {
                 return (
                   <SubMenu
                     key={menuItem.value}
-                    // icon={renderIcon(menuItem.icon)}
                     icon={
                       React.createElement(
-                        // Icon[menuItem.icon],
-                        Icon['MessageOutlined']
+                        (Icon as any)[menuItem.icon],
+                        // Icon['MessageOutlined']
                       )
                     }
                     title={menuItem.name}
@@ -150,8 +149,8 @@ function LayoutMenu(props: Props) {
                   key={menuItem.value}
                   icon={
                     React.createElement(
-                      // Icon[menuItem.icon],
-                      Icon['MessageOutlined']
+                      (Icon as any)[menuItem.icon],
+                      // Icon['MessageOutlined']
                     )
                   }
                   style={{ paddingBottom: index === menus.length - 1 ? 50 : 0 }}

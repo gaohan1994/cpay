@@ -66,3 +66,21 @@ export const terminalInfoExport = async (params?: any) => {
   const result = await ApiRequest.post(`/cpay-admin/terminal/info/terminalInfoExport`, params);
   return result;
 };
+
+/**
+ * @todo 导入终端信息
+ * @param params
+ */
+export const terminalInfoImport = async (params?: any) => {
+  const result = await ApiRequest.postFormData(`/cpay-admin/terminal/info/terminalInfoImportData`, params);
+  return result;
+};
+
+/**
+ * @todo 导入终端模板
+ * @param params
+ */
+export const terminalInfoImportTemplate = async (params?: any) => {
+  const result = await ApiRequest.post(`/cpay-admin/terminal/info/terminalInfoImportTemplate`, params);
+  return result
+}

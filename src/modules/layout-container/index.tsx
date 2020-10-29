@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Layout, ConfigProvider, Menu, Divider } from 'antd';
+import { Layout, ConfigProvider, Menu, Divider, Button } from 'antd';
 import './index.scss';
 import LayoutMenu from './component/menu';
 import LayoutBread from './component/bread';
@@ -9,6 +9,7 @@ import { useSelectorHook, useRedux } from '@/common/redux-util';
 import { getUserDept } from '@/common/api';
 import './index.less';
 import { useHistory } from 'react-router-dom';
+import { logout } from '@/pages/user/constants/api';
 
 const prefix = 'component-layout';
 
@@ -55,6 +56,7 @@ function LayoutContainer(props: Props) {
         <div className="header-title-dept">
           {(common.userDept && common.userDept.deptName) || ''}
         </div>
+        <Button onClick={() => { logout({})}}>退出</Button>
       </Header>
       <Layout>
         <LayoutMenu menus={menus} />

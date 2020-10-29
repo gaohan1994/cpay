@@ -7,8 +7,10 @@ import { advert } from '@/pages/advertisement/reducers';
 import { app } from '@/pages/application/reducers';
 import { upload } from '@/pages/upload/reducers';
 import { system } from '@/pages/system/reducers';
+import { user } from '@/pages/user/reducers';
 
 export const reducer = combineReducers({
+  user,
   homeReducer,
   common,
   advert,

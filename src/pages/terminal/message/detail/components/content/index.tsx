@@ -43,7 +43,6 @@ export function renderColumns(array: any[]) {
 
 export default (props: Props) => {
   const { currentTab, terminalDetailInfo } = props;
-  console.log('currentTab', currentTab);
   /**
    * 基础信息
    */
@@ -184,54 +183,55 @@ export default (props: Props) => {
    * 系统信息
    */
   if (currentTab.key === '2') {
+    const terminalSystemDetail = terminalDetailInfo.terminalSysdetail
     const detailArr: any[] = [];
     detailArr.push({
       label: '系统版本',
-      value: '--',
+      value: terminalSystemDetail?.osVersion || '--',
     });
     detailArr.push({
       label: '安全模块版本',
-      value: '--',
+      value:  terminalSystemDetail?.safeModelVersion || '--',
     });
     detailArr.push({
       label: '运维SDK版本',
-      value: '--',
+      value:  terminalSystemDetail?.tmsSdk || '--',
     });
     detailArr.push({
       label: '收单SDK版本',
-      value: '--',
+      value:  terminalSystemDetail?.paySdk || '--',
     });
     detailArr.push({
       label: 'POS管家内部版本',
-      value: '--',
+      value:  terminalSystemDetail?.tmsAppVersion || '--',
     });
     detailArr.push({
       label: '收单应用',
-      value: '--',
+      value:  terminalSystemDetail?.payAppName || '--',
     });
     detailArr.push({
       label: '网络类型',
-      value: '--',
+      value:  terminalSystemDetail?.networkType || '--',
     });
     detailArr.push({
       label: '蓝牙地址',
-      value: '--',
+      value:  terminalSystemDetail?.blueTooth || '--',
     });
     detailArr.push({
       label: 'Android版本',
-      value: '--',
+      value:  terminalSystemDetail?.androidVersion || '--',
     });
     detailArr.push({
       label: '参数版本',
-      value: '--',
+      value:  terminalSystemDetail?.commParaVersion || '--',
     });
     detailArr.push({
       label: 'EMV版本',
-      value: '--',
+      value:  terminalSystemDetail?.emvVersion || '--',
     });
     detailArr.push({
       label: 'POS管家外部版本',
-      value: '--',
+      value:  terminalSystemDetail?.payAppVersionOutside || '--',
     });
     return renderColumns(detailArr);
   }

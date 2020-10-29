@@ -12,7 +12,7 @@ import TerminalRoute from '@/pages/terminal/route';
 import ApplicationRoute from '@/pages/application/route';
 import UploadRoute from '@/pages/upload/route';
 import advertisement from '@/pages/advertisement/route';
-import Login from '@/pages/sign/login';
+import Login from '@/pages/user/login';
 import MotionRoute from '@/pages/motion/route';
 import ReportRoute from '@/pages/report/route';
 import SystemRoute from '@/pages/system/route';
@@ -39,5 +39,5 @@ export const routerConfig: RouteProps[] = [
   ...UploadRoute,
   ...MotionRoute,
   ...ReportRoute,
-  ...SystemRoute
+  ...SystemRoute,
 ];

@@ -6,7 +6,7 @@ import { PaginatedParams } from 'ahooks/lib/useAntdTable';
 import { PlusOutlined, CopyOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd/lib/button';
 import { terminalParamList, terminalParamRemove } from './constants';
-import { formatListResult } from '@/common/request-util';
+import { formatListResult, formatPaginate } from '@/common/request-util';
 import { createTableColumns, getStandardPagination } from '@/component/table';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import Forms from '@/component/form';
@@ -21,8 +21,8 @@ export default () => {
 
   const [form] = Form.useForm();
   const { tableProps, search }: any = useAntdTable(
-    (paginatedParams: PaginatedParams, tableProps: any) => {
-      return terminalParamList({ ...tableProps });
+    (paginatedParams: PaginatedParams[0], tableProps: any) => {
+      return terminalParamList({ ...tableProps, ...formatPaginate(paginatedParams)});
     },
     {
       form,
