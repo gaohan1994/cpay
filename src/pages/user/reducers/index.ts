@@ -11,6 +11,7 @@ export const initState: UserInterface.IUserReducerState = {
 
 export const ACTION_TYPES_USER = {
   RECEIVE_MENU_USER: 'RECEIVE_MENU_USER',
+  RESET_MENU_USER: 'RESET_MENU_USER',
 };
 
 export function user(state = initState, action: { type: string; payload: any }): UserInterface.IUserReducerState {
@@ -20,6 +21,13 @@ export function user(state = initState, action: { type: string; payload: any }):
       return {
         ...state,
         ...payload,
+      };
+    }
+    case ACTION_TYPES_USER.RESET_MENU_USER: {
+      const { payload } = action;
+      return {
+        ...state,
+        user: {},
       };
     }
     default:

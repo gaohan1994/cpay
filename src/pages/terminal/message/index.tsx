@@ -25,7 +25,7 @@ import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
 import history from '@/common/history-util';
 import { useSelectorHook } from '@/common/redux-util';
 import { getDictText } from '@/pages/common/util';
-import ImportModal from './components/importModal';
+import ImportModal from '../../../component/modal/importModal';
 import {terminalInfoImport, terminalInfoImportTemplate } from './constants/api'
 
 export default () => {
@@ -394,6 +394,7 @@ export default () => {
       <ImportModal 
         visible={importModalVisible}
         onCancel={() => setImportModalVisible(false)}
+        importFunc={terminalInfoImport}
       >
         <Button type='primary' onClick={onDownloadImportTemplate}><DownloadOutlined />下载模版</Button>
       </ImportModal>

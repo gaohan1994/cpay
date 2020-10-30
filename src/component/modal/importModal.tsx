@@ -1,8 +1,10 @@
+/**
+ * @todo 导入Modal组件
+ */
 import React, { useState, useRef, useEffect, Fragment } from 'react';
 import { Button, Modal, Form, Col, Row, Input, notification, message, Upload } from 'antd';
 import {
   CloseOutlined,
-  DownloadOutlined,
   UploadOutlined,
   CheckCircleFilled,
   CheckOutlined,
@@ -10,16 +12,17 @@ import {
 } from '@ant-design/icons';
 import { useForm } from 'antd/lib/form/Form';
 import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
-import { terminalInfoImport, terminalInfoImportTemplate } from '../constants/api';
+import invariant from 'invariant'
 
 interface Props {
   visible: boolean;
   onCancel: () => void;
+  importFunc: (params: any) => Promise<any>;
   children?: any;
 }
 
 export default function ImportPage(props: Props) {
-  const { visible, onCancel } = props;
+  const { visible, onCancel, importFunc } = props;
   const [form] = useForm();
   const [file, setFile] = useState({} as any);
   const [resultModalVisible, setResultModalVisible] = useState(false);
@@ -32,23 +35,31 @@ export default function ImportPage(props: Props) {
    * @todo 点击弹窗的上传组件调用
    */
   const handleImportModalOk = async () => {
-    const formData = new FormData();
-    formData.append('file', file);
-    const res = await terminalInfoImport(formData);
-    if (res && res.code === RESPONSE_CODE.success) {
+    try{
+      console.log(file);
+      
+      invariant(Object.keys(file).length, '请选择文件')
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await importFunc(formData);
+      invariant(res?.code === RESPONSE_CODE.success, res.msg || '导入失败')
       notification.success({ message: '导入成功' });
       setFile({});
       setResultModalVisible(true);
       setImportResult(res.data);
       onCancel();
-    } else {
-      notification.error({ message: (res && res.msg) || '导入终端信息失败' });
+      
     }
+    catch(err) {
+      setFile({});
+      notification.error({ message: (err && err.message) || '导入失败' });
+    }
+
   };
 
   const beforeUpload = (file: File) => {
     const type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-    if (file.type !== type) {
+    if (!file || file.type !== type) {
       notification.error({ message: '请上传excel文件' });
       return false;
     }

@@ -63,3 +63,21 @@ export const terminalInfoListByIsGroup = async (
     callback(result.data.rows);
   return result;
 };
+
+/**
+ * @todo 终端分组下载模板
+ * @param params 
+ */
+export const groupSetImportTemplate = async (params: any) => {
+  const result = await ApiRequest.post(`/cpay-admin/terminal/groupSet/groupSetImportTemplateBy${params.type}`, {})
+  return result
+}
+
+/**
+ * @todo 终端分组导入
+ * @param params
+ */
+export const groupSetImportData = async (params: FormData, type: string) => {
+  const result = await ApiRequest.postFormData(`/cpay-admin/terminal/groupSet/groupSetImportDataBy${type}`, params)
+  return result
+}

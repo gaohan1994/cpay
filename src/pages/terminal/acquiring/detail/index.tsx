@@ -24,6 +24,7 @@ import { useStore } from '@/pages/common/costom-hooks';
 import { renderCommonSelectForm } from '@/component/form/render';
 import { FormItmeType } from '@/component/form/type';
 import { useSelectorHook } from '@/common/redux-util';
+import moment from 'moment'
 // import TextArea from 'antd/lib/input/TextArea';
 const { TextArea } = Input;
 
@@ -68,7 +69,7 @@ export default (props: any) => {
           paramValueText: response.data.paramValueText,
           paramValueInt: response.data.paramValueInt,
           paramValueFloat: response.data.paramValueFloat,
-          paramValueDate: response.data.paramValueDate,
+          paramValueDate: moment(response.data.paramValueDate || 0),
           paramValueEnum: response.data.paramValueEnum,
           remark: response.data.remark,
         });
@@ -79,17 +80,18 @@ export default (props: any) => {
 
   useEffect(() => {
     const currentType = common.dictList?.acquiring_param_type?.data.find(d => d.dictValue === selectedParamsType);
-    console.log('currentType', currentType);
   }, [selectedParamsType]);
 
   const onFinish = async () => {
     try {
       const values = await form.validateFields();
+      if(values.paramType === '4') {
+        values.paramValueDate = values.paramValueDate.format('YYYY-MM-DD HH:mm:ss')
+      }
       const fetchUrl = isEdit ? terminalAcquiringEdit : terminalAcquiringAdd;
       const payload: any = isEdit
         ? { ...values, id: fields.id, }
         : { ...values, };
-      console.log('payload', payload);
       const result = await fetchUrl(payload);
       console.log('result', result);
       invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
@@ -189,6 +191,8 @@ export default (props: any) => {
         render: () => {
           return (
             <DatePicker
+              format="YYYY-MM-DD HH:mm:ss"
+              showTime={{ defaultValue: moment('00:00:00', 'HH:mm:ss') }}
               style={{ width: '100%' }}
               disabled={selectedParamsType !== '4'}
             />

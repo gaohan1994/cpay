@@ -98,6 +98,14 @@ export default (props: any) => {
     },
   ];
 
+  const paramTypeArr = [
+    'paramValueText',
+    'paramValueInt',
+    'paramValueFloat',
+    'paramValueDate',
+    'paramValueEnum'
+  ]
+
   const columns = createTableColumns([
     {
       title: '操作',
@@ -138,7 +146,7 @@ export default (props: any) => {
       render: (item) => {
         return (
           <span>
-            {item.paramValueText || item.paramValueInt || item.paramValueFloat || item.paramValueDate || item.paramValueEnum || '--'}
+            {item[paramTypeArr[Number(item.paramType) - 1]] || '--'}
           </span>
         )
       }

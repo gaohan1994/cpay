@@ -130,6 +130,12 @@ class ApiRequest {
     console.log('option', option);
     return fetch(`${BASE_URL}${url}`, option)
       .then((res) => res.json())
+      .then(async (res) => {
+        if(res.code === '1') { // 表明未登录
+          window.location.hash = '#/login'
+        }
+        return res
+      })
       .catch((error) => {
         notification.warn({
           message: error.message,
