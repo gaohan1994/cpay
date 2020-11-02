@@ -38,6 +38,7 @@ export interface IFormatResult<T> {
 export type UserDept = {
   deptId: number; // 所属机构id
   deptName: string; // 所属机构名称
+  parentId: number;
   leader: string;
   phone: string;
   email: string;

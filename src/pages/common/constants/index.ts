@@ -10,12 +10,15 @@ import {
   DictDetailItem,
 } from '@/pages/common/type';
 import { IResponseResult, IResponseListResult } from '@/common/type';
+import store from '@/modules/redux-store/index';
 
 /**
  * @todo 递归循环获得treeData
  * @param deptData
  */
 function formatDeptTreeData(deptData: DeptItem[]): DeptTreeData[] {
+  const state = store.getState()
+  const parentId = state.common.userDept.parentId
   let rootPrefix = '0-0';
   function parseArrayToTree(array: DeptItem[]) {
     let tree: DeptTreeData[] = [];
@@ -32,7 +35,7 @@ function formatDeptTreeData(deptData: DeptItem[]): DeptTreeData[] {
     let root = null;
     if (array) {
       array.forEach((item) => {
-        if (item.pId === 0) {
+        if (item.pId === parentId) {
           root = item;
           root.key = rootPrefix;
         }

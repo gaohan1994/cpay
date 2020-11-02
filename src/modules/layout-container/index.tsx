@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Layout, ConfigProvider, Menu, Divider, Button } from 'antd';
+import { Layout, ConfigProvider, Menu, Divider } from 'antd';
 import './index.scss';
 import LayoutMenu from './component/menu';
 import LayoutBread from './component/bread';
@@ -48,15 +48,23 @@ function LayoutContainer(props: Props) {
     getUserDept(dispatch);
   }, []);
 
+  const onLogout = (e: any) => {
+    e.stopPropagation()
+    logout(dispatch)
+    window.location.hash = '#/login'
+  }
+
   return (
     <Layout>
       <Header className="header">
-        <img className="header-logo" src={logo} />
-        <Divider type="vertical" className="header-divider" />
-        <div className="header-title-dept">
-          {(common.userDept && common.userDept.deptName) || ''}
+        <div className="header-left">
+          <img className="header-logo" src={logo} />
+          <Divider type="vertical" className="header-divider" />
+          <div className="header-title-dept">
+            {(common.userDept && common.userDept.deptName) || ''}
+          </div>
         </div>
-        <Button onClick={() => { logout({})}}>退出</Button>
+        <a className='header-right' onClick={onLogout}>退出</a>
       </Header>
       <Layout>
         <LayoutMenu menus={menus} />

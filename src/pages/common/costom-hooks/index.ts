@@ -20,6 +20,7 @@ export function useStore(dictType: string[]): CommonHooksState {
   // const [state, dispatch] = useRedux(common, initState);
   const [useSelector, dispatch] = useRedux();
   const state = useSelector((state) => state.common);
+  const parentId = state?.userDept?.parentId
 
   const [timer, setTimer] = useState(0);
 
@@ -93,11 +94,11 @@ export function useStore(dictType: string[]): CommonHooksState {
      * 请求机构数据
      * @time 1014加入缓存机制，全局请求一次
      */
-    if (state.deptData.length === 0 && timer < 3) {
+    // if (state.deptData.length === 0 && timer < 3) {
       getDeptTreeData(getDeptCallback);
       setTimer(prevTimer => prevTimer + 1);
-    }
-  }, [state.deptData])
+    // }
+  }, [parentId])
 
   useEffect(() => {
 
