@@ -86,7 +86,7 @@ function SystemLog(props: Props) {
     },
     {
       title: '操作类型',
-      dataIndex: 'operId',
+      dataIndex: 'action',
       dictType: 'sys_oper_type'
     },
     {

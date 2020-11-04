@@ -19,7 +19,7 @@ export const formatReportListResult = <T>(
           item[month[i]] = element[i];
         }
       }
-      list.push(item);
+      key === 'allData' ? list.unshift(item) : list.push(item);
     }
   }
   return {

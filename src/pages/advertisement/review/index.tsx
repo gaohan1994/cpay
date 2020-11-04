@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Table } from 'antd';
 import { useAntdTable } from 'ahooks';
 import { PaginatedParams } from 'ahooks/lib/useAntdTable';
-import { advertInfoList } from '../constants/api';
+import { advertAuditList } from '../constants/api';
 import { formatListResult } from '@/common/request-util';
 import { useStore } from '@/pages/common/costom-hooks';
 import Forms from '@/component/form';
@@ -19,7 +19,7 @@ function Page(props: Props) {
 
   const { tableProps, search }: any = useAntdTable(
     (paginatedParams: PaginatedParams, tableProps: any) =>
-      advertInfoList({ ...paginatedParams, ...tableProps }),
+      advertAuditList({ ...paginatedParams, ...tableProps }),
     {
       form,
       formatResult: formatListResult,

@@ -32,3 +32,10 @@ export const advertInfoRemove = (id: number) =>
 
 export const advertAdd = (params: any) =>
   ApiRequest.post(`/cpay-admin/advert/info/advertAdd`, params);
+
+/**
+ * @todo 查询广告审核列表信息
+ * @param params 
+ */
+export const advertAuditList = (params: any) => 
+  ApiRequest.post(`/cpay-admin/advert/audit/advertAuditList`, params)

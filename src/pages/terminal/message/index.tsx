@@ -64,14 +64,15 @@ export default () => {
   useEffect(() => {
     terminalGroupListByDept(formTreeValue, (groupData) => {
       setTerminalGroup(groupData);
-      groupData[0] && setGroupValue(`${groupData[0].id}`);
+      setGroupValue(`${groupData[0]?.id}`)
+      form.setFieldsValue({groupId: undefined})
     });
   }, [formTreeValue]);
 
   useEffect(() => {
     // 终端厂商变化导致终端型号要变
     if (firmValue !== '') {
-      form.setFieldsValue({ terminalTypeCode: '' });
+      form.setFieldsValue({ terminalTypeCode: undefined });
       onFirmLoadData(firmValue);
     }
   }, [firmValue]);
@@ -184,7 +185,6 @@ export default () => {
           };
         }),
       onChange: (firmId: any) => {
-        console.log('firmId: ', firmId);
         setFirmValue(firmId);
       },
       formName: 'firmId',
@@ -310,10 +310,7 @@ export default () => {
     },
     {
       title: '所属组',
-      dataIndex: 'terminalGroupId',
-      render: (terminalGroupId: any) => {
-        return <span>{terminalGroupId}</span>;
-      },
+      dataIndex: 'groupName',
     },
     {
       title: '商户名称',

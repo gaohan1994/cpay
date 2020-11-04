@@ -46,6 +46,7 @@ export default function Page() {
   const [error, setError] = useState<ErrorField[]>([]);
   const [checkedKeys, setCheckedKeys] = useState([] as any[]);
   const [checkedIds, setCheckedIds] = useState([] as any[]);
+  const [checkedHalfIds, setCheckedHalfIds] = useState<number[]>([])
   const [menuLoading, setMenuLoading] = useState(false);
   const [status, setStatus] = useState(true);
 
@@ -132,13 +133,19 @@ export default function Page() {
 
 
   const onCheck = (checkedKeys: any, info: any) => {
-    console.log('onCheck', checkedKeys, info);
     setCheckedKeys(checkedKeys);
     if (info && Array.isArray(info.checkedNodes)) {
       let ids: number[] = [];
+      let halfIds: number[] = []
       info.checkedNodes.forEach((element: any) => {
         ids.push(element.menuId);
       });
+      info.halfCheckedKeys?.length && system.menuTreeData.forEach(item => {
+        if(info.halfCheckedKeys.indexOf(item.key) !== -1) {
+          halfIds.push(item.menuId)
+        }
+      })
+      setCheckedHalfIds(halfIds)
       setCheckedIds(ids);
     }
   };
@@ -207,7 +214,7 @@ export default function Page() {
       const fields = form.getFieldsValue();
       let param: any = {
         ...fields,
-        menuIds: checkedIds.join(','),
+        menuIds: [...checkedIds, ...checkedHalfIds].join(','),
         status: status ? 0 : 1
       }
       setLoading(true);

@@ -54,10 +54,14 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const ele = document.getElementById('home-statistic')
+    if(!ele) {
+      return
+    }
     setTimeout(() => {
-      let myChart = echarts.getInstanceByDom(document.getElementById('home-statistic') as any);
+      let myChart = echarts.getInstanceByDom(ele as any);
       if (myChart === undefined) {
-        myChart = echarts.init(document.getElementById('home-statistic') as any);
+        myChart = echarts.init(ele as any);
       }
       myChart.setOption(bar_option(data));
       window.addEventListener('resize', function () {
@@ -68,10 +72,14 @@ function App() {
 
 
   useEffect(() => {
+    const ele = document.getElementById('home-statistic-line')
+    if(!ele) {
+      return
+    }
     setTimeout(() => {
-      let myChart = echarts.getInstanceByDom(document.getElementById('home-statistic-line') as any);
+      let myChart = echarts.getInstanceByDom(ele as any);
       if (myChart === undefined) {
-        myChart = echarts.init(document.getElementById('home-statistic-line') as any);
+        myChart = echarts.init(ele as any);
       }
       myChart.setOption(line_option(data));
       window.addEventListener('resize', function () {
