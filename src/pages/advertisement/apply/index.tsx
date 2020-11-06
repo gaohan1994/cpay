@@ -11,6 +11,7 @@ import { createTableColumns, getStandardPagination } from '@/component/table';
 import { useStore } from '@/pages/common/costom-hooks';
 import { RESPONSE_CODE } from '@/common/config';
 import invariant from 'invariant';
+import { PlusOutlined } from '@ant-design/icons';
 
 export default () => {
   // 请求dept数据
@@ -138,6 +139,7 @@ export default () => {
           extraButtons: [{
             title: '新增',
             type: 'primary',
+            icon: <PlusOutlined />,
             onClick: () => {
               history.push(`/advertisement/apply/add`)
             }

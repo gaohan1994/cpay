@@ -230,7 +230,7 @@ export default () => {
     {
       placeholder: '终端状态',
       formType: FormItmeType.SelectCommon,
-      formName: 'activateType',
+      formName: 'status',
       dictList: 'term_real_status',
     },
   ];
@@ -339,7 +339,7 @@ export default () => {
     },
     {
       title: '终端状态',
-      dataIndex: 'activateType',
+      dataIndex: 'status',
       render: (status: any) => {
         return <span>{getDictText(status, 'term_real_status')}</span>;
       },

@@ -171,8 +171,9 @@ function Page(props: Props) {
     },
     {
       title: '所属角色',
-      dataIndex: 'roleIds',
-      render: (roleIds: number[]) => roleIds?.join(',') || '--'
+      dataIndex: 'roles',
+      render: (roles: any[]) => {
+        return Array.isArray(roles) && roles?.length && roles[0].roleName ||  '--'}
     },
     {
       title: '机构名称',

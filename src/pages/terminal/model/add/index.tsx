@@ -106,8 +106,8 @@ export default () => {
       render: () => {
         return (
           <Radio.Group>
-            <Radio value={1}>是</Radio>
-            <Radio value={2}>否</Radio>
+            <Radio value={0}>是</Radio>
+            <Radio value={1}>否</Radio>
           </Radio.Group>
         );
       },

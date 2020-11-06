@@ -106,7 +106,7 @@ function SystemLog(props: Props) {
       dataIndex: 'operLocation',
     },
     {
-      title: '登录状态',
+      title: '操作状态',
       dataIndex: 'status',
       dictType: 'sys_common_status',
       render: (item) => <Tag color={getStatusColor(item)}>{item}</Tag>

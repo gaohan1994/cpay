@@ -32,6 +32,8 @@ export interface AdvertisementDetail {
   isDisabled: number;
   status: number;
   type: number;
+  groupName: string;
+  firmName: string;
 }
 
 export declare module IAdvertReducerInterface {

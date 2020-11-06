@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './index.scss';
-import { Row, Col, Card, Spin, notification } from 'antd';
-import { systemMains } from './constants/api';
+import { Row, Col, Card, Spin, notification, Divider, Popover } from 'antd';
+import { systemMains, getDownloadJobList } from './constants/api';
 import { IHomeData } from './constants/type';
 import echarts from 'echarts/lib/echarts';
 import 'echarts/lib/component/title';
@@ -32,6 +32,7 @@ function App() {
   const containerRef: any = useRef(null);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({} as IHomeData);
+  const [downloadJobList, setDownloadJobList] = useState<any[]>([])
   const [chartHeight, setChartHeight] = useState(0);
 
   useEffect(() => {
@@ -50,7 +51,18 @@ function App() {
         callback(result);
       }).catch((err) => {
         notification.warn(err?.msg);
-      });;
+      });
+    getDownloadJobList()
+      .then((result) => {
+        if(result.code !== RESPONSE_CODE.success) {
+          notification.warn(result?.msg || '')
+          return
+        }
+        setDownloadJobList(result.data || {})
+      })
+      .catch((err) => {
+        notification.warn(err?.msg);
+      });
   }, []);
 
   useEffect(() => {
@@ -97,6 +109,10 @@ function App() {
     history.push(`/report/downloadJob`);
   }
 
+  const onUploadDetail = (job: any) => {
+    history.push(`/upload/update/operation?id=${job.id}&jobName=${job.jobName}`)
+  }
+
   const onPublishClick = () => {
     history.push(`/application/publish`);
   }
@@ -105,7 +121,7 @@ function App() {
     <Spin spinning={loading} wrapperClassName='home-container-loading' >
       <Row className='home-row'>
         <Container>
-          <div style={{ width: '100%', height: '100%' }} ref={containerRef} id='home-statistic-line' />
+          <div style={{ width: '100%', height: '100%', paddingLeft: -8 }} ref={containerRef} id='home-statistic-line' />
         </Container>
         <Container>
           <div style={{ width: '100%', height: '100%' }} ref={containerRef} id='home-statistic' />
@@ -113,36 +129,42 @@ function App() {
       </Row>
       <Row className='home-row'>
         <Container>
-          <div>
-            <div>
-              <span>更新任务</span>
-              <span onClick={() => onUploadmore()}>更多+</span>
+          <div style={{padding: '0 6px'}}>
+            <div className='home-card-row home-card-title'>
+              <span >更新任务</span>
+              <a onClick={() => onUploadmore()}>更多+</a>
             </div>
-            {data && data.downloadJobList && data.downloadJobList.map((job) => {
+            {downloadJobList && downloadJobList.map((job) => {
+              const total = job.successCount + job.failureCount + job.executingCount + job.executeCount
               return (
-                <div key={job.id} className='home-card-row'>
-                  <span>{job.jobName}</span>
-                  <span>{`${job.successCount + job.failureCount + job.executingCount + job.executeCount}/${job.successCount}/${job.failureCount}/${job.executingCount}/${job.executeCount}`}</span>
+                <div key={job.id} className='home-card-row' onClick={() => onUploadDetail(job)}>
+                  <Popover
+                    placement="right" 
+                    content={`任务共${total}条，成功${job.successCount}条，失败${job.failureCount}条，待执行${job.executingCount}条，执行中${job.executeCount}条`}
+                  >
+                    <a className='home-card-row-content'> {job.jobName} </a>
+                  </Popover>
+                  <span>{`${total}/${job.successCount}/${job.failureCount}/${job.executingCount}/${job.executeCount}`}</span>
                 </div>
               )
             })}
           </div>
         </Container>
         <Container>
-          <div>
-            <div>
-              信息公告
+          <div style={{padding: '0 6px'}}>
+            <div className='home-card-row home-card-title'>
+              <span>信息公告</span>
             </div>
-
+            <Divider style={{margin: '0 0 8px'}}/>
             <div>
-              <div>
+              <div className='home-card-row home-card-title'>
                 <span>待办事宜</span>
-                <span>更多+</span>
+                <a>更多+</a>
               </div>
               <div>
                 {data.toBeAuditedAppCount && (
                   <div className='home-card-row' onClick={() => onPublishClick()}>
-                    <span>{`有${data.toBeAuditedAppCount}条应用未发布`}</span>
+                    <a className='home-card-row-content'>{`有${data.toBeAuditedAppCount}条应用未发布`}</a>
                     <span>{moment().format('YYYY-MM-DD')}</span>
                   </div>
                 )}

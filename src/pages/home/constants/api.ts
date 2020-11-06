@@ -7,3 +7,11 @@ export const systemMains = async (
   callback && callback(result);
   return result;
 };
+
+/**
+ * 获取任务列表
+ */
+export const getDownloadJobList = async (): Promise<any> => {
+  const result = await ApiRequest.post(`/cpay-admin/system/getDownloadJobList`, {})
+  return result
+}

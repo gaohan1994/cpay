@@ -78,7 +78,7 @@ export const appInfoRemove = (params: any) =>
 * @param params 
 */
 export const appInfoRecove = (params: any) =>
-  ApiRequest.post(`/cpay-admin/app/info/appInfoRecove`, params);
+  ApiRequest.post(`/cpay-admin/app/info/appInfoRecover`, params);
 
 /**
  * @todo 应用从回收站删除

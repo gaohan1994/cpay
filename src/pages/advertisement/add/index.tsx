@@ -60,7 +60,7 @@ export default () => {
   useEffect(() => {
     // 终端厂商变化导致终端型号要变
     if (firmValue !== '') {
-      form.setFieldsValue({ terminalTypeCode: '' });
+      form.setFieldsValue({ terminalTypes: '' });
       onFirmLoadData(firmValue);
     }
   }, [firmValue]);
@@ -140,7 +140,7 @@ export default () => {
       render: () => {
         return renderSelectForm(
           {
-            formName: 'terminalTypeCode',
+            formName: 'terminalTypes',
             formType: FormItmeType.Select,
             selectData:
               terminalFirmTypeList &&
@@ -154,7 +154,7 @@ export default () => {
           false
         )
       },
-      key: 'terminalTypeCode',
+      key: 'terminalTypes',
     },
     {
       label: '有效起始时间',

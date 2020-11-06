@@ -60,7 +60,7 @@ export default () => {
       const result = await fetchUrl(payload);
       invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
       notification.success({ message: isEdit ? '修改成功！' : '新增成功！' });
-      history.goBack();
+      // history.goBack();
     } catch (errorInfo) {
       errorInfo.message && notification.warn({ message: errorInfo.message });
       errorInfo.errorFields && setError(errorInfo.errorFields);

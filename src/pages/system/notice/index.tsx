@@ -202,7 +202,7 @@ function Page(props: Props) {
    */
   const forms: FormItem[] = [
     {
-      formName: 'noticeName',
+      formName: 'noticeTitle',
       placeholder: '公告标题',
       formType: FormItmeType.Normal,
     },

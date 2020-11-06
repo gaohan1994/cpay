@@ -10,6 +10,7 @@ import Advertisementapple from '@/pages/advertisement/apply';
 import Advertisementreview from '@/pages/advertisement/review';
 import Advertisementreviewdetail from '@/pages/advertisement/review/detail';
 import AdvertisementApplyUpdate from '@/pages/advertisement/apply/update';
+import AdvertisementApplyDeatil from '@/pages/advertisement/apply/detail'
 import AdvertisementAdd from '@/pages/advertisement/add';
 
 export const AdvertisementMenu = {
@@ -49,7 +50,7 @@ const routerConfig: any[] = [
   {
     path: '/advertisement/apply/detail',
     name: '广告申请详情',
-    component: AdvertisementApplyUpdate,
+    component: AdvertisementApplyDeatil,
     exact: true,
     inMenu: false,
   },

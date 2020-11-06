@@ -72,11 +72,13 @@ export default function Page() {
     }
     if (Array.isArray(initialValues.tree) && initialValues.tree.length > 0) {
       let ids: number[] = [];
+      let halfIds: number[] = [];
       initialValues.tree.forEach((element: any) => {
-        if (element.checked) {
-          ids.push(element.id);
+        if(element.checked) {
+          element.pId === 0 ? halfIds.push(element.id) : ids.push(element.id);
         }
       });
+      setCheckedHalfIds(halfIds)
       setCheckedIds(ids);
     }
   }, [detail]);
@@ -140,6 +142,7 @@ export default function Page() {
       info.checkedNodes.forEach((element: any) => {
         ids.push(element.menuId);
       });
+      // 一级菜单的半选也要保存，否则菜单不显示
       info.halfCheckedKeys?.length && system.menuTreeData.forEach(item => {
         if(info.halfCheckedKeys.indexOf(item.key) !== -1) {
           halfIds.push(item.menuId)
