@@ -16,7 +16,7 @@ import { PlusOutlined } from '@ant-design/icons';
 export default () => {
   // 请求dept数据
   const history = useHistory();
-  useStore(['advert']);
+  useStore(['advert_file_type', 'advert_type', 'advert_status']);
   const [form] = Form.useForm();
 
   const { tableProps, search }: any = useAntdTable(

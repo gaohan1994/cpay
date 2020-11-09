@@ -101,11 +101,11 @@ export default () => {
     },
     {
       title: '终端号',
-      dataIndex: 'merchantId',
+      dataIndex: 'terminalCode',
     },
     {
       title: '商户号',
-      dataIndex: 'merchantName',
+      dataIndex: 'merchantCode',
     },
     {
       title: '所属机构',
@@ -120,7 +120,7 @@ export default () => {
     {
       title: '商家地址',
       // width: 240,
-      dataIndex: 'address',
+      dataIndex: 'merchantAddress',
     },
     {
       title: '经度',
@@ -181,7 +181,7 @@ export default () => {
         rowKey="email"
         {...tableProps}
         pagination={getStandardPagination(tableProps.pagination)}
-        scroll={{ x: 1500 }}
+        scroll={{ x: 2000 }}
       />
       <ModalMap visible={visible} toggle={toggle} point={currentItem} />
     </div>

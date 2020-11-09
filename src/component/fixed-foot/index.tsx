@@ -22,7 +22,7 @@ export default function FixedFoot(props: any) {
   const { children, errors, fieldLabels } = props;
 
   const getErrorInfo = (errors: ErrorField[], fieldLabels: any) => {
-    const errorCount = errors.filter((item) => item.errors.length > 0).length;
+    const errorCount = errors?.filter((item) => item.errors.length > 0).length;
     if (!errors || errorCount === 0) {
       return null;
     }

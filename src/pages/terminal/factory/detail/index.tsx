@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 import { RESPONSE_CODE } from '@/common/config';
 import invariant from 'invariant';
 import { formatSearch } from '@/common/request-util';
-import { firmEdit, terminalFirmDetail, firmAdd, checkFirmCodeUnique } from '../constants';
+import { firmEdit, terminalFirmDetail, firmAdd } from '../constants';
 
 const { TextArea } = Input;
 
@@ -38,11 +38,6 @@ export default () => {
   const onSubmit = async () => {
     try {
       const fields = await form.validateFields();
-
-      const checkResult = await checkFirmCodeUnique({ code: fields.code });
-      console.log('checkResult', checkResult);
-      invariant(checkResult.code === RESPONSE_CODE.success && checkResult.data === false, checkResult.msg || ' ');
-
       const { search } = history.location;
       const field = formatSearch(search);
       const isEdit = !!field.id;
@@ -60,7 +55,7 @@ export default () => {
       const result = await fetchUrl(payload);
       invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
       notification.success({ message: isEdit ? '修改成功！' : '新增成功！' });
-      // history.goBack();
+      history.goBack()
     } catch (errorInfo) {
       errorInfo.message && notification.warn({ message: errorInfo.message });
       errorInfo.errorFields && setError(errorInfo.errorFields);

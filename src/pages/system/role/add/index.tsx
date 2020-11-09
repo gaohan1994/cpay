@@ -44,9 +44,9 @@ export default function Page() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<ErrorField[]>([]);
-  const [checkedKeys, setCheckedKeys] = useState([] as any[]);
+  const [checkedKeys, setCheckedKeys] = useState<string[]>([]);
+  const [halfCheckedKeys, setHalfCheckedKeys] = useState<string[]>([])
   const [checkedIds, setCheckedIds] = useState([] as any[]);
-  const [checkedHalfIds, setCheckedHalfIds] = useState<number[]>([])
   const [menuLoading, setMenuLoading] = useState(false);
   const [status, setStatus] = useState(true);
 
@@ -72,13 +72,11 @@ export default function Page() {
     }
     if (Array.isArray(initialValues.tree) && initialValues.tree.length > 0) {
       let ids: number[] = [];
-      let halfIds: number[] = [];
       initialValues.tree.forEach((element: any) => {
         if(element.checked) {
-          element.pId === 0 ? halfIds.push(element.id) : ids.push(element.id);
+          ids.push(element.id);
         }
       });
-      setCheckedHalfIds(halfIds)
       setCheckedIds(ids);
     }
   }, [detail]);
@@ -86,23 +84,37 @@ export default function Page() {
   useEffect(() => {
     if (system.menuTreeData.length > 0) {
       let keys: string[] = [];
-      checkedIds.forEach(element => {
-        getChildKeys(element, system.menuTreeData, keys);
-      });
+      let halfKeys: string[] = []
+      getCheckedKeys(system.menuTreeData || [], keys, halfKeys, null)
       setCheckedKeys(keys);
+      setHalfCheckedKeys(halfKeys)
     }
   }, [system.menuTreeData, detail, checkedIds]);
 
-  const getChildKeys = (id: string, list: any[], keys: string[]) => {
-    list.forEach(element => {
-      if (numeral(id).value() === numeral(element.menuId).value()) {
-        keys.push(element.key);
-        return;
-      } else if (Array.isArray(element.children) && element.children.length > 0) {
-        getChildKeys(id, element.children, keys);
+  const getCheckedKeys = (list: any[], keys: string[], halfKeys: string[],  key: string | null) => {
+    let flag = true
+    list.length && list.forEach((item: any) => {
+      const checked: boolean = checkedIds.indexOf(item.menuId) !== -1
+      if(checked) {
+        Array.isArray(item.children) && item.children.length 
+          ? getCheckedKeys(item.children, keys, halfKeys, item.key) 
+          : keys.push(item.key)
+      }else {
+        flag = false
       }
-    });
+    })
+    !flag && key && halfKeys.push(key)
   }
+  // const getChildKeys = (id: string, list: any[], keys: string[]) => {
+  //   list.forEach(element => {
+  //     if (numeral(id).value() === numeral(element.menuId).value()) {
+  //       keys.push(element.key);
+  //       return;
+  //     } else if (Array.isArray(element.children) && element.children.length > 0) {
+  //       getChildKeys(id, element.children, keys);
+  //     }
+  //   });
+  // }
   const checkRoleName = (rule: any, value: any, callback: any) => {
     let flag = false;
     for (let i = 0; i < roleList.length; i++) {
@@ -136,21 +148,7 @@ export default function Page() {
 
   const onCheck = (checkedKeys: any, info: any) => {
     setCheckedKeys(checkedKeys);
-    if (info && Array.isArray(info.checkedNodes)) {
-      let ids: number[] = [];
-      let halfIds: number[] = []
-      info.checkedNodes.forEach((element: any) => {
-        ids.push(element.menuId);
-      });
-      // 一级菜单的半选也要保存，否则菜单不显示
-      info.halfCheckedKeys?.length && system.menuTreeData.forEach(item => {
-        if(info.halfCheckedKeys.indexOf(item.key) !== -1) {
-          halfIds.push(item.menuId)
-        }
-      })
-      setCheckedHalfIds(halfIds)
-      setCheckedIds(ids);
-    }
+    setHalfCheckedKeys(info.halfCheckedKeys)
   };
 
   const renderMenuTree = () => {
@@ -213,11 +211,13 @@ export default function Page() {
   const onSubmit = async () => {
     try {
       const values = await form.validateFields();
-      console.log('Success:', values);
+      const menuIds: number[] = []
+      const menuKeys = [...checkedKeys, ...halfCheckedKeys]
+      system.menuList.forEach((item: any) => { menuKeys.indexOf(item.key) !== -1 && menuIds.push(item.menuId) })
       const fields = form.getFieldsValue();
       let param: any = {
         ...fields,
-        menuIds: [...checkedIds, ...checkedHalfIds].join(','),
+        menuIds: [...menuIds].join(','),
         status: status ? 0 : 1
       }
       setLoading(true);

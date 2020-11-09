@@ -411,8 +411,8 @@ function Page(props: Props) {
       key: 'dictValue',
       requiredType: 'input' as any,
       // 改成新增才需要校验，修改不用
-      rules: editItem.dictId ? [] : [
-        { validator: checkDictValue },
+      rules: editItem.dictCode ? [] : [
+        // { validator: checkDictValue },
         {
           required: true,
           message: '请输入字典键值',
@@ -468,7 +468,7 @@ function Page(props: Props) {
       />
       <Modal
         visible={modalVisible}
-        title={editItem.dictId ? "修改字典数据" : "新增字典数据"}
+        title={editItem.dictCode ? "修改字典数据" : "新增字典数据"}
         onCancel={hideModal}
         onOk={handleOk}
       >

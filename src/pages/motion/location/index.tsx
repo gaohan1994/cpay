@@ -99,11 +99,11 @@ export default () => {
     },
     {
       title: '终端号',
-      dataIndex: 'merchantId',
+      dataIndex: 'terminalCode',
     },
     {
       title: '商户号',
-      dataIndex: 'merchantName',
+      dataIndex: 'merchantCode',
     },
     {
       title: '所属机构',
@@ -112,8 +112,7 @@ export default () => {
     },
     {
       title: '商家地址',
-      width: 240,
-      dataIndex: '',
+      dataIndex: 'merchantAddress',
     },
     {
       title: '经度',
