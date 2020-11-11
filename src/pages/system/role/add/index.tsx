@@ -91,6 +91,13 @@ export default function Page() {
     }
   }, [system.menuTreeData, detail, checkedIds]);
 
+  /**
+   * @todo 页面加载时，对menuTree的选中状态进行一个处理
+   * @param list 列表
+   * @param keys 显示选中的keys
+   * @param halfKeys 显示半选的keys
+   * @param key 父级key
+   */
   const getCheckedKeys = (list: any[], keys: string[], halfKeys: string[],  key: string | null) => {
     let flag = true
     list.length && list.forEach((item: any) => {
@@ -99,11 +106,11 @@ export default function Page() {
         Array.isArray(item.children) && item.children.length 
           ? getCheckedKeys(item.children, keys, halfKeys, item.key) 
           : keys.push(item.key)
-      }else {
+      } else {
         flag = false
       }
     })
-    !flag && key && halfKeys.push(key)
+    key && (flag ? keys.push(key) : halfKeys.push(key))
   }
   // const getChildKeys = (id: string, list: any[], keys: string[]) => {
   //   list.forEach(element => {

@@ -109,7 +109,7 @@ export default function Page() {
                 maxSize='100M'
                 fileType={
                   driverTypeValue === '2' || driverTypeValue === '3'
-                    ? { type: 'application/zip', message: '请上传zip类型文件' }
+                    ? { type: ['application/zip', 'application/x-zip-compressed'], message: '请上传zip类型文件' }
                     : {} as any
                 }
                 renderButton={() =>
@@ -298,6 +298,7 @@ export default function Page() {
         setLoading(false);
         if (res && res.code === RESPONSE_CODE.success) {
           notification.success({ message: '软件信息新增成功' });
+          form.resetFields()
           history.goBack();
         } else {
           notification.error({ message: res.msg || '软件信息新增失败，请重试' });

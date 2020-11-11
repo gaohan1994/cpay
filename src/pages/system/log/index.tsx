@@ -11,6 +11,8 @@ import { Spin, Tabs } from 'antd';
 import { useStore } from '@/pages/common/costom-hooks';
 import OperationLog from './log-operation';
 import LoginLog from './log-login';
+import AmsLog from './log-ams'
+import TmsLog from './log-tms'
 
 const { TabPane } = Tabs;
 
@@ -20,10 +22,20 @@ const tabsData = [
     key: '1',
     component: <OperationLog />
   },
+  // {
+  //   tab: '登录日志',
+  //   key: '2',
+  //   component: <LoginLog />
+  // },
   {
-    tab: '登录日志',
-    key: '2',
-    component: <LoginLog />
+    tab: 'TMS通讯日志',
+    key: '3',
+    component: <TmsLog />
+  },
+  {
+    tab: '应用商店日志',
+    key: '4',
+    component: <AmsLog />
   },
 ];
 

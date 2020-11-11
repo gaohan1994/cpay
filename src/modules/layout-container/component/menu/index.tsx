@@ -99,6 +99,15 @@ function LayoutMenu(props: Props) {
   const onSelect = (keys: any) => {
     setSelectedKeys(keys.key);
   };
+
+  const renderIcon = (icon: string) => {
+    const ele = (Icon as any)[icon]
+    if(ele) {
+      return (React.createElement( ele ))
+    }
+    return null
+  }
+
   return (
     <Sider
       theme="light"
@@ -123,12 +132,7 @@ function LayoutMenu(props: Props) {
                 return (
                   <SubMenu
                     key={menuItem.value}
-                    icon={
-                      React.createElement(
-                        (Icon as any)[menuItem.icon],
-                        // Icon['MessageOutlined']
-                      )
-                    }
+                    icon={renderIcon(menuItem.icon)}
                     title={menuItem.name}
                     style={{
                       paddingBottom: index === menus.length - 1 ? 50 : 0,
@@ -147,12 +151,7 @@ function LayoutMenu(props: Props) {
               return (
                 <Menu.Item
                   key={menuItem.value}
-                  icon={
-                    React.createElement(
-                      (Icon as any)[menuItem.icon],
-                      // Icon['MessageOutlined']
-                    )
-                  }
+                  icon={renderIcon(menuItem.icon)}
                   style={{ paddingBottom: index === menus.length - 1 ? 50 : 0 }}
                 >
                   {menuItem.name}

@@ -92,7 +92,10 @@ function Page(props: Props) {
    */
   const onEdit = (item: any) => {
     setEditItem(item);
-    addForm.setFieldsValue(item);
+    addForm.setFieldsValue({
+      ...item,
+      status: `${item.status}`
+    });
     showModal();
   }
 

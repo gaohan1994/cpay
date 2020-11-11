@@ -46,3 +46,17 @@ export const monitorOperLogExport = (param: any) =>
  */
 export const monitorLoginInfoList = (param: any) =>
   ApiRequest.post(`/cpay-admin/monitor/logininfor/operLogList`, param);
+
+/**
+ * @todo 请求应用商店日志列表
+ * @param params 
+ */
+export const amsAccessList = (params: any) => 
+  ApiRequest.post(`/cpay-admin/ams/access/amsAccessList`, params)
+
+/**
+ * @todo 请求TMS通讯日志列表
+ * @param params 
+ */
+export const tmsAccessList = (params: any) => 
+  ApiRequest.post(`/cpay-admin/tms/access/tmsAccessList`, params)
