@@ -18,7 +18,7 @@ import store from '@/modules/redux-store/index';
  */
 function formatDeptTreeData(deptData: DeptItem[]): DeptTreeData[] {
   const state = store.getState()
-  const parentId = state.common.userDept.parentId
+  const parentId = state.common.userDept.parentId || 0
   let rootPrefix = '0-0';
   function parseArrayToTree(array: DeptItem[]) {
     let tree: DeptTreeData[] = [];

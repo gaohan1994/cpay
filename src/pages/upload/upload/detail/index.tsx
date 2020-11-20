@@ -43,7 +43,7 @@ const getObjectValue = (obj: any, keys: string[]) => {
 export default function Page() {
   const id = useQueryParam('id');
   const res = useStore(['driver_type', 'job_action', 'release_type',
-    'buss_type', 'unionpay_connection', '	dcc_sup_flag',
+    'buss_type', 'unionpay_connection', 'dcc_sup_flag',
     'terminal_type', 'activate_type', 'is_group_update', 'zz_flag'
   ]);
 
@@ -68,7 +68,7 @@ export default function Page() {
     terminalInfo.push({ label: "终端类型", value: getActivateTypeNames(getDownloadJobOutputValue('activateTypes')) });
     terminalInfo.push({ label: "银联间直连", value: getDictText(getDownloadJobOutputValue('cupConnMode'), 'unionpay_connection') });
     terminalInfo.push({ label: "业务类型", value: getDictText(getDownloadJobOutputValue('bussType'), 'buss_type') });
-    terminalInfo.push({ label: "DCC交易指定类型", value: getDictText(getDownloadJobOutputValue('dccSupFlag'), '	dcc_sup_flag') });
+    terminalInfo.push({ label: "DCC交易指定类型", value: getDictText(getDownloadJobOutputValue('dccSupFlag'), 'dcc_sup_flag') });
     terminalInfo.push({ label: "增值终端", value: getDictText(getDownloadJobOutputValue('zzFlag'), 'zz_flag') });
     arr.push({ key: '终端信息', value: terminalInfo });
     arr.push({ key: '软件信息', value: getDownloadJobOutputValue('downloadJobAppList') });

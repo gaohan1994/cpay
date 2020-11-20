@@ -31,6 +31,7 @@ export function TableTusns(props: Props) {
     (paginatedParams: any, tableProps: any) =>
       terminalInfoList({ ...fetchParam, pageSize: paginatedParams.pageSize, pageNum: paginatedParams.current, ...tableProps }),
     {
+      manual: true,
       form,
       formatResult: formatListResult,
     }
@@ -54,8 +55,7 @@ export function TableTusns(props: Props) {
   }
 
   useEffect(() => {
-    setSelectedRowKeys([]);
-    reset();
+    visible && customReset()
   }, [visible]);
 
   /**

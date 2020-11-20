@@ -120,21 +120,21 @@ export default function Page() {
       title: '机构号',
       dataIndex: 'code',
     },
-    {
-      title: '排序',
-      dataIndex: 'orderNum',
-    },
-    {
-      title: '机构状态',
-      dataIndex: 'status',
-      dictType: 'sys_normal_disable',
-      render: (item) => <Tag color={getStatusColor(item)}>{item}</Tag>
-    },
-    {
-      title: '创建时间',
-      dataIndex: 'createTime',
-      width: 200,
-    },
+    // {
+    //   title: '排序',
+    //   dataIndex: 'orderNum',
+    // },
+    // {
+    //   title: '机构状态',
+    //   dataIndex: 'status',
+    //   dictType: 'sys_normal_disable',
+    //   render: (item) => <Tag color={getStatusColor(item)}>{item}</Tag>
+    // },
+    // {
+    //   title: '创建时间',
+    //   dataIndex: 'createTime',
+    //   width: 200,
+    // },
     {
       title: '操作',
       render: (key, item) => (
@@ -170,20 +170,20 @@ export default function Page() {
       placeholder: '机构号',
       formType: FormItmeType.Normal,
     },
-    {
-      placeholder: '机构状态',
-      formName: 'status',
-      formType: FormItmeType.Select,
-      selectData:
-        (dictList &&
-          dictList.sys_normal_disable && dictList.sys_normal_disable.data.map((item) => {
-            return {
-              value: `${item.dictValue}`,
-              title: `${item.dictLabel}`,
-            };
-          })) ||
-        [],
-    },
+    // {
+    //   placeholder: '机构状态',
+    //   formName: 'status',
+    //   formType: FormItmeType.Select,
+    //   selectData:
+    //     (dictList &&
+    //       dictList.sys_normal_disable && dictList.sys_normal_disable.data.map((item) => {
+    //         return {
+    //           value: `${item.dictValue}`,
+    //           title: `${item.dictLabel}`,
+    //         };
+    //       })) ||
+    //     [],
+    // },
   ];
 
   const rowSelection = {

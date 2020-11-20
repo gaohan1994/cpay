@@ -11,7 +11,6 @@ import { useSelectorHook } from '@/common/redux-util';
 import { DictDetailItem } from '@/pages/common/type';
 import { useFormSelectedList, useSoftVersionList } from '@/pages/common/costom-hooks/form-select';
 import { taskSoftListByType } from '../../../constants/api';
-
 export function useSoftInfoFromData(props: any) {
   const { firmId, cupConnMode, dccSupFlag } = props;
   const state = useSelectorHook((state) => state.common.dictList);
@@ -40,7 +39,7 @@ export function useSoftInfoFromData(props: any) {
       case '5': {
         let arr = [];
         for (let i = 0; i < job_action.length; i++) {
-          if (job_action[i].dictValue === '0') {
+          if (job_action[i].dictValue === '7') {
             arr.push(job_action[i]);
           }
         }
@@ -52,7 +51,7 @@ export function useSoftInfoFromData(props: any) {
       case '4': {
         let arr = [];
         for (let i = 0; i < job_action.length; i++) {
-          if (job_action[i].dictValue === '0' || job_action[i].dictValue === '2') {
+          if (job_action[i].dictValue === '7' || job_action[i].dictValue === '8') {
             arr.push(job_action[i]);
           }
         }

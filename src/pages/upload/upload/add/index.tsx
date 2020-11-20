@@ -633,7 +633,7 @@ export default function Page() {
   const onDeleteSoftInfoFormsItem = (index: number) => {
     if (softInfoFormsNum > 1) {
       for (let i = index; i < softInfoFormsNum; i++) {
-        softFroms[index].setFieldsValue(softFroms[i + 1].getFieldsValue());
+        i < 4 && softFroms[i].setFieldsValue(softFroms[i + 1].getFieldsValue());
       }
     }
     softFroms[softInfoFormsNum - 1].resetFields();

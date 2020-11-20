@@ -14,11 +14,11 @@ const fieldLabels = {
   parentId: '上级机构',
   code: '机构号',
   deptName: '机构名称',
-  orderNum: '显示排序',
+  // orderNum: '显示排序',
   leader: '负责人',
   phone: '联系电话',
   email: '邮箱',
-  status: '机构状态',
+  // status: '机构状态',
 }
 
 const customFormLayout = {
@@ -74,7 +74,7 @@ export default function AddModal(props: Props) {
       const fields = form.getFieldsValue();
       let param: any = {
         ...fields,
-        status: fields.status !== undefined ? fields.status : 0
+        // status: fields.status !== undefined ? fields.status : 0
       }
       setLoading(true);
       if (editItem.deptId) {
@@ -174,7 +174,7 @@ export default function AddModal(props: Props) {
       key: 'code',
       requiredType: 'input' as any,
       rules: [
-        { validator: checkDeptCode },
+        // { validator: checkDeptCode },
         {
           required: true,
           message: '请输入机构号',
@@ -186,18 +186,18 @@ export default function AddModal(props: Props) {
       key: 'deptName',
       requiredType: 'input' as any,
       rules: [
-        { validator: checkDeptName },
+        // { validator: checkDeptName },
         {
           required: true,
           message: '请输入机构名称',
         },
       ]
     },
-    {
-      label: fieldLabels.orderNum,
-      key: 'orderNum',
-      requiredType: 'input' as any,
-    },
+    // {
+    //   label: fieldLabels.orderNum,
+    //   key: 'orderNum',
+    //   requiredType: 'input' as any,
+    // },
     {
       label: fieldLabels.leader,
       key: 'leader',
@@ -210,19 +210,19 @@ export default function AddModal(props: Props) {
       label: fieldLabels.email,
       key: 'email',
     },
-    {
-      label: fieldLabels.status,
-      key: 'status',
-      render: () => <Radio.Group defaultValue={'0'}>
-        {
-          dictList && dictList.sys_normal_disable && dictList.sys_normal_disable.data.map(item => {
-            return (
-              <Radio key={item.dictValue} value={item.dictValue}>{item.dictLabel}</Radio>
-            )
-          })
-        }
-      </Radio.Group>
-    },
+    // {
+    //   label: fieldLabels.status,
+    //   key: 'status',
+    //   render: () => <Radio.Group defaultValue={'0'}>
+    //     {
+    //       dictList && dictList.sys_normal_disable && dictList.sys_normal_disable.data.map(item => {
+    //         return (
+    //           <Radio key={item.dictValue} value={item.dictValue}>{item.dictLabel}</Radio>
+    //         )
+    //       })
+    //     }
+    //   </Radio.Group>
+    // },
   ];
 
   return (

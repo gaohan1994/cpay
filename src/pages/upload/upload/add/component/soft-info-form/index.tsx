@@ -45,6 +45,14 @@ export function SoftInfoItem(props: Props) {
     if (!driverTypeValue || driverTypeValue.length === 0) {
       setSoftInfoValue({});
     }
+    form.setFieldsValue({
+      actionType: undefined,
+      appId: undefined,
+      appCode: undefined,
+      appVersionId: undefined,
+      versionName: undefined,
+      terminalTypes: undefined
+    })
   }, [driverTypeValue]);
 
   useEffect(() => {

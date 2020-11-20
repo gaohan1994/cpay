@@ -49,7 +49,7 @@ const fieldLabels = {
 
 export default function Page() {
   const id = useQueryParam('id');
-  useStore(['driver_type', 'unionpay_connection', 'dcc_sup_flag']);
+  useStore(['driver_type', 'unionpay_connection', 'is_dcc_sup']);
   const history = useHistory();
   const [form] = useForm();
   const uploadRef: any = useRef();

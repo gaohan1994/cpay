@@ -184,26 +184,27 @@ export default function Page() {
         value: logUploadTypeValue,
         onChange: (id: any) => {
           setLogUploadTypeValue(id);
+          setAppCode('')
           form.setFieldsValue({ appCode: undefined });
         },
       }),
     },
     {
-      show: logUploadTypeValue === '01',
-      label: fieldLabels.appCode,
+      // show: logUploadTypeValue === '01',
+      label: form.getFieldValue('type') === '01' ? fieldLabels.appCode :  fieldLabels.logFile,
       key: 'appCode',
       requiredType: 'input' as any,
       render: renderCode,
       ...customFormLayout,
     },
-    {
-      show: logUploadTypeValue === '1',
-      label: fieldLabels.appCode,
-      key: 'logFile',
-      requiredType: 'input' as any,
-      render: renderCode,
-      ...customFormLayout,
-    },
+    // {
+    //   show: logUploadTypeValue === '02',
+    //   label: fieldLabels.logFile,
+    //   key: 'appCode',
+    //   requiredType: 'input' as any,
+    //   render: renderCode,
+    //   ...customFormLayout,
+    // },
     {
       ...getCustomSelectFromItemData({
         label: fieldLabels.firmId,
@@ -337,12 +338,12 @@ export default function Page() {
     hideModal();
     form.setFieldsValue({
       appCode:
-        logUploadTypeValue === '0'
+        logUploadTypeValue === '01'
           ? selectedRow[0].appCode
           : selectedRow[0].logUrl,
     });
     setAppCode(
-      logUploadTypeValue === '0'
+      logUploadTypeValue === '01'
         ? selectedRow[0].appCode
         : selectedRow[0].logUrl
     );
@@ -374,13 +375,13 @@ export default function Page() {
         validEndTime: fields.validEndTime.format('YYYY-MM-DD HH:mm:ss'),
       };
 
-      if (logUploadTypeValue === '1') {
-        param = {
-          ...param,
-          appCode: fields.logFile,
-        };
-        delete param.logFile;
-      }
+      // if (logUploadTypeValue === '02') {
+      //   param = {
+      //     ...param,
+      //     appCode: fields.logFile,
+      //   };
+      //   delete param.logFile;
+      // }
       setLoading(true);
       if (id) {
         param = {
