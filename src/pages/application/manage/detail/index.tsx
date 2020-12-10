@@ -19,6 +19,7 @@ function Page() {
   // 请求dept数据
   const res = useStore(['app_status']);
   const id = useQueryParam('id');
+  const status = useQueryParam('status');
   const [detailArr, setDetailArr] = useState([] as any[]);
   const [loading, setLoading] = useState(false);
 
@@ -38,7 +39,7 @@ function Page() {
       return;
     }
     setLoading(true)
-    appInfoDetail(id, getDetailCallback);
+    appInfoDetail(id, getDetailCallback, {status});
   }, []);
 
   /**

@@ -80,7 +80,7 @@ function Page(props: Props) {
    * @param item 
    */
   const onDetail = (item: any) => {
-    history.push(`/application/publish/detail?id=${item.id}`);
+    history.push(`/application/publish/detail?id=${item.id}&status=${item.status}`);
   }
 
   /**
@@ -133,7 +133,7 @@ function Page(props: Props) {
         <div>
           <a onClick={() => onDetail(item)}>详情</a>
           {
-            (item.status === 2 || item.status === 5) && (
+            (item.status === 2 ) && (
               <>
                 <Divider type="vertical" />
                 <a onClick={() => onPublish(item)}>发布</a>
@@ -141,7 +141,15 @@ function Page(props: Props) {
             )
           }
           {
-            item.status === 4 && (
+            (item.status === 4 ) && (
+              <>
+                <Divider type="vertical" />
+                <a onClick={() => onPublish(item)}>上架</a>
+              </>
+            )
+          }
+          {
+            item.status === 3 && (
               <>
                 <Divider type="vertical" />
                 <a onClick={() => onUnshelveItem(item)}>下架</a>

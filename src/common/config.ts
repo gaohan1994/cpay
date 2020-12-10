@@ -23,6 +23,7 @@ export const BASE_URL = !isProduction()
 
 console.log('process.env.PROJECT_ENV', process.env.PROJECT_ENV);
 export const SOURCE_URL = 'http://172.30.20.100:9200';
+// export const SOURCE_URL = 'https://182.119.90.205:58888'
 
 /**
  * 请求返回的code枚举
@@ -39,7 +40,7 @@ export const BASIC_CONFIG = {
 
 export const getDownloadPath = (filename: string): string => {
   const href = `${BASE_URL}/cpay-admin/tmp/download?fileName=${filename}`;
-
+// window.location.href = href
   const body = document.getElementsByTagName('body')[0];
   const downloadForm = document.createElement('form');
   downloadForm.method = 'POST';

@@ -7,7 +7,7 @@ interface State {
   detail: any;
 }
 
-export function useDetail(id: number, fetchFunction: Function, setLoading?: Function) {
+export function useDetail(id: number, fetchFunction: Function, setLoading?: Function, params?:object) {
   const initState: State = {
     detail: {} as any,
   };
@@ -34,7 +34,7 @@ export function useDetail(id: number, fetchFunction: Function, setLoading?: Func
       if (setLoading) {
         setLoading(true);
       }
-      fetchFunction(id, getParamsCallback);
+      fetchFunction(id, getParamsCallback, params);
     }
   }, []);
   return { detail, setDetail };

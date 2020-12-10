@@ -325,7 +325,7 @@ export default function Page() {
         list: terminalGroupList,
         valueKey: 'id',
         nameKey: 'name',
-        required: true,
+        // required: true,
       })
     },
     {

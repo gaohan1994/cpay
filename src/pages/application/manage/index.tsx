@@ -128,7 +128,7 @@ function Page(props: Props) {
    * @param item
    */
   const onDetail = (item: any) => {
-    history.push(`/application/manage/detail?id=${item.id}`);
+    history.push(`/application/manage/detail?id=${item.id}&status=${item.status}`);
   };
 
   /**
@@ -377,7 +377,7 @@ function Page(props: Props) {
   const extraButtons = [
     { title: '上传', onClick: onUpload, icon: <UploadOutlined /> },
     { title: '提交审核', onClick: onAuditSubmit, type: 'primary' as any },
-    { title: '回收站', onClick: onRecycleList, icon: <DeleteOutlined /> },
+    // { title: '回收站', onClick: onRecycleList, icon: <DeleteOutlined /> },
   ];
 
   const rowSelection = {

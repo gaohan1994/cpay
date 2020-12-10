@@ -24,9 +24,10 @@ export const appInfoList = (params: IAppInfoListField) =>
  */
 export const appInfoDetail = async (
   id: number,
-  callback?: (params: any) => void
+  callback?: (params: any) => void,
+  params?: object,
 ): Promise<any> => {
-  const result = await ApiRequest.post(`/cpay-admin/app/info/appInfoDetail`, { id });
+  const result = await ApiRequest.post(`/cpay-admin/app/info/appInfoDetail`, { id, ...params });
   callback && callback(result);
   return result;
 };

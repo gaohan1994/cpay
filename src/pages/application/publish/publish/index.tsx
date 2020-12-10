@@ -44,12 +44,13 @@ const fieldLabels = {
 function Page() {
   const history = useHistory();
   const id = useQueryParam('id');
+  const status = useQueryParam('status');
   const [flag, setFlag] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<ErrorField[]>([]);
   const [form] = Form.useForm();
 
-  let { detail } = useDetail(id, appInfoDetail, setLoading);
+  let { detail } = useDetail(id, appInfoDetail, setLoading, {status});
   detail = detail?.appInfo || {}
 
   useEffect(() => {
