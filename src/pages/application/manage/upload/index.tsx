@@ -217,7 +217,10 @@ export default function Page() {
       notification.error({ message: '最多只能上传5张' });
       arr = arr.slice(0, 5);
     }
-    setImageFileList(arr);
+    // 不加setTimeout会导致缺少图片
+    setTimeout(() => {
+      setImageFileList(arr);
+    })
   };
 
   const beforeUpload = (file: any) => {

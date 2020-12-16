@@ -98,14 +98,6 @@ export default (props: Props) => {
         )?.dictLabel || '--',
     });
     detailArr.push({
-      label: '终端屏幕类型',
-      value: detail?.advertCopsSign || '--',
-    });
-    detailArr.push({
-      label: '广告文件名',
-      value: '--',
-    });
-    detailArr.push({
       label: '审核意见',
       render: () => {
         return (
@@ -116,18 +108,24 @@ export default (props: Props) => {
       },
     });
 
-    const secondArr = [
-      {
+    const secondArr = [] as any[];
+    if(detail?.adPath) {
+      secondArr.push({
         label: '广告预览图片',
         render: () => {
-          return <img src={detail?.picPath} style={{ width: '100%' }} />;
+          return <div>
+            {detail?.adPath?.split(';')
+              .filter(v => v)
+              .map(item => <img src={item} style={{ width: 'auto', height: '100px', marginRight: '10px' }} />)}
+          </div>
         },
-      },
-    ];
+      })
+    }
+
     // 审核意见;
     return (
       <Row style={{ padding: 12 }}>
-        {[detailArr, secondArr].map((array, index) => {
+        {[detailArr, secondArr].filter(item => item.length).map((array, index) => {
           return (
             <Col span={10} style={{ marginLeft: index === 1 ? '24px' : '' }}>
               <Descriptions
@@ -135,8 +133,7 @@ export default (props: Props) => {
                 column={1}
                 layout={index === 1 ? 'vertical' : 'horizontal'}
               >
-                {array.length > 0 &&
-                  array.map((item: any) => {
+                {array.map((item: any) => {
                     const { label, render, value, ...rest } = item;
                     return (
                       <Descriptions.Item

@@ -241,7 +241,7 @@ function Page(props: Props) {
           terminalGroup.map((item) => {
             return {
               value: `${item.id}`,
-              title: `${item.remark}`,
+              title: `${item.name}`,
             };
           })) ||
         [],

@@ -11,6 +11,8 @@ import { IResponseResult } from '@/common/type';
 type IDetailArr = {
   label: string;
   value: string;
+  render?: () => any;
+  hidden?: boolean;
 };
 
 function Page() {
@@ -49,6 +51,18 @@ function Page() {
         { label: '终端型号', value: data.terminalTypes },
         { label: '广告类型', value: getDictText(`${data.type}`, 'advert_type') },
         { label: '广告文件类型', value: getDictText(`${data.adFileType}`, 'advert_file_type') },
+        { 
+          label: '广告预览图片', 
+          value: data.adPath, 
+          render: () => {
+            return <div>
+              {data?.adPath?.split(';')
+                .filter(v => v)
+                .map(item => <img src={item} style={{ width: 'auto', height: '100px', marginRight: '10px' }} />)}
+            </div>
+          },
+          hidden: data.adFileType !== 0
+        },
         { label: '广告营销说明', value: data.description },
       ];
       setDetailArr(obj);
@@ -63,8 +77,8 @@ function Page() {
         <Descriptions column={1} bordered>
           {detailArr &&
             detailArr.map((item, index) => (
-              <Descriptions.Item key={index} label={<div style={{ width: '100px' }}>{item.label}</div>}>
-                <div style={{ width: 'calc(60vw - 200px)' }}>{item.value || '--'}</div>
+              !item.hidden && <Descriptions.Item key={index} label={<div style={{ width: '100px' }}>{item.label}</div>}>
+                {item.render ? item.render() : <div style={{ width: 'calc(60vw - 200px)' }}>{item.value || '--'}</div>}
               </Descriptions.Item>
             ))}
         </Descriptions>

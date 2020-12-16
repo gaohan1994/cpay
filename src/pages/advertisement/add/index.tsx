@@ -6,7 +6,8 @@
  * @Last Modified time: 2020-10-14 11:45:35
  */
 import React, { useEffect, useState } from 'react';
-import { Form, DatePicker, Button, notification, Input } from 'antd';
+import { Form, DatePicker, Button, notification, Input, Upload } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import { useHistory } from 'react-router-dom';
 import { useStore } from '@/pages/common/costom-hooks';
 import { useSelectorHook } from '@/common/redux-util';
@@ -18,11 +19,11 @@ import {
   renderCommonSelectForm,
   renderSelectForm,
 } from '@/component/form/render';
-import { advertAdd } from '../constants/api';
+import { advertAdd, advertInfoDetail,advertInfoEdit } from '../constants/api';
 import { FormItmeType } from '@/component/form/type';
 import { terminalGroupListByDept } from '@/pages/terminal/message/constants/api';
 import { ITerminalGroupByDeptId } from '@/pages/terminal/message/types';
-import { RESPONSE_CODE } from '@/common/config';
+import { RESPONSE_CODE, BASIC_CONFIG } from '@/common/config';
 import { AdvertisementDetail } from '../types';
 import moment from 'moment';
 import invariant from 'invariant';
@@ -31,6 +32,8 @@ import {
   terminalTypeListByFirm as getTerminalTypeListByFirm,
 } from '@/pages/terminal/constants';
 import FixedFoot from '@/component/fixed-foot';
+import { useQueryParam } from '@/common/request-util';
+import { formatUploadFile } from '@/common/util';
 
 const { TextArea } = Input;
 
@@ -50,8 +53,56 @@ export default () => {
   const [groupData, setTerminalGroupList] = useState(initState.groupData);
   const [terminalFirmList, setTerminalFirmList] = useState([] as any[]);
   const [firmValue, setFirmValue] = useState('');
+  const [imageFileList, setImageFileList] = useState([] as any[]);
+  const [fileType, setFileType] = useState()
+  const id = useQueryParam('id')
 
   const [terminalFirmTypeList, setTerminalFirmTypeList] = useState([] as any[]);
+  const [advertisement, setAdvertisement] = useState(initState.advertisement);
+
+  useEffect(() => {
+    if(!id) {
+      return 
+    }
+    advertInfoDetail(id, (result) => {
+      if (result.code === RESPONSE_CODE.success) {
+        const { data } = result;
+        setAdvertisement(data);
+        setDeptId(data.deptId);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if(!id) {
+      return
+    }
+    let detailImageList: any[] = [];
+    if (advertisement.picPath && advertisement.adPath.length > 0) {
+      detailImageList = advertisement.adPath.split(';').filter(item=>item).map((item, index) => ({
+        uid: index,
+        name: `image${index + 1}.jpeg`,
+        status: 'done',
+        url: item,
+        type:'image/jpeg',
+        size: 12
+      }))
+    }
+    setImageFileList(detailImageList);
+    form.setFieldsValue({
+      adName: advertisement.adName,
+      firmId: advertisement.firmId,
+      terminalTypes:advertisement.terminalTypes,
+      startTime: moment(advertisement.startTime),
+      endTime: moment(advertisement.endTime),
+      deptId: advertisement.deptId,
+      groupId: advertisement.groupId,
+      type: `${advertisement.type}`,
+      adFileType: `${advertisement.adFileType}`,
+      deviceType: `${advertisement.deviceType}`,
+      description: advertisement.description,
+    });
+  }, [advertisement]);
 
   useEffect(() => {
     getTerminalFirmList({}, setTerminalFirmList)
@@ -78,6 +129,8 @@ export default () => {
     });
   }, [deptId]);
 
+ 
+
   const onFinish = async () => {
     try {
       const values = await form.validateFields();
@@ -86,20 +139,65 @@ export default () => {
         startTime: values.startTime.format('YYYY-MM-DD HH:mm:ss'),
         endTime: values.endTime.format('YYYY-MM-DD HH:mm:ss'),
       };
-      console.log('values:', payload);
-      const result = await advertAdd(payload);
+      if(values.adFileType === '0') {
+        invariant(imageFileList && imageFileList.length > 0, '请上传广告图片');
+        payload.adPath = formatUploadFile(imageFileList).join(';')
+      }
+      id && (payload.id = id)
+      const fetchFunc = id ? advertInfoEdit : advertAdd
+      const result = await fetchFunc(payload);
       invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
-      notification.success({ message: '新增广告成功！' });
+      notification.success({ message: id ? '修改广告成功！' : '新增广告成功' });
       history.goBack();
     } catch (error) {
+      error.errorFields && setError(error.errorFields)
       error.message && notification.warn({ message: error.message });
     }
   };
 
   const onDeptChange = (deptId: number) => {
-    console.log('deptId: ', deptId);
     form.setFieldsValue({ groupId: '' });
     setDeptId(deptId);
+  };
+
+  const beforeUpload = (file: any) => {
+    // 判断是否是图片
+    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+    if (!isJpgOrPng) {
+      notification.error({ message: '只能上传jpg或png文件' });
+    }
+    // 判断是否小于等于5M
+    const isLt5M = file.size / 1024 / 1024 <= 5;
+    if (!isLt5M) {
+      notification.error({ message: '超过限制5M' });
+    }
+    return isJpgOrPng && isLt5M;
+  };
+
+  /**
+   * @todo 监听上传应用截组件改变的文件
+   * @param param0
+   */
+  const handleChange = ({ fileList }: any, callback: any) => {
+    let arr: any[] = [];
+    for (let i = 0; i < fileList.length; i++) {
+      let file = fileList[i];
+      // 判断是否是图片
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
+      // 判断是否小于等于5M
+      const isLt5M = file.size / 1024 / 1024 <= 5;
+      if (isJpgOrPng && isLt5M) {
+        arr.push(file);
+      }
+    }
+    if (arr.length > 5) {
+      notification.error({ message: '最多只能上传5张' });
+      arr = arr.slice(0, 5);
+    }
+
+    setTimeout(() => {
+      callback(arr);
+    })
   };
 
   const forms: any[] = [
@@ -241,9 +339,35 @@ export default () => {
             formName: 'adFileType',
             formType: FormItmeType.SelectCommon,
             dictList: 'advert_file_type',
+            onChange: (v) => setFileType(v)
           },
           false
         ),
+    },
+    {
+      show: form.getFieldValue('adFileType') === '0',
+      key: 'adPath',
+      label: '广告预览图片',
+      render: () => {
+        return  <Upload
+          action={`${BASIC_CONFIG.BASE_URL}/cpay-admin/file/upload/tmp`}
+          listType="picture-card"
+          fileList={imageFileList}
+          beforeUpload={beforeUpload}
+          onChange={({ fileList }) =>
+            handleChange({ fileList }, setImageFileList)
+          }
+          multiple={true}
+          withCredentials={true}
+        >
+          {imageFileList.length >= 5 ? null : (
+            <div>
+              <PlusOutlined />
+              <div className="ant-upload-text">上传</div>
+            </div>
+          )}
+        </Upload>
+      }
     },
     {
       label: '广告营销说明',

@@ -19,6 +19,7 @@ import { formatSearch } from '@/common/request-util';
 import { AdvertisementDetail } from '../../types';
 import moment from 'moment';
 import invariant from 'invariant';
+import { formatUploadFile } from '@/common/util';
 
 export default () => {
   const history = useHistory();
@@ -112,26 +113,6 @@ export default () => {
     try {
       invariant(imageFileList && imageFileList.length > 0, '请上传广告图片');
       invariant(videoFileList && videoFileList.length > 0, '请上传广告');
-      const formatUploadFile = (list: any[]): string[] => {
-        let picPaths = [];
-        for (let i = 0; i < list.length; i++) {
-          let originPic = '';
-          if (list[i].url) {
-            originPic = list[i].url;
-          } else if (list[i].response && list[i].response.data) {
-            originPic = list[i].response.data;
-          } else {
-            continue;
-          }
-          let pic = `${BASIC_CONFIG.SOURCE_URL}/${originPic.replace(
-            `${BASIC_CONFIG.SOURCE_URL}/`,
-            ''
-          )}`;
-          picPaths.push(pic);
-        }
-
-        return picPaths;
-      };
 
       const payload: Partial<AdvertisementDetail> = {
         ...values,
@@ -308,7 +289,9 @@ export default () => {
       arr = arr.slice(0, 5);
     }
 
-    callback(arr);
+    setTimeout(() => {
+      callback(arr);
+    })
   };
   return (
     <div>

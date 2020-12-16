@@ -43,7 +43,8 @@ const routerConfig: any[] = [
   {
     path: '/advertisement/apply/update',
     name: '广告申请修改',
-    component: AdvertisementApplyUpdate,
+    // component: AdvertisementApplyUpdate,
+    component: AdvertisementAdd,
     exact: true,
     inMenu: false,
   },

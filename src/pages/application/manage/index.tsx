@@ -224,13 +224,13 @@ function Page(props: Props) {
       render: (key, item) => (
         <div>
           <a onClick={() => onDetail(item)}>详情</a>
-          {item.status !== 4 && (
+          {item.status !== 3 && (
             <>
               <Divider type="vertical" />
               <a onClick={() => onEdit(item)}>修改</a>
             </>
           )}
-          {item.status !== 4 && (
+          {item.status !== 3 && (
             <>
               <Divider type="vertical" />
               <a onClick={() => onRemoveItem(item)}>删除</a>
@@ -330,7 +330,7 @@ function Page(props: Props) {
           terminalGroupList.map((item) => {
             return {
               value: `${item.id}`,
-              title: `${item.remark}`,
+              title: `${item.name}`,
             };
           })) ||
         [],

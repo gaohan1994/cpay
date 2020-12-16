@@ -164,7 +164,7 @@ export default () => {
           terminalGroup.map((item) => {
             return {
               value: `${item.id}`,
-              title: `${item.remark}`,
+              title: `${item.name}`,
             };
           })) ||
         [],
