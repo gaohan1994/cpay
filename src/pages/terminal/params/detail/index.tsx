@@ -263,7 +263,7 @@ export default () => {
     {
       label: fieldLabels.groupId,
       key: 'groupId',
-      requiredType: 'select',
+      // requiredType: 'select',
       render: () =>
         // getCustomSelectFromItemData({})
         renderSelect({

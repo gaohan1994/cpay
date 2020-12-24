@@ -16,7 +16,7 @@ type Props = {
   maxSize?: string;
   renderRequire?: () => any;
   renderButton?: () => any;
-  fileType?: { type: string, message: string };
+  fileType?: { type: string[], message: string };
   setFile?: any;
 }
 
@@ -41,8 +41,8 @@ function SelectUpload(props: Props) {
    */
   const beforeUpload = (file: File) => {
     const { maxSize, fileType } = props;
-    if (fileType && fileType.type) {
-      if (file.type !== fileType.type) {
+    if (fileType && fileType?.type?.length) {
+      if (fileType.type.indexOf(file.type) === -1) {
         notification.error({ message: fileType.message || '上传文件形式不对，请重新上传' });
         return false;
       }

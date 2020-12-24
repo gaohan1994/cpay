@@ -36,8 +36,6 @@ export default function ImportPage(props: Props) {
    */
   const handleImportModalOk = async () => {
     try{
-      console.log(file);
-      
       invariant(Object.keys(file).length, '请选择文件')
       const formData = new FormData();
       formData.append('file', file);
@@ -58,12 +56,12 @@ export default function ImportPage(props: Props) {
   };
 
   const beforeUpload = (file: File) => {
-    const type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-    if (!file || file.type !== type) {
+    const type = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel']
+    if (!file || type.indexOf(file.type) === -1) {
       notification.error({ message: '请上传excel文件' });
       return false;
     }
-    setFile(file);
+    setFile(file);    
     return false;
   };
 

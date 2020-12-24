@@ -18,7 +18,7 @@ export default (props: Props) => {
   const { terminalDetailInfo } = props;
 
   const [form] = Form.useForm();
-  const { tableProps, search }: any = useAntdTable(
+  const { tableProps, search, params: fetchFields }: any = useAntdTable(
     (paginatedParams: any, tableProps: any) => {
       return terminalFlowList({
         ...formatPaginate(paginatedParams),
@@ -80,6 +80,7 @@ export default (props: Props) => {
               (terminalDetailInfo.terminalInfo &&
                 terminalDetailInfo.terminalInfo.tusn) ||
               '',
+            ...fetchFields[1]
           } as any);
           invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
 

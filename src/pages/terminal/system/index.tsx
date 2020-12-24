@@ -12,10 +12,10 @@ import Forms from '@/component/form';
 import { RESPONSE_CODE, BASE_URL, getDownloadPath } from '@/common/config';
 
 export default () => {
-  const [fetchField, setFetchField] = useState({} as any);
+  // const [fetchField, setFetchField] = useState({} as any);
 
   const [form] = Form.useForm();
-  const { tableProps, search }: any = useAntdTable(
+  const { tableProps, search, params: fetchFields }: any = useAntdTable(
     (paginatedParams: any, fetchProps: any) => {
       console.log('tableProps', fetchProps);
       return terminalSysdetailList({
@@ -35,7 +35,7 @@ export default () => {
       title: '确认要导出终端系统信息？',
       onOk: async () => {
         try {
-          const result = await terminalSysdetailExport({} as any);
+          const result = await terminalSysdetailExport(fetchFields[1]);
           invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
 
           const href = getDownloadPath(result.data);

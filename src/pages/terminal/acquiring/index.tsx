@@ -23,7 +23,7 @@ export default (props: any) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);
   const [form] = Form.useForm();
   console.log('props', props);
-  const { tableProps, search }: any = useAntdTable(
+  const { tableProps, search, params: fetchFields }: any = useAntdTable(
     (paginatedParams: PaginatedParams[0], tableProps: any) => {
       return terminalAcquiringList({ 
         ...tableProps, 
@@ -47,7 +47,7 @@ export default (props: any) => {
 
   const onExport = async () => {
     try {
-      const result = await terminalAcquiringExport({} as any);
+      const result = await terminalAcquiringExport(fetchFields[1]);
       invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
 
       const href = getDownloadPath(result.data);

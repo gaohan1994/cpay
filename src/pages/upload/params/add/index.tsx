@@ -46,7 +46,7 @@ const fieldLabels = {
   jobName: '任务名称',
   firmId: '终端厂商',
   terminalTypes: '终端型号',
-  activateTypes: '终端类型',
+  // activateTypes: '终端类型',
   cupConnMode: '银联间直连',
   bussType: '业务类型',
   dccSupFlag: 'DCC交易',
@@ -98,7 +98,7 @@ export default function Page() {
   const [loading, setLoading] = useState(false);
   const [dictLoading, setDictLoading] = useState(true);
   const terminalTypesRef: any = useRef();
-  const activateTypesRef: any = useRef();
+  // const activateTypesRef: any = useRef();
   const groupIdsRef: any = useRef();
   const [terminalTypes, setTerminalTypes] = useState([] as any[]);
   const [activeTypes, setActiveTypes] = useState([] as any[]);
@@ -112,7 +112,7 @@ export default function Page() {
     terminalFirmValue,
     setTerminalFirmValue,
     terminalTypeList,
-    activateTypesList,
+    // activateTypesList,
     unionpayConnectionList,
     cupConnModeValue,
     setCupConnModeValue,
@@ -202,16 +202,16 @@ export default function Page() {
           issueParamJobOutput.terminalTypes.split(',')
         );
       }
-      if (
-        activateTypesRef &&
-        activateTypesRef.current &&
-        activateTypesRef.current.setCheckedList &&
-        issueParamJobOutput.activateTypes
-      ) {
-        activateTypesRef.current.setCheckedList(
-          issueParamJobOutput.activateTypes.split(',')
-        );
-      }
+      // if (
+      //   activateTypesRef &&
+      //   activateTypesRef.current &&
+      //   activateTypesRef.current.setCheckedList &&
+      //   issueParamJobOutput.activateTypes
+      // ) {
+      //   activateTypesRef.current.setCheckedList(
+      //     issueParamJobOutput.activateTypes.split(',')
+      //   );
+      // }
       setValidDateShow(issueParamJobOutput.validDateShow === 1 ? true : false);
       if (issueParamJobOutput.validDateShow === 1) {
         form.setFieldsValue({
@@ -287,23 +287,23 @@ export default function Page() {
         />
       ),
     },
-    {
-      label: fieldLabels.activateTypes,
-      key: 'activateTypes',
-      requiredType: 'select',
-      render: () => (
-        <CustomCheckGroup
-          ref={activateTypesRef}
-          list={activateTypesList}
-          valueKey={'dictValue'}
-          nameKey={'dictLabel'}
-          setForm={(value: any[]) => {
-            form.setFieldsValue({ activateTypes: value });
-            setActiveTypes(value);
-          }}
-        />
-      ),
-    },
+    // {
+    //   label: fieldLabels.activateTypes,
+    //   key: 'activateTypes',
+    //   requiredType: 'select',
+    //   render: () => (
+    //     <CustomCheckGroup
+    //       ref={activateTypesRef}
+    //       list={activateTypesList}
+    //       valueKey={'dictValue'}
+    //       nameKey={'dictLabel'}
+    //       setForm={(value: any[]) => {
+    //         form.setFieldsValue({ activateTypes: value });
+    //         setActiveTypes(value);
+    //       }}
+    //     />
+    //   ),
+    // },
     {
       ...getCustomSelectFromItemData({
         label: fieldLabels.cupConnMode,

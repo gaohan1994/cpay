@@ -20,7 +20,7 @@ export default () => {
   const [form] = Form.useForm();
   const [visible, { toggle }] = useBoolean(false);
   const [currentItem, setCurrentItem] = useState({} as any);
-  const { tableProps, search }: any = useAntdTable(
+  const { tableProps, search, params: fetchFields }: any = useAntdTable(
     (paginatedParams: PaginatedParams[0], tableProps: any) => {
       return relocationCurrentList({
         ...formatPaginate(paginatedParams),
@@ -39,7 +39,7 @@ export default () => {
       title: '确认要导出终端信息？',
       onOk: async () => {
         try {
-          const result = await relocationCurrentExport({});
+          const result = await relocationCurrentExport(fetchFields[1]);
           invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
 
           const href = getDownloadPath(result.data);

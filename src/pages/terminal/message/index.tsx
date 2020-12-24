@@ -77,7 +77,7 @@ export default () => {
     }
   }, [firmValue]);
 
-  const { tableProps, search }: any = useAntdTable(
+  const { tableProps, search, params: fetchFields }: any = useAntdTable(
     (paginatedParams: PaginatedParams[0], tableProps: any) => {
       return terminalInfoList({
         ...formatPaginate(paginatedParams),
@@ -106,7 +106,7 @@ export default () => {
       title: '确认要导出终端信息？',
       onOk: async () => {
         try {
-          const result = await terminalInfoExport({});
+          const result = await terminalInfoExport(fetchFields[1]);
           invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
 
           const href = getDownloadPath(result.data);
@@ -327,7 +327,7 @@ export default () => {
       title: '银联间直连',
       dataIndex: 'cupConnMode',
       render: (conn: any) => {
-        return <span>{Number(conn) === 0 ? '是' : '否'}</span>;
+        return <span>{Number(conn) === 0 ? '间连' : '直连'}</span>;
       },
     },
     {

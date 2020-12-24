@@ -300,7 +300,7 @@ export function FormTusns(props: Props) {
                   uploadRef={uploadRef}
                   maxSize='100M'
                   setFile={setFile}
-                  fileType={{ type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", message: "请上传excel文件" }}
+                  fileType={{ type: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'], message: "请上传excel文件" }}
                 />
               </Col>
             </Row>

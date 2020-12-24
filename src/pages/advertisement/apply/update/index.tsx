@@ -189,7 +189,7 @@ export default () => {
       label: '组别名称',
       key: 'groupId',
       requiredType: 'select',
-      requiredText: '请选择组别',
+      // requiredText: '请选择组别',
       render: () =>
         renderSelect({
           formName: 'groupId',
