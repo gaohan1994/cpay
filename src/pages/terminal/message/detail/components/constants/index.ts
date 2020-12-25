@@ -46,3 +46,17 @@ export const terminalPowerList = async (
 
 export const powerRemove = (params: any) =>
   ApiRequest.post(`/cpay-admin/terminal/power/powerRemove`, params);
+
+  /**
+   * 查询终端信息管理系统信息
+   */
+  export const terminalSystemInfo = async (params:{id: number | undefined}):Promise<IResponseResult<any>> => {
+    return ApiRequest.post(`/cpay-admin/terminal/sysDetail/terminalSysDetailDetail`, params)
+  }
+
+  /**
+   * 查询终端信息管理基本信息、系统信息
+   */
+  export const terminalBaseInfo = async (params: {id: number}): Promise<IResponseResult<any>> => {
+    return ApiRequest.post(`/cpay-admin/terminal/info/terminalInfoDetail`, params)
+  }

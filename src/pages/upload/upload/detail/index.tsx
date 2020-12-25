@@ -82,14 +82,17 @@ export default function Page() {
     arr.push({ key: '更新方式', value: updateTypeInfo });
     const releaseTypeInfo: any[] = [];
     releaseTypeInfo.push({ label: "发布类型", value: getDictText(getDownloadJobOutputValue('releaseType'), 'release_type') });
-    releaseTypeInfo.push({ label: "机构名称", value: getDownloadJobOutputValue('deptName') });
-    releaseTypeInfo.push({ label: "升级范围", value: getDictText(getDownloadJobOutputValue('activateType'), 'activate_type') });
-    releaseTypeInfo.push({ label: "组别过滤方式", value: getDictText(getDownloadJobOutputValue('isGroupUpdate'), 'is_group_update') });
-    if (getDownloadJobOutputValue('isGroupUpdate') !== 0) {
-      releaseTypeInfo.push({ label: "终端组别", value: getDownloadJobOutputValue('groupNames') });
+    if (getDownloadJobOutputValue('releaseType') !== 0) {
+      releaseTypeInfo.push({ label: "机构名称", value: getDownloadJobOutputValue('deptName') });
+      releaseTypeInfo.push({ label: "升级范围", value: getDictText(getDownloadJobOutputValue('activateType'), 'activate_type') });
+      releaseTypeInfo.push({ label: "组别过滤方式", value: getDictText(getDownloadJobOutputValue('isGroupUpdate'), 'is_group_update') });
+      if (getDownloadJobOutputValue('isGroupUpdate') !== 0) {
+        releaseTypeInfo.push({ label: "终端组别", value: getDownloadJobOutputValue('groupNames') });
+      }
     }
     if (getDownloadJobOutputValue('releaseType') === 0) {
-      releaseTypeInfo.push({ label: "终端集合", value: getDownloadJobOutputValue('tusns') });
+      const res = getCommonValue('tusnList')
+      releaseTypeInfo.push({ label: "终端集合", value: Array.isArray(res) ? res.join(' ') : res || '--'});
     }
     arr.push({ key: '发布类型', value: releaseTypeInfo });
     setDetailArr(arr);

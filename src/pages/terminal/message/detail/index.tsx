@@ -3,10 +3,12 @@ import { useHistory } from 'react-router-dom';
 import { formatSearch } from '@/common/request-util';
 import invariant from 'invariant';
 import { Tabs, notification } from 'antd';
-import { terminalInfoDetail, DetailTabs } from './constants';
+import { terminalInfoDetail, DetailTabs,  } from './constants';
+import {terminalBaseInfo} from './components/constants'
 import { RESPONSE_CODE } from '@/common/config';
 import Content from './components/content';
 import { ITerminalSystemDetailInfo } from './types';
+import { useStore } from '@/pages/common/costom-hooks';
 
 const { TabPane } = Tabs;
 
@@ -16,6 +18,7 @@ interface State {
 }
 
 export default () => {
+  useStore(['buss_type'])
   const history = useHistory();
   const initState: State = {
     currentTab: '1',
@@ -28,7 +31,7 @@ export default () => {
     const { search } = history.location;
     const field = formatSearch(search);
     console.log('field:', field);
-    terminalInfoDetail(field.id, (result: any) => {
+    terminalBaseInfo({id: field.id}).then((result: any) => {
       try {
         console.log('result:', result);
         invariant(result.code === RESPONSE_CODE.success, result.msg || ' ');
@@ -36,7 +39,7 @@ export default () => {
       } catch (error) {
         notification.warn({ message: error.message });
       }
-    });
+    })
   }, [history.location.search]);
 
   /**

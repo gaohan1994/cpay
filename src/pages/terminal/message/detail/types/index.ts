@@ -18,6 +18,7 @@ export interface ITerminalSystemDetail {
   tmsSdk: string;
   tusn: string;
   updateTime: string;
+  blueTooth: string;
 }
 
 export interface ITerminalApp { }
@@ -46,6 +47,13 @@ export interface ITerminalInfo {
   imsi: string;
   netMark: string;
   merchantCode?: string;
+  cupConnMode?: number;
+  dccSupFlag?: number;
+  terminalCode?: string;
+  bussType?: string;
+  legalPerson?: string;
+  merchantAddress?: string;
+  applyPhone?: number;
 }
 
 export interface ITerminalSystemDetailInfo {
@@ -55,4 +63,5 @@ export interface ITerminalSystemDetailInfo {
   terminalInfo: ITerminalInfo;
   terminalPowerList: any[];
   terminalSysdetail: any;
+  terminalInfoInOutput: ITerminalInfo
 }

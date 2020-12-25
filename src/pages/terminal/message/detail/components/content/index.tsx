@@ -8,6 +8,8 @@ import { FormItem, FormItmeType } from '@/component/form/type';
 import Application from '../application';
 import Traffic from '../traffic';
 import Power from '../power';
+import SystemInfo from '../system'
+import { getDictText } from '@/pages/common/util';
 
 type Props = {
   currentTab: { title: string; key: string };
@@ -43,6 +45,7 @@ export function renderColumns(array: any[]) {
 
 export default (props: Props) => {
   const { currentTab, terminalDetailInfo } = props;
+  const terminalInfo = terminalDetailInfo?.terminalInfoInOutput || {}
   /**
    * 基础信息
    */
@@ -51,129 +54,120 @@ export default (props: Props) => {
     detailArr.push({
       label: '终端序列号',
       value:
-        (terminalDetailInfo &&
-          terminalDetailInfo.terminalInfo &&
-          terminalDetailInfo.terminalInfo.tusn) ||
+        (terminalInfo &&
+          terminalInfo.tusn) ||
         '--',
     });
     detailArr.push({
       label: '所属组别',
       value:
-        (terminalDetailInfo &&
-          terminalDetailInfo.terminalInfo &&
-          terminalDetailInfo.terminalInfo.groupNames) ||
+        (terminalInfo &&
+          terminalInfo.groupNames) ||
         '--',
     });
     detailArr.push({
       label: '终端类型',
       value:
-        (terminalDetailInfo.terminalInfo &&
-          terminalDetailInfo.terminalInfo.terminalTypeName) ||
+        (terminalInfo &&
+          terminalInfo.terminalTypeName) ||
         '--',
     });
     detailArr.push({
       label: 'IMSI',
       value:
-        (terminalDetailInfo.terminalInfo &&
-          terminalDetailInfo.terminalInfo.imsi) ||
+        (terminalInfo &&
+          terminalInfo.imsi) ||
         '--',
     });
     detailArr.push({
       label: '终端状态',
       value:
-        (terminalDetailInfo.terminalInfo &&
-          typeof terminalDetailInfo.terminalInfo.status === 'number' &&
-          terminalDetailInfo.terminalInfo.status === 1
+        (terminalInfo &&
+          typeof terminalInfo.status === 'number' &&
+          terminalInfo.status === 1
           ? '已激活'
           : '未激活') || '--',
     });
     detailArr.push({
       label: '商户编号',
       value:
-        (terminalDetailInfo.terminalInfo &&
-          terminalDetailInfo.terminalInfo.merchantCode) ||
+        (terminalInfo &&
+          terminalInfo.merchantCode) ||
         '--',
     });
     detailArr.push({
       label: '商户名称',
       value:
-        (terminalDetailInfo.terminalInfo &&
-          terminalDetailInfo.terminalInfo.merchantName) ||
+        (terminalInfo &&
+          terminalInfo.merchantName) ||
         '--',
     });
     detailArr.push({
       label: '手机号',
-      value: '--',
+      value: terminalInfo?.applyPhone || '--',
     });
     detailArr.push({
       label: '银联间直连',
-      value: '--',
+      value: (!terminalInfo.cupConnMode ? '间连' : '直连'),
     });
     detailArr.push({
       label: '商户地址',
       value:
-        terminalDetailInfo.terminalInfo &&
-          terminalDetailInfo.terminalInfo.county
-          ? `${terminalDetailInfo.terminalInfo.county} ${terminalDetailInfo.terminalInfo.city} ${terminalDetailInfo.terminalInfo.address}`
-          : '--',
+        terminalInfo &&
+          terminalInfo?.merchantAddress || '--'
+          // ? `${terminalInfo.county} ${terminalInfo.city} ${terminalInfo.address}`
+          // : '--',
     });
     detailArr.push({
       label: '是否支持DCC',
-      value: '--',
+      value: (!terminalInfo.dccSupFlag ? '支持' : '不支持'),
     });
     detailArr.push({
       label: '所属机构',
       value:
-        (terminalDetailInfo.terminalInfo &&
-          terminalDetailInfo.terminalInfo.deptName) ||
+        (terminalInfo &&
+          terminalInfo.deptName) ||
         '--',
     });
     detailArr.push({
       label: '终端厂商',
       value:
-        (terminalDetailInfo.terminalInfo &&
-          terminalDetailInfo.terminalInfo.firmName) ||
+        (terminalInfo &&
+          terminalInfo.firmName) ||
         '--',
     });
     detailArr.push({
       label: 'IMEI',
       value:
-        (terminalDetailInfo.terminalInfo &&
-          terminalDetailInfo.terminalInfo.imei) ||
+        (terminalInfo &&
+          terminalInfo.imei) ||
         '--',
     });
     detailArr.push({
       label: '无线地址',
       value:
-        (terminalDetailInfo.terminalInfo &&
-          terminalDetailInfo.terminalInfo.netMark) ||
-        '--',
-    });
-    detailArr.push({
-      label: '终端类型',
-      value:
-        (terminalDetailInfo.terminalInfo &&
-          terminalDetailInfo.terminalInfo.terminalTypeName) ||
+        (terminalInfo &&
+          terminalInfo.netMark) ||
         '--',
     });
     detailArr.push({
       label: '终端编号',
-      value: '--',
+      value: terminalInfo?.terminalCode || '--',
     });
     detailArr.push({
       label: '商户姓名',
-      value: '--',
+      value: terminalInfo?.legalPerson || '--',
     });
     detailArr.push({
       label: '激活时间',
       value:
-        (terminalDetailInfo.terminalInfo &&
-          terminalDetailInfo.terminalInfo.createTime) ||
+        (terminalInfo &&
+          terminalInfo.createTime) ||
         '--',
     });
     detailArr.push({
       label: '业务类型',
-      value: '--',
+      value: getDictText(terminalInfo.bussType || '', 'buss_type')
     });
     console.log('arr:', detailArr);
     return renderColumns(detailArr);
@@ -183,57 +177,7 @@ export default (props: Props) => {
    * 系统信息
    */
   if (currentTab.key === '2') {
-    const terminalSystemDetail = terminalDetailInfo.terminalSysdetail
-    const detailArr: any[] = [];
-    detailArr.push({
-      label: '系统版本',
-      value: terminalSystemDetail?.osVersion || '--',
-    });
-    detailArr.push({
-      label: '安全模块版本',
-      value:  terminalSystemDetail?.safeModelVersion || '--',
-    });
-    detailArr.push({
-      label: '运维SDK版本',
-      value:  terminalSystemDetail?.tmsSdk || '--',
-    });
-    detailArr.push({
-      label: '收单SDK版本',
-      value:  terminalSystemDetail?.paySdk || '--',
-    });
-    detailArr.push({
-      label: 'POS管家内部版本',
-      value:  terminalSystemDetail?.tmsAppVersion || '--',
-    });
-    detailArr.push({
-      label: '收单应用',
-      value:  terminalSystemDetail?.payAppName || '--',
-    });
-    detailArr.push({
-      label: '网络类型',
-      value:  terminalSystemDetail?.networkType || '--',
-    });
-    detailArr.push({
-      label: '蓝牙地址',
-      value:  terminalSystemDetail?.blueTooth || '--',
-    });
-    detailArr.push({
-      label: 'Android版本',
-      value:  terminalSystemDetail?.androidVersion || '--',
-    });
-    detailArr.push({
-      label: '参数版本',
-      value:  terminalSystemDetail?.commParaVersion || '--',
-    });
-    detailArr.push({
-      label: 'EMV版本',
-      value:  terminalSystemDetail?.emvVersion || '--',
-    });
-    detailArr.push({
-      label: 'POS管家外部版本',
-      value:  terminalSystemDetail?.payAppVersionOutside || '--',
-    });
-    return renderColumns(detailArr);
+    return <SystemInfo terminalSystemDetail={terminalDetailInfo?.terminalSysdetail || {}}/>
   }
 
   /**

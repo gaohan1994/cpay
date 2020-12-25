@@ -52,7 +52,7 @@ export default () => {
   const [deptId, setDeptId] = useState(initState.deptId);
   const [groupData, setTerminalGroupList] = useState(initState.groupData);
   const [terminalFirmList, setTerminalFirmList] = useState([] as any[]);
-  const [firmValue, setFirmValue] = useState('');
+  const [firmValue, setFirmValue] = useState<number | undefined>();
   const [imageFileList, setImageFileList] = useState([] as any[]);
   const [fileType, setFileType] = useState()
   const id = useQueryParam('id')
@@ -99,9 +99,9 @@ export default () => {
       groupId: advertisement.groupId,
       type: `${advertisement.type}`,
       adFileType: `${advertisement.adFileType}`,
-      deviceType: `${advertisement.deviceType}`,
       description: advertisement.description,
     });
+    onFirmLoadData(advertisement.firmId)
   }, [advertisement]);
 
   useEffect(() => {
@@ -110,14 +110,14 @@ export default () => {
 
   useEffect(() => {
     // 终端厂商变化导致终端型号要变
-    if (firmValue !== '') {
-      form.setFieldsValue({ terminalTypes: '' });
+    if (firmValue !== undefined) {
+      form.setFieldsValue({ terminalTypes: undefined });
       onFirmLoadData(firmValue);
     }
   }, [firmValue]);
 
-  const onFirmLoadData = (firmId: string) => {
-    getTerminalTypeListByFirm({ firmId: firmId }, (data) => {
+  const onFirmLoadData = (firmId: number) => {
+    getTerminalTypeListByFirm({ firmId: `${firmId}` }, (data) => {
       setTerminalFirmTypeList(data);
     });
   };
@@ -156,7 +156,7 @@ export default () => {
   };
 
   const onDeptChange = (deptId: number) => {
-    form.setFieldsValue({ groupId: '' });
+    form.setFieldsValue({ groupId: undefined });
     setDeptId(deptId);
   };
 
@@ -218,8 +218,8 @@ export default () => {
             selectData: terminalFirmList &&
               terminalFirmList.map((item) => {
                 return {
-                  value: `${item.id}`,
-                  title: `${item.firmName}`,
+                  value: item.id,
+                  title: item.firmName,
                 };
               }),
             onChange: (firmId: any) => {
@@ -244,8 +244,8 @@ export default () => {
               terminalFirmTypeList &&
               terminalFirmTypeList.map((item) => {
                 return {
-                  value: `${item.typeCode}`,
-                  title: `${item.typeName}`,
+                  value: item.typeCode,
+                  title: item.typeName,
                 };
               }),
           },
@@ -297,8 +297,8 @@ export default () => {
     {
       label: '组别名称',
       key: 'groupId',
-      requiredType: 'select',
-      requiredText: '请选择组别',
+      // requiredType: 'select',
+      // requiredText: '请选择组别',
       render: () =>
         renderSelect({
           formName: 'groupId',
