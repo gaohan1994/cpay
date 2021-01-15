@@ -148,7 +148,7 @@ export function renderNormalForm(data: IComponentFormNormalForm) {
 export function renderSelect(data: IComponentFormSelectForm) {
   const { formName, span, selectData, formType, ...rest } = data;
   return (
-    <Select {...rest} key={formName}>
+    <Select {...rest} key={formName} allowClear>
       {Array.isArray(selectData) &&
         selectData.length > 0 &&
         selectData.map((option) => {

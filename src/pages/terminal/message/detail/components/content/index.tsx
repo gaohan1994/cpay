@@ -184,21 +184,21 @@ export default (props: Props) => {
    * 应用信息
    */
   if (currentTab.key === '3') {
-    return <Application terminalDetailInfo={terminalDetailInfo} />;
+    return <Application terminalDetailInfo={{terminalInfo: terminalInfo} as any} />;
   }
 
   /**
    * 流量信息
    */
   if (currentTab.key === '4') {
-    return <Traffic terminalDetailInfo={terminalDetailInfo} />;
+    return <Traffic terminalDetailInfo={{terminalInfo: terminalInfo} as any} />;
   }
 
   /**
    * 开机记录
    */
   if (currentTab.key === '5') {
-    return <Power terminalDetailInfo={terminalDetailInfo} />;
+    return <Power terminalDetailInfo={{terminalInfo: terminalInfo} as any} />;
   }
   return <div>500</div>;
 };

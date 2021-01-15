@@ -207,7 +207,7 @@ export default () => {
       formName: 'activateType',
       formType: FormItmeType.SelectCommon,
       dictList: 'terminal_type',
-      mode: 'multiple',
+      // mode: 'multiple',
     },
     {
       placeholder: '是否支持DCC',
