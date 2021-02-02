@@ -14,17 +14,19 @@ import { terminalInfoList } from '@/pages/terminal/message/constants/api';
 import { formatListResult } from '@/common/request-util';
 import { FormItem, FormItmeType } from '@/component/form/type';
 import { createTableColumns, getStandardPagination } from '@/component/table';
-
+import { getDictText } from '@/pages/common/util';
+import  './index.scss'
 interface Props {
   visible: boolean;       // modal是否展示
   hideModal: () => void;  // 关闭modal
   fetchParam: any;        // 获取参数
   setOptions: any;        // 设置选中列表
   options: any[];         // 选中列表
+  terminalTypeList: any[] // 终端类型
 }
 
 export function TableTusns(props: Props) {
-  const { visible, hideModal, fetchParam, options, setOptions } = props;
+  const { visible, hideModal, fetchParam, options, setOptions, terminalTypeList } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([] as any[]);
   const [form] = Form.useForm();    // 查询终端的表单
   const { tableProps, search }: any = useAntdTable(
@@ -63,21 +65,59 @@ export function TableTusns(props: Props) {
    */
   const forms: FormItem[] = [
     {
-      span: 6,
       formName: 'tusn',
       placeholder: '终端序列号',
       formType: FormItmeType.Normal,
     },
     {
-      span: 6,
+      formName: 'deptId',
+      formType: FormItmeType.TreeSelectCommon,
+    },
+    { 
+      placeholder: '终端型号',
+      formType: FormItmeType.Select,
+      selectData:
+        terminalTypeList &&
+        terminalTypeList.map((item) => {
+          return {
+            value: `${item.typeCode}`,
+            title: `${item.typeName}`,
+          };
+        }),
+      formName: 'terminalTypeName',
+    },
+    {
+      formName: 'terminalCode',
+      placeholder: '终端编号',
+      formType: FormItmeType.Normal,
+    },
+    {
       formName: 'merchantName',
       placeholder: '商户名称',
       formType: FormItmeType.Normal,
     },
     {
-      span: 8,
-      formName: 'deptId',
-      formType: FormItmeType.TreeSelectCommon,
+      formName: 'merchantCode',
+      placeholder: '商户编号',
+      formType: FormItmeType.Normal
+    },
+    {
+      placeholder: '终端类型',
+      formName: 'activateType',
+      formType: FormItmeType.SelectCommon,
+      dictList: 'terminal_type',
+    },
+    {
+      placeholder: '银联间直连',
+      formName: 'cupConnMode',
+      formType: FormItmeType.SelectCommon,
+      dictList: 'unionpay_connection',
+    },
+    {
+      placeholder: '业务类型',
+      formType: FormItmeType.SelectCommon,
+      formName: 'bussType',
+      dictList: 'buss_type',
     },
   ];
 
@@ -89,10 +129,10 @@ export function TableTusns(props: Props) {
       title: '终端序列号',
       dataIndex: 'tusn',
     },
-    {
-      title: '所属机构',
-      dataIndex: 'deptName',
-    },
+    // {
+    //   title: '所属机构',
+    //   dataIndex: 'deptName',
+    // },
     {
       title: '终端厂商',
       dataIndex: 'firmName',
@@ -102,8 +142,31 @@ export function TableTusns(props: Props) {
       dataIndex: 'terminalTypeName'
     },
     {
+      title: '终端编号',
+      dataIndex: 'terminalCode',
+    },
+    {
+      title: '商户编号',
+      dataIndex: 'merchantCode',
+    },
+    {
+      title: '终端类型',
+      dataIndex: 'activateType',
+      dictType: 'terminal_type'
+    },
+    {
       title: '商户名称',
       dataIndex: 'merchantName'
+    },
+    {
+      title: '银联间直连',
+      dataIndex: 'cupConnMode',
+      render: (val) => Number(val) === 0 ? '间连' : '直连'
+    },
+    {
+      title: '业务类型',
+      dataIndex: 'bussType',
+      render:(val) => getDictText(val, 'buss_type')
     }
   ]);
 
@@ -161,7 +224,7 @@ export function TableTusns(props: Props) {
       bodyStyle={{ padding: 0 }}
       getContainer={false}
     >
-      <div style={{ height: 400, overflow: 'auto', overflowX: 'hidden', padding: '24px 0px 24px 24px' }}>
+      <div style={{ height: 400, overflow: 'auto', overflowX: 'hidden', padding: '24px 24px 24px 24px' }}>
         <Forms
           form={form}
           forms={forms}
@@ -171,7 +234,9 @@ export function TableTusns(props: Props) {
           }}
         />
         <Table
+          className='table'
           rowKey="tusn"
+          scroll={{ x: 1200 }}
           rowSelection={rowSelection}
           columns={columns}
           {...tableProps}

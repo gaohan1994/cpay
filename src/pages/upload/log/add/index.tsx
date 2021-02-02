@@ -269,6 +269,7 @@ export default function Page() {
             terminalTypeCodes: terminalTypeValue,
           }}
           setFailedOptions={setFailedTusnsOptions}
+          terminalTypeList={terminalTypeList}
         />
       ),
     },

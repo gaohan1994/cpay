@@ -36,12 +36,13 @@ const getVaildParam = (param: any) => {
 interface Props {
   options: any[];
   setOptions: any;
+  terminalTypeList: any[];
   fetchParam?: any;
   setFailedOptions?: any;
 }
 
 export function FormTusns(props: Props) {
-  const { options, setOptions, fetchParam, setFailedOptions } = props;
+  const { options, setOptions, fetchParam, setFailedOptions, terminalTypeList } = props;
   const [selectedOptions, setSelectOptions] = useState([] as any[]);
   const [modalVisible, setModalVisible] = useState(false);
   const [importModalVisible, setImportModalVisible] = useState(false);
@@ -274,6 +275,7 @@ export function FormTusns(props: Props) {
         fetchParam={getVaildParam(fetchParam)}
         setOptions={setOptions}
         options={options}
+        terminalTypeList={terminalTypeList}
       />
       <Modal
         visible={importModalVisible}

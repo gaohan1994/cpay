@@ -570,6 +570,7 @@ export default function Page() {
                 dccSupFlag: dccSupFlagValue,
                 zzFlag: zzFlagValue,
               }}
+              terminalTypeList={terminalTypeList}
             />
           ),
         },

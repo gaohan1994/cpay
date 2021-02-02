@@ -20,6 +20,8 @@ import { softInfoEdit, softInfoAdd } from '../../constants/api';
 import UploadApp from '@/pages/application/manage/component/UploadApp';
 import { UploadOutlined } from '@ant-design/icons';
 import FixedFoot, { ErrorField } from '@/component/fixed-foot';
+import { useDispatch } from 'react-redux';
+import { ACTION_TYPES_APP } from '@/pages/application/reducers';
 
 const { TextArea } = Input;
 
@@ -49,6 +51,7 @@ const fieldLabels = {
 
 export default function Page() {
   const id = useQueryParam('id');
+  const dispatch = useDispatch()
   useStore(['driver_type', 'unionpay_connection', 'is_dcc_sup']);
   const history = useHistory();
   const [form] = useForm();
@@ -90,6 +93,13 @@ export default function Page() {
 
   useEffect(() => {
     form.setFieldsValue({ dccSupFlag: false });
+    return () => {
+      form.resetFields()
+      dispatch({
+        type: ACTION_TYPES_APP.RECEIVE_APP_INFO,
+        payload: {}
+      })
+    }
   }, []);
 
   /**
@@ -163,6 +173,7 @@ export default function Page() {
         onChange: (id: string) => {
           setDriverTypeValue(`${id}`);
           form.resetFields()
+          form.setFieldsValue({type: `${id}`})
         },
       })
     },

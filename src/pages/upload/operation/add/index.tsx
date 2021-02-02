@@ -259,6 +259,7 @@ export default function Page() {
                 terminalTypeId: terminalTypeValue
               }}
               setFailedOptions={setFailedTusnsOptions}
+              terminalTypeList={terminalTypeList}
             />
         },
         {
