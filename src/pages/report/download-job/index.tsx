@@ -82,10 +82,10 @@ function Page(props: Props) {
     const currentEndDate = year + (currentMonth >= 1 && currentMonth <= 9 ? "0" : "") + currentMonth;
     setInitStartTime(moment(currentdate));
     setStartTime(moment(currentdate));
-    setEndTime(moment(currentEndDate));
+    setEndTime('');
     form.setFieldsValue({
       startTime: moment(currentdate),
-      endTime: moment(currentEndDate),
+      endTime: '',
       isShowAll: 0,
     });
   }, []);

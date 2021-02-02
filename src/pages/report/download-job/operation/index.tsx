@@ -17,7 +17,7 @@ import { createTableColumns, getStandardPagination } from '@/component/table';
 import { SyncOutlined, PauseOutlined, CaretRightOutlined, LogoutOutlined } from '@ant-design/icons';
 import { RESPONSE_CODE, getDownloadPath } from '@/common/config';
 import invariant from 'invariant';
-import { taskDownloadTaskList } from '@/pages/upload/upload/constants/api';
+import { taskDownloadTaskList, taskDownloadTaskExport } from '@/pages/upload/upload/constants/api';
 
 type Props = {};
 
@@ -91,28 +91,23 @@ function Page(props: Props) {
     },
     {
       title: '商户号',
-      dataIndex: 'terminalMerchant',
-      render: (merchant) => merchant.merchantCode,
+      dataIndex: 'merchantCode',
     },
     {
       title: '商户名称',
-      dataIndex: 'terminalMerchant',
-      render: (merchant) => merchant.merchantName,
+      dataIndex: 'merchantName',
     },
     {
       title: '商家姓名',
-      dataIndex: 'terminalMerchant',
-      render: (merchant) => merchant.legalPerson,
+      dataIndex: 'legalPerson',
     },
     {
       title: '商家手机号',
-      dataIndex: 'terminalMerchant',
-      render: (merchant) => merchant.applyPhone,
+      dataIndex: 'applyPhone',
     },
     {
       title: '商家地址',
-      dataIndex: 'terminalMerchant',
-      render: (merchant) => `${merchant.province || ''}${merchant.city || ''}${merchant.county || ''}`,
+      dataIndex: 'merchantAddress',
     },
   ]);
 
@@ -140,6 +135,21 @@ function Page(props: Props) {
       formType: FormItmeType.SelectCommon,
       dictList: ['download_task_status'],
     },
+    {
+      formName: 'terminalCode', 
+      placeholder: '终端号',
+      formType: FormItmeType.Normal
+    },
+    {
+      formName: 'merchantCode', 
+      placeholder: '商户号',
+      formType: FormItmeType.Normal
+    },
+    {
+      formName: 'merchantAddress',
+      placeholder: '商家地址',
+      formType: FormItmeType.Normal
+    }
   ];
 
   /**
@@ -158,7 +168,7 @@ function Page(props: Props) {
             ...fetchParams[1]
           }
           setLoading(true);
-          const result = await taskDownloadTaskList(param);
+          const result = await taskDownloadTaskExport(param);
           setLoading(false);
           invariant(result && result.code === RESPONSE_CODE.success, result && result.msg || '导出失败，请重试');
           if (result.data) {

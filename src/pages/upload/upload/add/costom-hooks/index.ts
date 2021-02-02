@@ -20,7 +20,7 @@ export function useFormSelectData(props: any) {
   const [terminalFirmValue, setTerminalFirmValue] = useState('');
   const { terminalTypeList, setTerminalTypeList } = useTerminalTypeList(firmId || -1);
   const [terminalTypeValue, setTerminalTypeValue] = useState('');
-  // const [activateTypesList, setActivateTypesList] = useState([] as DictDetailItem[]);
+  const [activateTypesList, setActivateTypesList] = useState([] as DictDetailItem[]);
   const [unionpayConnectionList, setUnionpayConnectionList] = useState([] as DictDetailItem[]);
   const [cupConnModeValue, setCupConnModeValue] = useState('');
   const [dccSupFlagList, setDccSupFlagList] = useState([] as DictDetailItem[]);
@@ -38,7 +38,7 @@ export function useFormSelectData(props: any) {
   const [zzFlagValue, setZzFlagValue] = useState('');
 
   useEffect(() => {
-    // setActivateTypesList(state.terminal_type && state.terminal_type.data || []);
+    setActivateTypesList(state.terminal_type && state.terminal_type.data || []);
     setUnionpayConnectionList(state.unionpay_connection && state.unionpay_connection.data || []);
     setBussTypeList(state.buss_type && state.buss_type.data || []);
     setDccSupFlagList(state.dcc_sup_flag && state.dcc_sup_flag.data || []);
@@ -57,7 +57,7 @@ export function useFormSelectData(props: any) {
     terminalFirmValue, setTerminalFirmValue,
     terminalTypeList, setTerminalTypeList,
     terminalTypeValue, setTerminalTypeValue,
-    // activateTypesList, setActivateTypesList,
+    activateTypesList, setActivateTypesList,
     unionpayConnectionList, setUnionpayConnectionList,
     cupConnModeValue, setCupConnModeValue,
     bussTypeList, setBussTypeList,

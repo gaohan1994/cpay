@@ -162,6 +162,7 @@ export default function Page() {
         value: driverTypeValue,
         onChange: (id: string) => {
           setDriverTypeValue(`${id}`);
+          form.resetFields()
         },
       })
     },

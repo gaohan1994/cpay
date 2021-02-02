@@ -145,8 +145,9 @@ export default () => {
     <div>
       <Form form={form}>
         <Row gutter={24}>
-          {renderCommonTreeSelectForm(deptForm)}
-
+          <Col span={6}>
+            {renderCommonTreeSelectForm(deptForm)}
+          </Col>
           <Col span={6}>
             <Form.Item>
               <Input
