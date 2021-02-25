@@ -92,7 +92,6 @@ export default function Page() {
   }, [appInfo]);
 
   useEffect(() => {
-    form.setFieldsValue({ dccSupFlag: false });
     return () => {
       form.resetFields()
       dispatch({
@@ -211,14 +210,14 @@ export default function Page() {
     {
       label: fieldLabels.iconPath,
       key: 'iconPath',
-      requiredText: '应用图标不能为空',
+      // requiredText: '应用图标不能为空',
       render: renderIcon
     },
     {
       label: fieldLabels.dccSupFlag,
       key: 'dccSupFlag',
-      requiredType: 'select',
-      render: () => <Switch checkedChildren="是" unCheckedChildren="否" />
+      // requiredType: 'select',
+      render: () => <Switch defaultChecked={false} checkedChildren="是" unCheckedChildren="否" />
     },
     {
       ...getCustomSelectFromItemData({
@@ -279,7 +278,7 @@ export default function Page() {
           : appIcon.replace(`${BASIC_CONFIG.SOURCE_URL}/`, ''),
       }
       setLoading(true);
-      if (typeof fields.dccSupFlag === 'boolean') {
+      if (['boolean', 'undefined'].indexOf(typeof fields.dccSupFlag)) {
         param = {
           ...param,
           dccSupFlag: fields.dccSupFlag ? 0 : 1

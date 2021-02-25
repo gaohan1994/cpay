@@ -23,7 +23,13 @@ export default () => {
   const [terminalIcon, setTerminalIcon] = useState({} as any);
 
   useEffect(() => {
+    if(!(window as any).BMap) {
+      return
+    }
     const mp = new BMap.Map('monitor-map-container');
+    if(!mp) {
+      return
+    }
     // const pointMap = new BMap.Point(point.longidude, point.latitude);
     // mp.centerAndZoom(pointMap, 15);
     // mp.addControl(new BMap.NavigationControl());
@@ -82,7 +88,7 @@ export default () => {
         strokeWeight: 1,
         fillOpacity: 0.3,
         strokeOpacity: 0.3,
-        enableEditing: true,
+        // enableEditing: true,
       });
       map.addOverlay(circle);
 
@@ -116,6 +122,11 @@ export default () => {
       notification.warn({ message: error.message });
     }
   };
+
+  const onReset = async () => {
+    await form.resetFields()
+    onSearch()
+  }
 
   const deptForm: FormItem = {
     span: 6,
@@ -157,7 +168,7 @@ export default () => {
             </Form.Item>
           </Col>
           <Form.Item>
-            <Button>重置</Button>
+            <Button onClick={onReset}>重置</Button>
           </Form.Item>
           <Form.Item style={{ marginLeft: 12 }}>
             <Button type="primary" onClick={onSearch}>
@@ -175,9 +186,7 @@ export default () => {
         options={[]}
       />
 
-      <div id="monitor-map-container" className="monitor-map-container">
-        map
-      </div>
+      <div id="monitor-map-container" className="monitor-map-container"></div>
     </div>
   );
 };

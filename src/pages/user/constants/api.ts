@@ -24,3 +24,8 @@ export const getUserAndMenu = async (dispatch: ({}) => void): Promise<any> => {
   }
   return result;
 };
+
+/**
+ * 修改密码
+ */
+export const resetPwd = (params: any) => ApiRequest.post(`/cpay-admin/system/user/profile/resetPwd`, params)

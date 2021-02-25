@@ -21,7 +21,13 @@ export default (props: Props) => {
 
   useEffect(() => {
     if (point) {
+      if(!(window as any).BMap) {
+        return
+      }
       const mp = new BMap.Map('container');
+      if(!mp) {
+        return
+      }
       mp.addControl(new BMap.NavigationControl());
       mp.addControl(new BMap.ScaleControl());
       mp.addControl(new BMap.OverviewMapControl());
@@ -31,7 +37,6 @@ export default (props: Props) => {
       const merchantIcon = new BMap.Icon(pic_map_address, new BMap.Size(32, 37));
 
       const currentTerminalData: any = point;
-      console.log('currentTerminalData', currentTerminalData);
       /**
        * @param {radius} 半径
        * @param {currentTerminalData} 终端数据
@@ -48,7 +53,7 @@ export default (props: Props) => {
           currentTerminalData.merchantLatitude
         );
         mp.centerAndZoom(merchantPoint, 12);
-
+  
         const merchantMarker = new BMap.Marker(merchantPoint, {
           icon: merchantIcon,
         });
@@ -59,7 +64,7 @@ export default (props: Props) => {
           strokeWeight: 1,
           fillOpacity: 0.3,
           strokeOpacity: 0.3,
-          enableEditing: true,
+          // enableEditing: true,
         });
         mp.addOverlay(circle);
 

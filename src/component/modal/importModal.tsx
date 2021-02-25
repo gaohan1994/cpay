@@ -41,7 +41,11 @@ export default function ImportPage(props: Props) {
       formData.append('file', file);
       const res = await importFunc(formData);
       invariant(res?.code === RESPONSE_CODE.success, res.msg || '导入失败')
-      notification.success({ message: '导入成功' });
+      if(res?.data?.successCount === 0) {
+        notification.error({message: '导入失败'})
+      }else {
+        notification.success({ message: `导入成功` });
+      }
       setFile({});
       setResultModalVisible(true);
       setImportResult(res.data);
@@ -122,10 +126,10 @@ export default function ImportPage(props: Props) {
         }
         width={320}
       >
-        <div style={{ marginLeft: 30 }}>
+        <div style={{ marginLeft: 30, maxHeight: 150, overflowY: 'auto' }}>
           <div>
-            <CheckCircleFilled style={{ marginRight: 10, color: 'green' }} />
-            导入成功
+            <CheckCircleFilled style={{ marginRight: 10, color: importResult.successCount !== 0 ? 'green' : 'red' }} />
+            导入{importResult.successCount !== 0 ? '成功' : '失败'}
           </div>
           <div style={{ marginLeft: 20 }}>
             <div>
@@ -140,6 +144,7 @@ export default function ImportPage(props: Props) {
               <CloseOutlined style={{ marginRight: 10, color: 'red' }} />
               失败个数：{importResult.failCount}
             </div>
+            {importResult.errorMsgList && <div>失败原因： &nbsp;{importResult.errorMsgList}</div>}
           </div>
         </div>
       </Modal>

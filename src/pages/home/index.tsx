@@ -140,11 +140,11 @@ function App() {
                 <div key={job.id} className='home-card-row' onClick={() => onUploadDetail(job)}>
                   <Popover
                     placement="right" 
-                    content={`任务共${total}条，成功${job.successCount}条，失败${job.failureCount}条，待执行${job.executingCount}条，执行中${job.executeCount}条`}
+                    content={`任务共${total}条，成功${job.successCount}条，失败${job.failureCount}条，待执行${job.executeCount}条，执行中${job.executingCount}条`}
                   >
                     <a className='home-card-row-content'> {job.jobName} </a>
                   </Popover>
-                  <span>{`${total}/${job.successCount}/${job.failureCount}/${job.executingCount}/${job.executeCount}`}</span>
+                  <span>{`${total}/${job.successCount}/${job.failureCount}/${job.executeCount}/${job.executingCount}`}</span>
                 </div>
               )
             })}

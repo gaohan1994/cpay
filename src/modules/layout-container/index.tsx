@@ -10,6 +10,7 @@ import { getUserDept } from '@/common/api';
 import './index.less';
 import { useHistory } from 'react-router-dom';
 import { logout } from '@/pages/user/constants/api';
+import RightContent from '@/modules/layout-container/component/header/rightContent'
 
 const prefix = 'component-layout';
 
@@ -48,12 +49,6 @@ function LayoutContainer(props: Props) {
     getUserDept(dispatch);
   }, []);
 
-  const onLogout = (e: any) => {
-    e.stopPropagation()
-    logout(dispatch)
-    window.location.hash = '#/login'
-  }
-
   return (
     <Layout>
       <Header className="header">
@@ -64,7 +59,8 @@ function LayoutContainer(props: Props) {
             {(common.userDept && common.userDept.deptName) || ''}
           </div>
         </div>
-        <a className='header-right' onClick={onLogout}>退出</a>
+        {/* <a className='header-right' onClick={onLogout}>退出</a> */}
+        <RightContent />
       </Header>
       <Layout>
         <LayoutMenu menus={menus} />
